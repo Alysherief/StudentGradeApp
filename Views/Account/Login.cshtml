@@ -1,0 +1,79 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+
+            <div class="card shadow">
+                <div class="card-body p-4">
+
+                    <h2 class="text-center mb-4">Student Grade App</h2>
+                    <h4 class="text-center mb-4">Login</h4>
+
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">
+                            @ViewBag.Error
+                        </div>
+                    }
+
+                    <form asp-controller="Account"
+                          asp-action="Login"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label for="usernameOrEmail" class="form-label">
+                                Username or Email
+                            </label>
+
+                            <input type="text"
+                                   id="usernameOrEmail"
+                                   name="usernameOrEmail"
+                                   class="form-control"
+                                   placeholder="Enter username or email"
+                                   required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                Password
+                            </label>
+
+                            <input type="password"
+                                   id="password"
+                                   name="password"
+                                   class="form-control"
+                                   placeholder="Enter password"
+                                   required />
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input type="checkbox"
+                                   id="rememberMe"
+                                   name="rememberMe"
+                                   value="true"
+                                   class="form-check-input" />
+
+                            <label for="rememberMe" class="form-check-label">
+                                Remember me
+                            </label>
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+                            Login
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+

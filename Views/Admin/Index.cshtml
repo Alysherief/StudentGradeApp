@@ -1,0 +1,111 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-5">
+
+    <div class="text-center mb-5">
+        <h1>Admin Dashboard</h1>
+        <p class="text-muted">
+            Welcome, @User.Identity?.Name
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card shadow h-100">
+                <div class="card-body text-center">
+                    <h4>Teachers</h4>
+                    <p>Manage teacher accounts.</p>
+
+                    <a asp-controller="Admin"
+                       asp-action="ManageTeachers"
+                       class="btn btn-primary">
+                        Manage Teachers
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow h-100">
+                <div class="card-body text-center">
+                    <h4>Students</h4>
+                    <p>Manage student accounts.</p>
+
+                    <a asp-controller="Admin"
+                       asp-action="ManageStudents"
+                       class="btn btn-primary">
+                        Manage Students
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow h-100">
+                <div class="card-body text-center">
+                    <h4>Subjects</h4>
+                    <p>Create and manage subjects.</p>
+
+                    <a href="#" class="btn btn-primary">
+                        Manage Subjects
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row g-4 mt-2">
+
+        <div class="col-md-6">
+            <div class="card shadow h-100">
+                <div class="card-body text-center">
+                    <h4>Assign Teachers</h4>
+                    <p>Assign teachers to subjects.</p>
+
+                    <a href="#" class="btn btn-success">
+                        Assign Teachers
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow h-100">
+                <div class="card-body text-center">
+                    <h4>Grade Components</h4>
+                    <p>
+                        Create quizzes, assignments, exams,
+                        and other grade components.
+                    </p>
+
+                    <a href="#" class="btn btn-success">
+                        Manage Grades
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="text-center mt-5">
+
+        <form asp-controller="Account"
+              asp-action="Logout"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <button type="submit"
+                    class="btn btn-danger">
+                Logout
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
