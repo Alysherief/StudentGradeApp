@@ -1,7 +1,7 @@
-﻿@model StudentGradeApp.ViewModels.CreateTeacherViewModel
+﻿@model StudentGradeApp.ViewModels.CreateSubjectViewModel
 
 @{
-    ViewData["Title"] = "Create Teacher";
+    ViewData["Title"] = "Create Subject";
 }
 
 <div class="container mt-5">
@@ -15,11 +15,11 @@
                 <div class="card-body p-4">
 
                     <h2 class="text-center mb-4">
-                        Create Teacher Account
+                        Create Subject
                     </h2>
 
                     <form asp-controller="Admin"
-                          asp-action="CreateTeacher"
+                          asp-action="CreateSubject"
                           method="post">
 
                         @Html.AntiForgeryToken()
@@ -30,15 +30,15 @@
 
                         <div class="mb-3">
 
-                            <label asp-for="FullName"
+                            <label asp-for="Name"
                                    class="form-label">
                             </label>
 
-                            <input asp-for="FullName"
+                            <input asp-for="Name"
                                    class="form-control"
-                                   placeholder="Enter full name" />
+                                   placeholder="e.g. Computer Science" />
 
-                            <span asp-validation-for="FullName"
+                            <span asp-validation-for="Name"
                                   class="text-danger">
                             </span>
 
@@ -46,15 +46,15 @@
 
                         <div class="mb-3">
 
-                            <label asp-for="Username"
+                            <label asp-for="Code"
                                    class="form-label">
                             </label>
 
-                            <input asp-for="Username"
+                            <input asp-for="Code"
                                    class="form-control"
-                                   placeholder="Enter username" />
+                                   placeholder="e.g. CS101" />
 
-                            <span asp-validation-for="Username"
+                            <span asp-validation-for="Code"
                                   class="text-danger">
                             </span>
 
@@ -62,16 +62,17 @@
 
                         <div class="mb-3">
 
-                            <label asp-for="Email"
+                            <label asp-for="CreditHours"
                                    class="form-label">
                             </label>
 
-                            <input asp-for="Email"
-                                   type="email"
+                            <input asp-for="CreditHours"
+                                   type="number"
                                    class="form-control"
-                                   placeholder="Enter email" />
+                                   min="1"
+                                   max="10" />
 
-                            <span asp-validation-for="Email"
+                            <span asp-validation-for="CreditHours"
                                   class="text-danger">
                             </span>
 
@@ -79,31 +80,16 @@
 
                         <div class="mb-3">
 
-                            <label asp-for="Password"
+                            <label asp-for="Description"
                                    class="form-label">
                             </label>
 
-                            <input asp-for="Password"
-                                   class="form-control"
-                                   placeholder="Enter password" />
+                            <textarea asp-for="Description"
+                                      class="form-control"
+                                      rows="4"
+                                      placeholder="Enter subject description"></textarea>
 
-                            <span asp-validation-for="Password"
-                                  class="text-danger">
-                            </span>
-
-                        </div>
-
-                        <div class="mb-3">
-
-                            <label asp-for="ConfirmPassword"
-                                   class="form-label">
-                            </label>
-
-                            <input asp-for="ConfirmPassword"
-                                   class="form-control"
-                                   placeholder="Confirm password" />
-
-                            <span asp-validation-for="ConfirmPassword"
+                            <span asp-validation-for="Description"
                                   class="text-danger">
                             </span>
 
@@ -111,16 +97,17 @@
 
                         <button type="submit"
                                 class="btn btn-primary w-100">
-                            Create Teacher
+                            Create Subject
                         </button>
 
                     </form>
 
                     <div class="text-center mt-3">
 
-                        <a asp-controller="Dashboard"
-                           asp-action="Index">
-                            Back to Dashboard
+                        <a asp-controller="Admin"
+                           asp-action="ManageSubjects"
+                           class="btn btn-secondary">
+                            Back to Subjects
                         </a>
 
                     </div>

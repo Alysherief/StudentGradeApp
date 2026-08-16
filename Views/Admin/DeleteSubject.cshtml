@@ -1,0 +1,95 @@
+﻿@model StudentGradeApp.Models.Subject
+
+@{
+    ViewData["Title"] = "Delete Subject";
+}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-body p-4">
+
+                    <h2 class="text-danger text-center mb-4">
+                        Delete Subject
+                    </h2>
+
+                    <div class="alert alert-warning">
+                        Are you sure you want to delete this subject?
+                    </div>
+
+                    <dl class="row">
+
+                        <dt class="col-sm-4">
+                            Subject Name
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            @Model.Name
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Subject Code
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            @Model.Code
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Credit Hours
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            @Model.CreditHours
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Teacher
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            @(Model.Teacher?.FullName ?? "Not Assigned")
+                        </dd>
+
+                    </dl>
+
+                    <form asp-controller="Admin"
+                          asp-action="DeleteSubject"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               asp-for="Id" />
+
+                        <div class="d-flex justify-content-between">
+
+                            <a asp-controller="Admin"
+                               asp-action="ManageSubjects"
+                               class="btn btn-secondary">
+                                Cancel
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-danger">
+                                Delete Subject
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

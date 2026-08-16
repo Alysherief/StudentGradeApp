@@ -1,0 +1,390 @@
+﻿@model StudentGradeApp.Models.GradeComponent
+
+@{
+    ViewData["Title"] = "Add Grade Component";
+
+    var subject = ViewBag.Subject as StudentGradeApp.Models.Subject;
+}
+
+<style>
+
+    .grade-create-page {
+        padding: 35px 0 60px;
+    }
+
+    .create-header {
+        background: linear-gradient(135deg, #0d6efd, #4f8dfd);
+        color: white;
+        border-radius: 24px;
+        padding: 35px;
+        margin-bottom: 30px;
+        box-shadow: 0 15px 35px rgba(13, 110, 253, 0.18);
+    }
+
+    .header-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 17px;
+        background: rgba(255,255,255,.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        margin-bottom: 18px;
+    }
+
+    .create-header h1 {
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .create-header p {
+        margin: 0;
+        opacity: .9;
+    }
+
+    .form-card {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 22px;
+        padding: 32px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.06);
+    }
+
+    .subject-info {
+        background: #f4f7ff;
+        border: 1px solid #dfe8ff;
+        border-radius: 16px;
+        padding: 18px;
+        margin-bottom: 28px;
+    }
+
+    .subject-code {
+        display: inline-block;
+        background: #0d6efd;
+        color: white;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .subject-name {
+        font-size: 1.2rem;
+        font-weight: 800;
+    }
+
+    .form-label {
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 12px;
+        padding: 12px 14px;
+    }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 .2rem rgba(13,110,253,.12);
+        }
+
+    .field-help {
+        color: #6c757d;
+        font-size: 13px;
+        margin-top: 6px;
+    }
+
+    .info-box {
+        background: #f8f9fa;
+        border-radius: 14px;
+        padding: 18px;
+        margin-top: 25px;
+    }
+
+    .info-box-title {
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .info-box p {
+        margin: 0;
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+    .action-buttons {
+        margin-top: 30px;
+        padding-top: 25px;
+        border-top: 1px solid #edf0f4;
+        display: flex;
+        gap: 10px;
+    }
+
+        .action-buttons .btn {
+            border-radius: 11px;
+            padding: 11px 20px;
+            font-weight: 700;
+        }
+
+    @@media (max-width: 767px) {
+
+        .grade-create-page {
+            padding-top: 20px;
+        }
+
+        .create-header {
+            padding: 28px 22px;
+            border-radius: 20px;
+        }
+
+        .form-card {
+            padding: 22px;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+            .action-buttons .btn {
+                width: 100%;
+            }
+    }
+
+</style>
+
+
+<div class="container grade-create-page">
+
+    <!-- HEADER -->
+
+    <div class="create-header">
+
+        <div class="header-icon">
+            <i class="bi bi-plus-circle-fill"></i>
+        </div>
+
+        <h1>
+            Add Grade Component
+        </h1>
+
+        <p>
+            Create a quiz, assignment, exam or other grading component.
+        </p>
+
+    </div>
+
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="form-card">
+
+                <!-- SUBJECT -->
+                @if (subject != null)
+                {
+                    <div class="subject-info">
+
+                        <span class="subject-code">
+                            @subject.Code
+                        </span>
+
+                        <div class="subject-name">
+                            @subject.Name
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(subject.Description))
+                        {
+                            <div class="text-muted mt-1">
+                                @subject.Description
+                            </div>
+                        }
+
+                    </div>
+                }
+
+
+                <form asp-controller="Admin"
+                      asp-action="CreateGradeComponent"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           asp-for="SubjectId" />
+
+
+                    <!-- VALIDATION -->
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger"
+                         role="alert">
+                    </div>
+
+
+                    <!-- NAME -->
+
+                    <div class="mb-4">
+
+                        <label asp-for="Name"
+                               class="form-label">
+                            Component Name
+                        </label>
+
+                        <input asp-for="Name"
+                               class="form-control"
+                               placeholder="e.g. Quiz 1, Midterm, Final Exam" />
+
+                        <div class="field-help">
+                            Give the grading component a clear name.
+                        </div>
+
+                        <span asp-validation-for="Name"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <!-- MAX GRADE -->
+
+                    <div class="mb-4">
+
+                        <label asp-for="MaxGrade"
+                               class="form-label">
+                            Maximum Grade
+                        </label>
+
+                        <div class="input-group">
+
+                            <input asp-for="MaxGrade"
+                                   class="form-control"
+                                   type="number"
+                                   min="1"
+                                   step="0.01"
+                                   placeholder="e.g. 20" />
+
+                            <span class="input-group-text">
+                                Marks
+                            </span>
+
+                        </div>
+
+                        <div class="field-help">
+                            The highest possible mark for this component.
+                        </div>
+
+                        <span asp-validation-for="MaxGrade"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <!-- WEIGHT -->
+
+                    <div class="mb-4">
+
+                        <label asp-for="WeightPercentage"
+                               class="form-label">
+                            Weight Percentage
+                        </label>
+
+                        <div class="input-group">
+
+                            <input asp-for="WeightPercentage"
+                                   class="form-control"
+                                   type="number"
+                                   min="0"
+                                   max="100"
+                                   step="0.01"
+                                   placeholder="e.g. 10" />
+
+                            <span class="input-group-text">
+                                %
+                            </span>
+
+                        </div>
+
+                        <div class="field-help">
+                            How much this component contributes to the final subject grade.
+                        </div>
+
+                        <span asp-validation-for="WeightPercentage"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <!-- EXAMPLE -->
+
+                    <div class="info-box">
+
+                        <div class="info-box-title">
+
+                            <i class="bi bi-lightbulb-fill text-warning me-2"></i>
+
+                            Example
+
+                        </div>
+
+                        <p>
+                            If a Quiz has a maximum grade of
+                            <strong>20 marks</strong>
+                            and a weight of
+                            <strong>10%</strong>,
+                            the student's result on this quiz contributes
+                            10% to their final subject grade.
+                        </p>
+
+                    </div>
+
+
+                    <!-- BUTTONS -->
+
+                    <div class="action-buttons">
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            <i class="bi bi-check-circle me-2"></i>
+
+                            Create Component
+
+                        </button>
+
+
+                        <a asp-controller="Admin"
+                           asp-action="GradeComponents"
+                           asp-route-subjectId="@Model.SubjectId"
+                           class="btn btn-outline-secondary">
+
+                            <i class="bi bi-arrow-left me-2"></i>
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+}

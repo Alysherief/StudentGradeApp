@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using StudentGradeApp.Models;
 
@@ -66,17 +67,17 @@ namespace StudentGradeApp.Controllers
 
                 if (roles.Contains("Admin"))
                 {
-                    return RedirectToAction("Index", "Admin");
+                    return RedirectToAction("Index", "Home");
                 }
 
                 if (roles.Contains("Teacher"))
                 {
-                    return RedirectToAction("Index", "Teacher");
+                    return RedirectToAction("Index", "Home");
                 }
 
                 if (roles.Contains("Student"))
                 {
-                    return RedirectToAction("Index", "Student");
+                    return RedirectToAction("Index", "Home");
                 }
 
                 await _signInManager.SignOutAsync();
@@ -108,6 +109,19 @@ namespace StudentGradeApp.Controllers
         public IActionResult AccessDenied()
         {
             return View();
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            return View(user);
         }
     }
 }

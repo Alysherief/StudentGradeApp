@@ -1,0 +1,74 @@
+﻿@model IEnumerable<StudentGradeApp.Models.Subject>
+
+@{
+    ViewData["Title"] = "My Subjects";
+}
+
+<div class="container mt-5">
+
+    <div class="text-center mb-4">
+        <h1>My Subjects</h1>
+        <p class="text-muted">
+            Subjects assigned to you
+        </p>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            You have not been assigned any subjects yet.
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+
+            @foreach (var subject in Model)
+            {
+                <div class="col-md-4">
+
+                    <div class="card shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <h4 class="card-title">
+                                @subject.Name
+                            </h4>
+
+                            <p class="text-muted">
+                                @subject.Code
+                            </p>
+
+                            <p>
+                                <strong>Credit Hours:</strong>
+                                @subject.CreditHours
+                            </p>
+
+                            @if (!string.IsNullOrEmpty(subject.Description))
+                            {
+                                <p>
+                                    @subject.Description
+                                </p>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+    <div class="text-center mt-4">
+
+        <a asp-controller="Dashboard"
+           asp-action="Index"
+           class="btn btn-secondary">
+            Back to Dashboard
+        </a>
+
+    </div>
+
+</div>

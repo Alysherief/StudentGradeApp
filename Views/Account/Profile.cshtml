@@ -1,0 +1,481 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using StudentGradeApp.Models
+@inject UserManager<AppUser> UserManager
+
+@model AppUser
+
+@{
+    ViewData["Title"] = "My Profile";
+
+    var roles = await UserManager.GetRolesAsync(Model);
+    var role = roles.FirstOrDefault() ?? "User";
+
+    var displayName = !string.IsNullOrWhiteSpace(Model.FullName)
+        ? Model.FullName
+        : Model.UserName ?? "User";
+
+    var initial = !string.IsNullOrWhiteSpace(displayName)
+        ? displayName.Substring(0, 1).ToUpper()
+        : "U";
+}
+
+<div class="profile-page">
+
+    <div class="profile-hero">
+
+        <div class="profile-avatar">
+            @initial
+        </div>
+
+        <div class="profile-hero-info">
+
+            <span class="profile-label">
+                MY PROFILE
+            </span>
+
+            <h1>
+                @displayName
+            </h1>
+
+            <p>
+                Manage your account information and security.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <div class="col-lg-8">
+
+            <div class="profile-card">
+
+                <div class="card-header-custom">
+
+                    <div class="header-icon">
+                        <i class="bi bi-person"></i>
+                    </div>
+
+                    <div>
+                        <h3>Personal Information</h3>
+                        <p>Your account details</p>
+                    </div>
+
+                </div>
+
+
+                <div class="profile-details">
+
+                    <div class="detail-item">
+
+                        <div class="detail-icon">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+
+                        <div>
+                            <span class="detail-label">
+                                Full Name
+                            </span>
+
+                            <strong>
+                                @(Model.FullName ?? "Not provided")
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <div class="detail-icon">
+                            <i class="bi bi-at"></i>
+                        </div>
+
+                        <div>
+                            <span class="detail-label">
+                                Username
+                            </span>
+
+                            <strong>
+                                @(Model.UserName ?? "Not provided")
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <div class="detail-icon">
+                            <i class="bi bi-envelope-fill"></i>
+                        </div>
+
+                        <div>
+                            <span class="detail-label">
+                                Email Address
+                            </span>
+
+                            <strong>
+                                @(Model.Email ?? "Not provided")
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <div class="detail-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+
+                        <div>
+                            <span class="detail-label">
+                                Account Role
+                            </span>
+
+                            <span class="role-badge">
+                                @role
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-4">
+
+            <div class="profile-card security-card">
+
+                <div class="security-icon">
+                    <i class="bi bi-shield-lock-fill"></i>
+                </div>
+
+                <h3>
+                    Account Security
+                </h3>
+
+                <p>
+                    Keep your account secure by regularly
+                    updating your password.
+                </p>
+
+                <a asp-controller="Account"
+                   asp-action="ChangePassword"
+                   class="btn btn-primary security-btn">
+
+                    <i class="bi bi-key-fill me-2"></i>
+
+                    Change Password
+
+                </a>
+
+            </div>
+
+
+            <div class="profile-card role-card">
+
+                <div class="role-card-icon">
+                    <i class="bi bi-person-badge-fill"></i>
+                </div>
+
+                <div>
+                    <span>
+                        CURRENT ROLE
+                    </span>
+
+                    <h4>
+                        @role
+                    </h4>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="profile-actions">
+
+        <a asp-controller="Dashboard"
+           asp-action="Index"
+           class="btn btn-light back-btn">
+
+            <i class="bi bi-arrow-left me-2"></i>
+
+            Back to Dashboard
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .profile-page {
+        max-width: 1050px;
+        margin: 0 auto;
+        padding: 35px 0 60px;
+    }
+
+    .profile-hero {
+        background: linear-gradient(135deg, #0d6efd, #4f8dfd);
+        border-radius: 25px;
+        padding: 35px;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        margin-bottom: 25px;
+        box-shadow: 0 15px 35px rgba(13,110,253,.18);
+    }
+
+    .profile-avatar {
+        width: 82px;
+        height: 82px;
+        border-radius: 24px;
+        background: rgba(255,255,255,.2);
+        border: 2px solid rgba(255,255,255,.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    .profile-label {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        opacity: .8;
+    }
+
+    .profile-hero h1 {
+        margin: 3px 0 6px;
+        font-size: 2rem;
+        font-weight: 800;
+    }
+
+    .profile-hero p {
+        margin: 0;
+        opacity: .9;
+    }
+
+    .profile-card {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 22px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.05);
+        overflow: hidden;
+    }
+
+    .card-header-custom {
+        padding: 23px 26px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        border-bottom: 1px solid #edf0f4;
+    }
+
+    .header-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 13px;
+        background: #eaf2ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+    }
+
+    .card-header-custom h3 {
+        margin: 0 0 3px;
+        font-size: 1.1rem;
+        font-weight: 800;
+    }
+
+    .card-header-custom p {
+        margin: 0;
+        color: #6c757d;
+        font-size: 13px;
+    }
+
+    .profile-details {
+        padding: 5px 26px;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px 0;
+        border-bottom: 1px solid #f0f1f3;
+    }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+    .detail-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: #f5f7fa;
+        color: #495057;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .detail-item > div:last-child {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .detail-label {
+        font-size: 11px;
+        color: #8a9199;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    .detail-item strong {
+        color: #212529;
+        font-size: 14px;
+    }
+
+    .role-badge {
+        display: inline-block;
+        width: fit-content;
+        padding: 6px 11px;
+        background: #eaf2ff;
+        color: #0d6efd;
+        border-radius: 9px;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .security-card {
+        padding: 27px;
+        margin-bottom: 20px;
+    }
+
+    .security-icon {
+        width: 55px;
+        height: 55px;
+        border-radius: 16px;
+        background: #eaf2ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 23px;
+        margin-bottom: 18px;
+    }
+
+    .security-card h3 {
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .security-card p {
+        color: #6c757d;
+        font-size: 13px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .security-btn {
+        width: 100%;
+        border-radius: 12px;
+        padding: 11px;
+        font-weight: 700;
+    }
+
+    .role-card {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .role-card-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 13px;
+        background: #f0f4f9;
+        color: #495057;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .role-card span {
+        font-size: 10px;
+        font-weight: 800;
+        color: #8a9199;
+        letter-spacing: .8px;
+    }
+
+    .role-card h4 {
+        margin: 3px 0 0;
+        font-weight: 800;
+        font-size: 15px;
+    }
+
+    .profile-actions {
+        text-align: center;
+        margin-top: 25px;
+    }
+
+    .back-btn {
+        border: 1px solid #dee2e6;
+        border-radius: 12px;
+        padding: 11px 20px;
+        font-weight: 700;
+    }
+
+    @@media (max-width: 767px) {
+
+        .profile-page {
+            padding: 20px 15px 40px;
+        }
+
+        .profile-hero {
+            padding: 25px 20px;
+            border-radius: 20px;
+        }
+
+        .profile-avatar {
+            width: 62px;
+            height: 62px;
+            border-radius: 18px;
+            font-size: 25px;
+        }
+
+        .profile-hero h1 {
+            font-size: 1.5rem;
+        }
+
+        .profile-details {
+            padding: 5px 20px;
+        }
+    }
+
+</style>

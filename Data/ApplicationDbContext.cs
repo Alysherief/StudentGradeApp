@@ -9,6 +9,13 @@ namespace StudentGradeApp.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-        }
+        
+    }
+        public DbSet<Subject> Subjects { get; set; }
+
+        public DbSet<GradeComponent> GradeComponents { get; set; }
+
+        public DbSet<StudentSubject> StudentSubjects { get; set; }
+        public DbSet<StudentGrade> StudentGrades { get; set; }
     }
 }

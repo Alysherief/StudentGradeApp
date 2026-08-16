@@ -1,0 +1,605 @@
+﻿@model IEnumerable<StudentGradeApp.Models.StudentSubject>
+
+@{
+    ViewData["Title"] = "My Subjects";
+
+    var subjects = Model.ToList();
+    var totalCredits = subjects.Sum(x => x.Subject?.CreditHours ?? 0);
+    var progress = Math.Min((totalCredits / 30.0) * 100, 100);
+}
+
+<style>
+
+    .subjects-page {
+        padding: 35px 0 60px;
+    }
+
+    /* =========================
+           HEADER
+           ========================= */
+
+    .subjects-header {
+        background: linear-gradient(135deg, #0d6efd, #4f8dfd);
+        color: white;
+        border-radius: 24px;
+        padding: 38px;
+        margin-bottom: 30px;
+        box-shadow: 0 15px 35px rgba(13, 110, 253, 0.18);
+    }
+
+        .subjects-header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .subjects-header p {
+            margin-bottom: 0;
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+    .header-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 17px;
+        background: rgba(255, 255, 255, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        margin-bottom: 18px;
+    }
+
+    /* =========================
+           CREDIT SUMMARY
+           ========================= */
+
+    .credit-summary {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .summary-label {
+        color: #6c757d;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .credit-number {
+        font-size: 2.1rem;
+        font-weight: 800;
+        color: #0d6efd;
+        line-height: 1.1;
+    }
+
+    .credit-limit {
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+    .credit-progress {
+        height: 10px;
+        border-radius: 20px;
+        background: #e9ecef;
+        overflow: hidden;
+    }
+
+    .credit-progress-bar {
+        height: 100%;
+        border-radius: 20px;
+        background: linear-gradient(90deg, #0d6efd, #4f8dfd);
+        transition: width 0.3s ease;
+    }
+
+    .complete-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #d1e7dd;
+        color: #146c43;
+        padding: 7px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    /* =========================
+           SUBJECT CARDS
+           ========================= */
+
+    .subject-card {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 20px;
+        height: 100%;
+        overflow: hidden;
+        transition: all 0.25s ease;
+        box-shadow: 0 7px 22px rgba(0, 0, 0, 0.05);
+    }
+
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 14px 32px rgba(0, 0, 0, 0.10);
+            border-color: #c9dcff;
+        }
+
+    .subject-top {
+        background: linear-gradient(135deg, #f5f8ff, #eef4ff);
+        padding: 20px;
+        border-bottom: 1px solid #e7edf7;
+    }
+
+    .subject-code {
+        display: inline-block;
+        background: #0d6efd;
+        color: white;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+    }
+
+    .approved-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #d1e7dd;
+        color: #146c43;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .subject-body {
+        padding: 22px;
+    }
+
+    .subject-name {
+        font-size: 1.25rem;
+        font-weight: 750;
+        color: #212529;
+        margin-bottom: 18px;
+        min-height: 30px;
+    }
+
+    .subject-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 13px;
+        color: #495057;
+        font-size: 14px;
+    }
+
+    .info-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: #f1f5ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .info-content small {
+        display: block;
+        color: #8a929a;
+        font-size: 11px;
+        margin-bottom: 1px;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+
+    .info-content span {
+        font-weight: 600;
+        color: #343a40;
+    }
+
+    .credit-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #f1f3f5;
+        color: #495057;
+        padding: 7px 11px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    /* =========================
+           EMPTY STATE
+           ========================= */
+
+    .empty-state {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 22px;
+        padding: 65px 30px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 22px;
+        background: #eef4ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 35px;
+        margin: 0 auto 20px;
+    }
+
+    .empty-state h3 {
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        color: #6c757d;
+        max-width: 500px;
+        margin: 0 auto 25px;
+    }
+
+    /* =========================
+           BOTTOM ACTIONS
+           ========================= */
+
+    .actions-section {
+        margin-top: 35px;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        border-radius: 12px;
+        padding: 11px 20px;
+        font-weight: 600;
+    }
+
+    /* =========================
+           MOBILE
+           ========================= */
+
+    @@media (max-width: 767px) {
+
+        .subjects-page {
+            padding-top: 20px;
+        }
+
+        .subjects-header {
+            padding: 28px 22px;
+            border-radius: 20px;
+        }
+
+            .subjects-header h1 {
+                font-size: 1.8rem;
+            }
+
+        .credit-summary {
+            padding: 20px;
+        }
+
+        .subject-name {
+            min-height: auto;
+        }
+    }
+
+</style>
+
+
+<div class="container subjects-page">
+
+    <!-- =========================
+         PAGE HEADER
+         ========================= -->
+
+    <div class="subjects-header">
+
+        <div class="header-icon">
+
+            <i class="bi bi-journal-bookmark-fill"></i>
+
+        </div>
+
+        <h1>
+            My Subjects
+        </h1>
+
+        <p>
+            View all subjects that have been approved for your semester.
+        </p>
+
+    </div>
+
+
+    @if (!subjects.Any())
+    {
+
+        <!-- =========================
+             EMPTY STATE
+             ========================= -->
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+
+                <i class="bi bi-journal-x"></i>
+
+            </div>
+
+            <h3>
+                No Approved Subjects Yet
+            </h3>
+
+            <p>
+                You don't currently have any approved subjects.
+                Choose your subjects and submit them for administrator approval.
+            </p>
+
+            <a asp-controller="Student"
+               asp-action="Subjects"
+               class="btn btn-primary action-btn">
+
+                <i class="bi bi-plus-circle me-2"></i>
+
+                Choose Subjects
+
+            </a>
+
+        </div>
+
+    }
+    else
+    {
+
+        <!-- =========================
+             CREDIT SUMMARY
+             ========================= -->
+
+        <div class="credit-summary">
+
+            <div class="row align-items-center">
+
+                <div class="col-md-4">
+
+                    <div class="summary-label mb-2">
+                        Total Approved Credits
+                    </div>
+
+                    <div>
+
+                        <span class="credit-number">
+                            @totalCredits
+                        </span>
+
+                        <span class="credit-limit">
+                            / 30 credit hours
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-8 mt-4 mt-md-0">
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+
+                        <span class="summary-label">
+                            Semester Progress
+                        </span>
+
+                        @if (totalCredits >= 30)
+                        {
+                            <span class="complete-badge">
+
+                                <i class="bi bi-check-circle-fill"></i>
+
+                                Complete
+
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="text-muted small fw-semibold">
+                                @totalCredits / 30
+                            </span>
+                        }
+
+                    </div>
+
+
+                    <div class="credit-progress">
+
+                        <div class="credit-progress-bar"
+                             style="width: @progress%;">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             SUBJECT CARDS
+             ========================= -->
+
+        <div class="row g-4">
+
+            @foreach (var enrollment in subjects)
+            {
+
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="subject-card">
+
+                        <!-- CARD TOP -->
+
+                        <div class="subject-top">
+
+                            <div class="d-flex
+                                justify-content-between
+                                align-items-center">
+
+                                <span class="subject-code">
+
+                                    @enrollment.Subject?.Code
+
+                                </span>
+
+                                <span class="approved-badge">
+
+                                    <i class="bi bi-check-circle-fill"></i>
+
+                                    Approved
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CARD BODY -->
+
+                        <div class="subject-body">
+
+                            <div class="subject-name">
+
+                                @enrollment.Subject?.Name
+
+                            </div>
+
+
+                            <!-- TEACHER -->
+
+                            <div class="subject-info">
+
+                                <div class="info-icon">
+
+                                    <i class="bi bi-person-fill"></i>
+
+                                </div>
+
+                                <div class="info-content">
+
+                                    <small>
+                                        Teacher
+                                    </small>
+
+                                    <span>
+
+                                        @(enrollment.Subject?.Teacher?.FullName
+                                            ?? "Not Assigned")
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- CREDIT HOURS -->
+
+                            <div class="subject-info">
+
+                                <div class="info-icon">
+
+                                    <i class="bi bi-clock-fill"></i>
+
+                                </div>
+
+                                <div class="info-content">
+
+                                    <small>
+                                        Credit Hours
+                                    </small>
+
+                                    <span>
+
+                                        @enrollment.Subject?.CreditHours
+                                        credit hour@(enrollment.Subject?.CreditHours == 1 ? "" : "s")
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="mt-3">
+
+                                <span class="credit-badge">
+
+                                    <i class="bi bi-mortarboard-fill"></i>
+
+                                    Enrolled
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            }
+
+        </div>
+
+
+        <!-- =========================
+             ACTIONS
+             ========================= -->
+
+        <div class="actions-section">
+
+            <a asp-controller="Student"
+               asp-action="Subjects"
+               class="btn btn-primary action-btn">
+
+                <i class="bi bi-plus-circle me-2"></i>
+
+                Select More Subjects
+
+            </a>
+
+            <a asp-controller="Dashboard"
+               asp-action="Index"
+               class="btn btn-outline-secondary action-btn">
+
+                <i class="bi bi-speedometer2 me-2"></i>
+
+                Back to Dashboard
+
+            </a>
+
+        </div>
+
+    }
+
+</div>

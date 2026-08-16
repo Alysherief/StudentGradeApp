@@ -1,0 +1,530 @@
+﻿@model StudentGradeApp.ViewModels.SelectSubjectsViewModel
+
+@{
+    ViewData["Title"] = "Choose Subjects";
+}
+
+<style>
+    .subjects-page {
+        padding: 35px 0 60px;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #0d6efd, #4f8dfd);
+        color: white;
+        border-radius: 22px;
+        padding: 35px;
+        margin-bottom: 30px;
+        box-shadow: 0 12px 30px rgba(13, 110, 253, 0.18);
+    }
+
+    .page-header h1 {
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .page-header p {
+        margin-bottom: 0;
+        opacity: 0.9;
+    }
+
+    .credit-summary {
+        background: white;
+        border-radius: 18px;
+        padding: 22px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+        margin-bottom: 25px;
+        border: 1px solid #edf0f4;
+    }
+
+    .credit-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #6c757d;
+        margin-bottom: 5px;
+    }
+
+    .credit-number {
+        font-size: 32px;
+        font-weight: 800;
+        color: #0d6efd;
+    }
+
+    .credit-limit {
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+    .progress {
+        height: 10px;
+        border-radius: 20px;
+        background-color: #e9ecef;
+    }
+
+    .progress-bar {
+        border-radius: 20px;
+        transition: width 0.25s ease;
+    }
+
+    .subject-card {
+        background: white;
+        border: 2px solid #edf0f4;
+        border-radius: 18px;
+        padding: 22px;
+        height: 100%;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .subject-card:hover {
+        border-color: #b8d1ff;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .subject-card.selected {
+        border-color: #0d6efd;
+        background: #f5f8ff;
+        box-shadow: 0 8px 22px rgba(13, 110, 253, 0.12);
+    }
+
+    .subject-check {
+        width: 22px;
+        height: 22px;
+        cursor: pointer;
+    }
+
+    .subject-code {
+        display: inline-block;
+        background: #eaf2ff;
+        color: #0d6efd;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 5px 9px;
+        border-radius: 7px;
+        margin-bottom: 10px;
+    }
+
+    .subject-name {
+        font-size: 19px;
+        font-weight: 700;
+        color: #212529;
+        margin-bottom: 8px;
+    }
+
+    .subject-teacher {
+        color: #6c757d;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .credit-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #f1f3f5;
+        color: #495057;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .submit-section {
+        background: white;
+        border-radius: 18px;
+        padding: 25px;
+        margin-top: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+        border: 1px solid #edf0f4;
+    }
+
+    .submit-btn {
+        border-radius: 12px;
+        padding: 12px 28px;
+        font-weight: 600;
+    }
+
+    .error-box {
+        border-radius: 12px;
+    }
+</style>
+
+
+<div class="container subjects-page">
+
+    <!-- PAGE HEADER -->
+
+    <div class="page-header">
+
+        <div class="d-flex flex-column flex-md-row
+                    justify-content-between
+                    align-items-md-center">
+
+            <div>
+
+                <h1>
+                    <i class="bi bi-journal-bookmark-fill me-2"></i>
+                    Choose Your Subjects
+                </h1>
+
+                <p>
+                    Select the subjects you want to take this semester.
+                    You must select exactly 30 credit hours.
+                </p>
+
+            </div>
+
+            <div class="mt-3 mt-md-0">
+
+                <a asp-controller="Student"
+                   asp-action="MySubjects"
+                   class="btn btn-light">
+
+                    <i class="bi bi-book me-1"></i>
+                    My Subjects
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- VALIDATION -->
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger error-box shadow-sm">
+
+            <div class="fw-bold mb-1">
+
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                Please check your selection
+
+            </div>
+
+            <div asp-validation-summary="All"></div>
+
+        </div>
+    }
+
+
+    <!-- CREDIT SUMMARY -->
+
+    <div class="credit-summary">
+
+        <div class="row align-items-center">
+
+            <div class="col-md-4">
+
+                <div class="credit-title">
+                    Selected Credit Hours
+                </div>
+
+                <span id="creditTotal"
+                      class="credit-number">
+                    0
+                </span>
+
+                <span class="credit-limit">
+                    / 30 credits
+                </span>
+
+            </div>
+
+            <div class="col-md-8 mt-3 mt-md-0">
+
+                <div class="d-flex justify-content-between mb-2">
+
+                    <small class="text-muted">
+                        Progress
+                    </small>
+
+                    <small id="creditMessage"
+                           class="fw-semibold text-primary">
+                        0 / 30
+                    </small>
+
+                </div>
+
+                <div class="progress">
+
+                    <div id="creditProgress"
+                         class="progress-bar"
+                         role="progressbar"
+                         style="width: 0%;">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUBJECT FORM -->
+
+    <form asp-controller="Student"
+          asp-action="SelectSubjects"
+          method="post">
+
+        @Html.AntiForgeryToken()
+
+
+        <div class="row g-4">
+
+            @for (int i = 0; i < Model.Subjects.Count; i++)
+            {
+
+                var subject = Model.Subjects[i];
+
+                <div class="col-md-6 col-lg-4">
+
+                    <label class="subject-card d-block"
+                           for="subject_@subject.SubjectId">
+
+                        <div class="d-flex
+                                    justify-content-between
+                                    align-items-start">
+
+                            <div>
+
+                                <span class="subject-code">
+                                    @subject.Code
+                                </span>
+
+                            </div>
+
+                            <input type="checkbox"
+                                   id="subject_@subject.SubjectId"
+                                   asp-for="Subjects[i].Selected"
+                                   class="form-check-input subject-check"
+                                   data-credit="@subject.CreditHours" />
+
+                        </div>
+
+
+                        <div class="subject-name">
+
+                            @subject.Name
+
+                        </div>
+
+
+                        <div class="subject-teacher">
+
+                            <i class="bi bi-person me-1"></i>
+
+                            @(string.IsNullOrEmpty(subject.TeacherName)
+                                ? "No teacher assigned"
+                                : subject.TeacherName)
+
+                        </div>
+
+
+                        <span class="credit-badge">
+
+                            <i class="bi bi-clock"></i>
+
+                            @subject.CreditHours
+                            credit hour@(subject.CreditHours == 1 ? "" : "s")
+
+                        </span>
+
+                    </label>
+
+                </div>
+
+            }
+
+        </div>
+
+
+        <!-- SUBMIT -->
+
+        <div class="submit-section">
+
+            <div class="d-flex
+                        flex-column
+                        flex-md-row
+                        justify-content-between
+                        align-items-md-center">
+
+                <div>
+
+                    <h5 class="fw-bold mb-1">
+                        Ready to submit?
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        Your subject selection will be sent to an
+                        administrator for approval.
+                    </p>
+
+                </div>
+
+                <button type="submit"
+                        id="submitButton"
+                        class="btn btn-primary submit-btn mt-3 mt-md-0">
+
+                    <i class="bi bi-send me-2"></i>
+                    Submit for Approval
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+@section Scripts {
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const checkboxes =
+                document.querySelectorAll(".subject-check");
+
+            const totalElement =
+                document.getElementById("creditTotal");
+
+            const progressBar =
+                document.getElementById("creditProgress");
+
+            const message =
+                document.getElementById("creditMessage");
+
+            const submitButton =
+                document.getElementById("submitButton");
+
+
+            function updateCredits() {
+
+                let total = 0;
+
+                checkboxes.forEach(function (checkbox) {
+
+                    if (checkbox.checked) {
+
+                        total += parseInt(
+                            checkbox.dataset.credit
+                        );
+
+                    }
+
+                });
+
+
+                totalElement.textContent = total;
+
+                message.textContent =
+                    total + " / 30";
+
+
+                let percentage =
+                    Math.min((total / 30) * 100, 100);
+
+                progressBar.style.width =
+                    percentage + "%";
+
+
+                // Update card appearance
+
+                checkboxes.forEach(function (checkbox) {
+
+                    const card =
+                        checkbox.closest(".subject-card");
+
+                    if (checkbox.checked) {
+
+                        card.classList.add("selected");
+
+                    }
+                    else {
+
+                        card.classList.remove("selected");
+
+                    }
+
+                });
+
+
+                // Button state
+
+                if (total === 30) {
+
+                    submitButton.disabled = false;
+
+                    submitButton.innerHTML =
+                        '<i class="bi bi-check-circle me-2"></i>' +
+                        'Submit for Approval';
+
+                }
+                else {
+
+                    submitButton.disabled = true;
+
+                    submitButton.innerHTML =
+                        '<i class="bi bi-send me-2"></i>' +
+                        'Submit for Approval';
+
+                }
+
+
+                // Prevent selecting beyond 30
+
+                checkboxes.forEach(function (checkbox) {
+
+                    if (!checkbox.checked) {
+
+                        const credit =
+                            parseInt(
+                                checkbox.dataset.credit
+                            );
+
+                        if (total + credit > 30) {
+
+                            checkbox.disabled = true;
+
+                        }
+                        else {
+
+                            checkbox.disabled = false;
+
+                        }
+
+                    }
+
+                });
+
+            }
+
+
+            checkboxes.forEach(function (checkbox) {
+
+                checkbox.addEventListener(
+                    "change",
+                    updateCredits
+                );
+
+            });
+
+
+            updateCredits();
+
+        });
+
+    </script>
+
+}

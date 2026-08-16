@@ -1,0 +1,120 @@
+﻿@model StudentGradeApp.ViewModels.AssignTeacherViewModel
+
+@{
+    ViewData["Title"] = "Assign Teacher";
+}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-body p-4">
+
+                    <h2 class="text-center mb-4">
+                        Assign Teacher
+                    </h2>
+
+                    <form asp-controller="Admin"
+                          asp-action="AssignTeacher"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3">
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label asp-for="SubjectId"
+                                   class="form-label">
+                                Subject
+                            </label>
+
+                            <select asp-for="SubjectId"
+                                    class="form-select">
+
+                                <option value="">
+                                    -- Select Subject --
+                                </option>
+
+                                @foreach (var subject in ViewBag.Subjects)
+                                {
+                                    <option value="@subject.Id">
+                                        @subject.Code - @subject.Name
+                                        (@subject.CreditHours Credit Hours)
+                                    </option>
+                                }
+
+                            </select>
+
+                            <span asp-validation-for="SubjectId"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label asp-for="TeacherId"
+                                   class="form-label">
+                                Teacher
+                            </label>
+
+                            <select asp-for="TeacherId"
+                                    class="form-select">
+
+                                <option value="">
+                                    -- Select Teacher --
+                                </option>
+
+                                @foreach (var teacher in ViewBag.Teachers)
+                                {
+                                    <option value="@teacher.Id">
+                                        @teacher.FullName
+                                        (@teacher.UserName)
+                                    </option>
+                                }
+
+                            </select>
+
+                            <span asp-validation-for="TeacherId"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-success w-100">
+                            Assign Teacher
+                        </button>
+
+                    </form>
+
+                    <div class="text-center mt-3">
+
+                        <a asp-controller="Admin"
+                           asp-action="ManageSubjects"
+                           class="btn btn-secondary">
+                            Back to Subjects
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

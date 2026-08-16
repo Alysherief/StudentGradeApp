@@ -1,19 +1,19 @@
-﻿@model IEnumerable<StudentGradeApp.Models.AppUser>
+﻿@model IEnumerable<StudentGradeApp.Models.Subject>
 
 @{
-    ViewData["Title"] = "Manage Students";
+    ViewData["Title"] = "Manage Subjects";
 }
 
 <div class="container mt-5">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h2>Manage Students</h2>
+        <h2>Manage Subjects</h2>
 
         <a asp-controller="Admin"
-           asp-action="CreateStudent"
+           asp-action="CreateSubject"
            class="btn btn-primary">
-            Create Student
+            Create Subject
         </a>
 
     </div>
@@ -21,7 +21,7 @@
     @if (!Model.Any())
     {
         <div class="alert alert-info">
-            No students have been created yet.
+            No subjects have been created yet.
         </div>
     }
     else
@@ -36,43 +36,48 @@
 
                         <thead>
                             <tr>
-                                <th>Full Name</th>
-                                <th>Username</th>
-                                <th>Email</th>
+                                <th>Name</th>
+                                <th>Code</th>
+                                <th>Credit Hours</th>
+                                <th>Teacher</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
 
                         <tbody>
 
-                            @foreach (var student in Model)
+                            @foreach (var subject in Model)
                             {
                                 <tr>
 
                                     <td>
-                                        @student.FullName
+                                        @subject.Name
                                     </td>
 
                                     <td>
-                                        @student.UserName
+                                        @subject.Code
                                     </td>
 
                                     <td>
-                                        @student.Email
+                                        @subject.CreditHours
+                                    </td>
+
+                                    <td>
+                                        @(subject.Teacher?.FullName ?? "Not Assigned")
                                     </td>
 
                                     <td>
 
                                         <a asp-controller="Admin"
-                                           asp-action="EditStudent"
-                                           asp-route-id="@student.Id"
+                                           asp-action="EditSubject"
+                                           asp-route-id="@subject.Id"
                                            class="btn btn-sm btn-warning">
                                             Edit
                                         </a>
 
                                         <a asp-controller="Admin"
-                                           asp-action="DeleteStudent"
-                                           asp-route-id="@student.Id"
+                                           asp-action="DeleteSubject"
+                                           asp-route-id="@subject.Id"
                                            class="btn btn-sm btn-danger">
                                             Delete
                                         </a>

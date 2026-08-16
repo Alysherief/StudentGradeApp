@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentGradeApp.Data;
 
@@ -11,9 +12,11 @@ using StudentGradeApp.Data;
 namespace StudentGradeApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260811162531_AddSubjectsAndEnrollment")]
+    partial class AddSubjectsAndEnrollment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,36 +256,6 @@ namespace StudentGradeApp.Migrations
                     b.ToTable("GradeComponents");
                 });
 
-            modelBuilder.Entity("StudentGradeApp.Models.StudentGrade", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Grade")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("GradeComponentId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("GradedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GradeComponentId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("StudentGrades");
-                });
-
             modelBuilder.Entity("StudentGradeApp.Models.StudentSubject", b =>
                 {
                     b.Property<int>("Id")
@@ -411,25 +384,6 @@ namespace StudentGradeApp.Migrations
                         .IsRequired();
 
                     b.Navigation("Subject");
-                });
-
-            modelBuilder.Entity("StudentGradeApp.Models.StudentGrade", b =>
-                {
-                    b.HasOne("StudentGradeApp.Models.GradeComponent", "GradeComponent")
-                        .WithMany()
-                        .HasForeignKey("GradeComponentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("StudentGradeApp.Models.AppUser", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GradeComponent");
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("StudentGradeApp.Models.StudentSubject", b =>

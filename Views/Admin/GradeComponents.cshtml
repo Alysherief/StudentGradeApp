@@ -1,0 +1,779 @@
+﻿@model IEnumerable<StudentGradeApp.Models.GradeComponent>
+
+@{
+    ViewData["Title"] = "Grade Components";
+
+    var subjects = ViewBag.Subjects as IEnumerable<StudentGradeApp.Models.Subject>
+                   ?? Enumerable.Empty<StudentGradeApp.Models.Subject>();
+
+    int? selectedSubjectId = ViewBag.SelectedSubjectId;
+
+    var components = Model.ToList();
+
+    var totalWeight = components.Sum(x => x.WeightPercentage);
+
+    var remainingWeight = Math.Max(0, 100 - totalWeight);
+
+    var progress = Math.Min(totalWeight, 100);
+}
+
+<style>
+
+    .grade-page {
+        padding: 35px 0 60px;
+    }
+
+    /* =========================
+           HEADER
+           ========================= */
+
+    .grade-header {
+        background: linear-gradient(135deg, #0d6efd, #4f8dfd);
+        color: white;
+        border-radius: 24px;
+        padding: 38px;
+        margin-bottom: 30px;
+        box-shadow: 0 15px 35px rgba(13, 110, 253, 0.18);
+    }
+
+    .header-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 17px;
+        background: rgba(255, 255, 255, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        margin-bottom: 18px;
+    }
+
+    .grade-header h1 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .grade-header p {
+        margin: 0;
+        opacity: 0.9;
+    }
+
+    /* =========================
+           SELECT SUBJECT
+           ========================= */
+
+    .selection-card {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    .selection-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        margin-bottom: 8px;
+    }
+
+    .subject-select {
+        border-radius: 12px;
+        padding: 12px 15px;
+        border: 1px solid #dee2e6;
+        font-weight: 500;
+    }
+
+        .subject-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .12);
+        }
+
+    /* =========================
+           SUMMARY
+           ========================= */
+
+    .summary-card {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    .summary-title {
+        font-weight: 800;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+
+    .summary-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0d6efd;
+    }
+
+    .summary-label {
+        color: #6c757d;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .weight-progress {
+        height: 10px;
+        background: #e9ecef;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .weight-progress-bar {
+        height: 100%;
+        border-radius: 20px;
+        background: linear-gradient(90deg, #0d6efd, #4f8dfd);
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .status-complete {
+        background: #d1e7dd;
+        color: #146c43;
+    }
+
+    .status-remaining {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-warning {
+        background: #f8d7da;
+        color: #842029;
+    }
+
+    /* =========================
+           COMPONENT CARDS
+           ========================= */
+
+    .component-card {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 20px;
+        height: 100%;
+        overflow: hidden;
+        box-shadow: 0 7px 22px rgba(0, 0, 0, .05);
+        transition: all .25s ease;
+    }
+
+        .component-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 32px rgba(0, 0, 0, .09);
+            border-color: #c9dcff;
+        }
+
+    .component-top {
+        padding: 20px;
+        background: linear-gradient(135deg, #f5f8ff, #eef4ff);
+        border-bottom: 1px solid #e7edf7;
+    }
+
+    .component-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 13px;
+        background: #0d6efd;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+    }
+
+    .component-body {
+        padding: 22px;
+    }
+
+    .component-name {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #212529;
+        margin-bottom: 20px;
+    }
+
+    .component-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 13px;
+    }
+
+    .info-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: #f1f5ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .info-text small {
+        display: block;
+        color: #8a929a;
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: .3px;
+    }
+
+    .info-text span {
+        font-weight: 700;
+        color: #343a40;
+    }
+
+    .weight-badge {
+        background: #e7f1ff;
+        color: #0d6efd;
+        padding: 7px 11px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .card-actions {
+        border-top: 1px solid #edf0f4;
+        margin-top: 20px;
+        padding-top: 18px;
+        display: flex;
+        gap: 8px;
+    }
+
+        .card-actions .btn {
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+    /* =========================
+           EMPTY STATE
+           ========================= */
+
+    .empty-state {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 22px;
+        padding: 60px 30px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, .05);
+    }
+
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 22px;
+        background: #eef4ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 35px;
+        margin: 0 auto 20px;
+    }
+
+    .empty-state h3 {
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        color: #6c757d;
+        max-width: 500px;
+        margin: 0 auto 25px;
+    }
+
+    /* =========================
+           BUTTONS
+           ========================= */
+
+    .main-btn {
+        border-radius: 12px;
+        padding: 11px 20px;
+        font-weight: 700;
+    }
+
+    /* =========================
+           MOBILE
+           ========================= */
+
+    @@media (max-width: 767px) {
+
+        .grade-page {
+            padding-top: 20px;
+        }
+
+        .grade-header {
+            padding: 28px 22px;
+            border-radius: 20px;
+        }
+
+            .grade-header h1 {
+                font-size: 1.8rem;
+            }
+
+        .selection-card,
+        .summary-card {
+            padding: 20px;
+        }
+    }
+
+</style>
+
+
+<div class="container grade-page">
+
+    <!-- =========================
+         HEADER
+         ========================= -->
+
+    <div class="grade-header">
+
+        <div class="header-icon">
+            <i class="bi bi-bar-chart-fill"></i>
+        </div>
+
+        <h1>
+            Grade Components
+        </h1>
+
+        <p>
+            Configure quizzes, assignments, exams and other grading components for your subjects.
+        </p>
+
+    </div>
+
+
+    <!-- =========================
+         SUBJECT SELECTION
+         ========================= -->
+
+    <div class="selection-card">
+
+        <div class="row align-items-end g-3">
+
+            <div class="col-md-9">
+
+                <div class="selection-label">
+                    Select Subject
+                </div>
+
+                <form asp-controller="Admin"
+                      asp-action="GradeComponents"
+                      method="get"
+                      id="subjectForm">
+
+                    <select name="subjectId"
+                            class="form-select subject-select"
+                            onchange="this.form.submit()">
+
+                        <option value="">
+                            -- Choose a subject --
+                        </option>
+
+                        @foreach (var subject in subjects)
+                        {
+                            if (selectedSubjectId == subject.Id)
+                            {
+                                <option value="@subject.Id" selected>
+                                    @subject.Code - @subject.Name
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@subject.Id">
+                                    @subject.Code - @subject.Name
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+                </form>
+
+            </div>
+
+            @if (selectedSubjectId != null)
+            {
+                <div class="col-md-3">
+
+                    <a asp-controller="Admin"
+                       asp-action="CreateGradeComponent"
+                       asp-route-subjectId="@selectedSubjectId"
+                       class="btn btn-primary main-btn w-100">
+
+                        <i class="bi bi-plus-circle me-2"></i>
+
+                        Add Component
+
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+
+    @if (selectedSubjectId == null)
+    {
+
+        <!-- =========================
+             NO SUBJECT SELECTED
+             ========================= -->
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+
+                <i class="bi bi-journal-check"></i>
+
+            </div>
+
+            <h3>
+                Choose a Subject
+            </h3>
+
+            <p>
+                Select a subject above to view and manage its grade components.
+            </p>
+
+        </div>
+
+    }
+    else
+    {
+
+        <!-- =========================
+             WEIGHT SUMMARY
+             ========================= -->
+
+        <div class="summary-card">
+
+            <div class="summary-title">
+                Grade Distribution
+            </div>
+
+            <div class="row align-items-center">
+
+                <div class="col-md-3">
+
+                    <div class="summary-label">
+                        Total Weight
+                    </div>
+
+                    <div class="summary-number">
+                        @totalWeight%
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6 mt-3 mt-md-0">
+
+                    <div class="d-flex justify-content-between mb-2">
+
+                        <span class="summary-label">
+                            Distribution
+                        </span>
+
+                        <span class="summary-label">
+                            @totalWeight / 100%
+                        </span>
+
+                    </div>
+
+                    <div class="weight-progress">
+
+                        <div class="weight-progress-bar"
+                             style="width: @progress%;">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3 text-md-end mt-3 mt-md-0">
+
+                    @if (totalWeight == 100)
+                    {
+                        <span class="status-badge status-complete">
+
+                            <i class="bi bi-check-circle-fill"></i>
+
+                            100% Complete
+
+                        </span>
+                    }
+                    else if (totalWeight < 100)
+                    {
+                        <span class="status-badge status-remaining">
+
+                            <i class="bi bi-info-circle-fill"></i>
+
+                            @remainingWeight% Remaining
+
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="status-badge status-warning">
+
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+
+                            Over 100%
+
+                        </span>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             COMPONENTS
+             ========================= -->
+        @if (!components.Any())
+        {
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+
+                    <i class="bi bi-clipboard-plus"></i>
+
+                </div>
+
+                <h3>
+                    No Grade Components
+                </h3>
+
+                <p>
+                    This subject doesn't have any grading components yet.
+                    Add quizzes, assignments, exams or other components to get started.
+                </p>
+
+                <a asp-controller="Admin"
+                   asp-action="CreateGradeComponent"
+                   asp-route-subjectId="@selectedSubjectId"
+                   class="btn btn-primary main-btn">
+
+                    <i class="bi bi-plus-circle me-2"></i>
+
+                    Create First Component
+
+                </a>
+
+            </div>
+
+        }
+        else
+        {
+
+            <div class="row g-4">
+
+                @foreach (var component in components)
+                {
+
+                    <div class="col-md-6 col-lg-4">
+
+                        <div class="component-card">
+
+                            <!-- CARD HEADER -->
+
+                            <div class="component-top">
+
+                                <div class="d-flex align-items-center gap-3">
+
+                                    <div class="component-icon">
+
+                                        <i class="bi bi-clipboard-data-fill"></i>
+
+                                    </div>
+
+                                    <div>
+
+                                        <div class="fw-bold">
+                                            @component.Name
+                                        </div>
+
+                                        <small class="text-muted">
+                                            Grade Component
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- CARD BODY -->
+
+                            <div class="component-body">
+
+                                <div class="component-name">
+                                    @component.Name
+                                </div>
+
+
+                                <!-- MAXIMUM GRADE -->
+
+                                <div class="component-info">
+
+                                    <div class="info-icon">
+
+                                        <i class="bi bi-123"></i>
+
+                                    </div>
+
+                                    <div class="info-text">
+
+                                        <small>
+                                            Maximum Grade
+                                        </small>
+
+                                        <span>
+                                            @component.MaxGrade marks
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- WEIGHT -->
+
+                                <div class="component-info">
+
+                                    <div class="info-icon">
+
+                                        <i class="bi bi-percent"></i>
+
+                                    </div>
+
+                                    <div class="info-text">
+
+                                        <small>
+                                            Weight
+                                        </small>
+
+                                        <span>
+                                            @component.WeightPercentage%
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="mt-3">
+
+                                    <span class="weight-badge">
+
+                                        <i class="bi bi-bar-chart-fill me-1"></i>
+
+                                        @component.WeightPercentage% of final grade
+
+                                    </span>
+
+                                </div>
+
+
+                                <!-- ACTIONS -->
+
+                                <div class="card-actions">
+
+                                    <a asp-controller="Admin"
+                                       asp-action="EditGradeComponent"
+                                       asp-route-id="@component.Id"
+                                       class="btn btn-outline-primary btn-sm flex-grow-1">
+
+                                        <i class="bi bi-pencil me-1"></i>
+
+                                        Edit
+
+                                    </a>
+
+
+                                    <form asp-controller="Admin"
+                                          asp-action="DeleteGradeComponent"
+                                          asp-route-id="@component.Id"
+                                          method="post"
+                                          class="flex-grow-1"
+                                          onsubmit="return confirm('Are you sure you want to delete this grade component?');">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <button type="submit"
+                                                class="btn btn-outline-danger btn-sm w-100">
+
+                                            <i class="bi bi-trash me-1"></i>
+
+                                            Delete
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                }
+
+            </div>
+
+        }
+
+    }
+
+
+    <!-- =========================
+         BACK BUTTON
+         ========================= -->
+
+    <div class="text-center mt-5">
+
+        <a asp-controller="Dashboard"
+           asp-action="Index"
+           class="btn btn-outline-secondary main-btn">
+
+            <i class="bi bi-speedometer2 me-2"></i>
+
+            Back to Dashboard
+
+        </a>
+
+    </div>
+
+</div>

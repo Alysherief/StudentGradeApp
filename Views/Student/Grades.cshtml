@@ -1,0 +1,506 @@
+﻿@model IEnumerable<StudentGradeApp.Models.StudentGrade>
+
+@using StudentGradeApp.Models
+
+@{
+    ViewData["Title"] = "My Grades";
+
+    var subjects = ViewBag.Subjects as List<Subject>
+        ?? new List<Subject>();
+
+    var selectedSubjectId = ViewBag.SelectedSubjectId as int?;
+}
+
+<div class="container student-grades-page">
+
+    <div class="grades-hero">
+
+        <div class="hero-icon">
+            <i class="bi bi-journal-text"></i>
+        </div>
+
+        <div>
+            <h1>My Grades</h1>
+            <p>
+                Select a subject to view your individual grades.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="subject-selector-card">
+
+        <div class="selector-icon">
+            <i class="bi bi-book"></i>
+        </div>
+
+        <div class="selector-content">
+
+            <label class="form-label">
+                Select Subject
+            </label>
+
+            <select class="form-select"
+                    onchange="selectSubject(this.value)">
+
+                <option value="">
+                    Choose a subject...
+                </option>
+
+                @foreach (var subject in subjects)
+                {
+                    <option value="@subject.Id"
+                            selected="@(selectedSubjectId == subject.Id)">
+                        @subject.Code - @subject.Name
+                    </option>
+                }
+
+            </select>
+
+        </div>
+
+    </div>
+
+    @if (!selectedSubjectId.HasValue)
+    {
+        <div class="empty-card">
+
+            <div class="empty-icon">
+                <i class="bi bi-clipboard-data"></i>
+            </div>
+
+            <h3>Select a Subject</h3>
+
+            <p>
+                Choose a subject above to see your quizzes,
+                assignments, exams and other grades.
+            </p>
+
+        </div>
+    }
+    else if (!Model.Any())
+    {
+        <div class="empty-card">
+
+            <div class="empty-icon">
+                <i class="bi bi-clipboard-x"></i>
+            </div>
+
+            <h3>No Grades Yet</h3>
+
+            <p>
+                There are no grades available for this subject yet.
+            </p>
+
+        </div>
+    }
+    else
+    {
+        var selectedSubject = subjects
+            .FirstOrDefault(s => s.Id == selectedSubjectId.Value);
+
+        <div class="grades-card">
+
+            <div class="grades-card-header">
+
+                <div>
+                    <h2>
+                        @(selectedSubject?.Name ?? "Subject")
+                    </h2>
+
+                    <p>
+                        @(selectedSubject?.Code ?? "")
+                    </p>
+                </div>
+
+                <div class="grade-count">
+                    <i class="bi bi-list-check"></i>
+                    @Model.Count() Grades
+                </div>
+
+            </div>
+
+            <div class="grade-list">
+
+                @foreach (var grade in Model)
+                {
+                    var component = grade.GradeComponent;
+
+                    if (component == null)
+                    {
+                        continue;
+                    }
+
+                    var percentage = component.MaxGrade > 0
+                        ? (grade.Grade / component.MaxGrade) * 100
+                        : 0;
+
+                    <div class="grade-row">
+
+                        <div class="component-icon-small">
+                            <i class="bi bi-check2-circle"></i>
+                        </div>
+
+                        <div class="component-info">
+
+                            <h4>
+                                @component.Name
+                            </h4>
+
+                            <span>
+                                @component.WeightPercentage% of final grade
+                            </span>
+
+                        </div>
+
+                        <div class="grade-result">
+
+                            <strong>
+                                @grade.Grade.ToString("0.##")
+                            </strong>
+
+                            <span>
+                                / @component.MaxGrade.ToString("0.##")
+                            </span>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    }
+
+    <div class="bottom-actions">
+
+        <a asp-controller="Dashboard"
+           asp-action="Index"
+           class="btn btn-light action-btn">
+
+            <i class="bi bi-arrow-left me-2"></i>
+            Dashboard
+
+        </a>
+
+        <a asp-controller="Student"
+           asp-action="Performance"
+           class="btn btn-primary action-btn">
+
+            <i class="bi bi-bar-chart-fill me-2"></i>
+            View Performance
+
+        </a>
+
+    </div>
+
+</div>
+
+<script>
+
+    function selectSubject(subjectId) {
+
+        if (!subjectId) {
+            window.location.href =
+                '@Url.Action("Grades", "Student")';
+
+            return;
+        }
+
+        window.location.href =
+            '@Url.Action("Grades", "Student")'
+            + '?subjectId='
+            + encodeURIComponent(subjectId);
+    }
+
+</script>
+
+<style>
+
+    .student-grades-page {
+        padding: 35px 0 60px;
+    }
+
+    .grades-hero {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 35px;
+        border-radius: 24px;
+        background: linear-gradient(135deg, #0d6efd, #5b8def);
+        color: white;
+        box-shadow: 0 15px 35px rgba(13,110,253,.18);
+        margin-bottom: 25px;
+    }
+
+    .hero-icon {
+        width: 65px;
+        height: 65px;
+        border-radius: 19px;
+        background: rgba(255,255,255,.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 29px;
+    }
+
+    .grades-hero h1 {
+        margin: 0 0 6px;
+        font-size: 2rem;
+        font-weight: 800;
+    }
+
+    .grades-hero p {
+        margin: 0;
+        opacity: .9;
+    }
+
+    .subject-selector-card {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 25px;
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.05);
+        margin-bottom: 25px;
+    }
+
+    .selector-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: #eaf2ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .selector-content {
+        flex: 1;
+    }
+
+        .selector-content .form-label {
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+    .form-select {
+        min-height: 48px;
+        border-radius: 12px;
+    }
+
+        .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 .2rem rgba(13,110,253,.12);
+        }
+
+    .empty-card {
+        text-align: center;
+        background: white;
+        padding: 65px 25px;
+        border-radius: 22px;
+        border: 1px solid #edf0f4;
+        box-shadow: 0 10px 30px rgba(0,0,0,.05);
+    }
+
+    .empty-icon {
+        width: 75px;
+        height: 75px;
+        margin: 0 auto 20px;
+        border-radius: 21px;
+        background: #edf4ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+    }
+
+    .empty-card h3 {
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .empty-card p {
+        color: #6c757d;
+        margin: 0;
+    }
+
+    .grades-card {
+        background: white;
+        border-radius: 22px;
+        border: 1px solid #edf0f4;
+        box-shadow: 0 10px 30px rgba(0,0,0,.06);
+        overflow: hidden;
+    }
+
+    .grades-card-header {
+        padding: 25px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #edf0f4;
+    }
+
+        .grades-card-header h2 {
+            margin: 0 0 4px;
+            font-size: 1.35rem;
+            font-weight: 800;
+        }
+
+        .grades-card-header p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 13px;
+        }
+
+    .grade-count {
+        background: #eaf2ff;
+        color: #0d6efd;
+        padding: 9px 13px;
+        border-radius: 11px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .grade-list {
+        padding: 5px 0;
+    }
+
+    .grade-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 20px 28px;
+        border-bottom: 1px solid #f0f1f3;
+        transition: background .2s ease;
+    }
+
+        .grade-row:last-child {
+            border-bottom: none;
+        }
+
+        .grade-row:hover {
+            background: #fafcff;
+        }
+
+    .component-icon-small {
+        width: 45px;
+        height: 45px;
+        border-radius: 13px;
+        background: #edf4ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .component-info {
+        flex: 1;
+    }
+
+        .component-info h4 {
+            margin: 0 0 4px;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .component-info span {
+            color: #8a94a6;
+            font-size: 12px;
+        }
+
+    .grade-result {
+        min-width: 120px;
+        text-align: right;
+    }
+
+        .grade-result strong {
+            font-size: 20px;
+            font-weight: 800;
+            color: #212529;
+        }
+
+        .grade-result span {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+    .bottom-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 25px;
+    }
+
+    .action-btn {
+        border-radius: 12px;
+        padding: 11px 18px;
+        font-weight: 700;
+    }
+
+    @@media (max-width: 767px) {
+
+        .student-grades-page {
+            padding: 20px 0 40px;
+        }
+
+        .grades-hero {
+            padding: 25px 20px;
+        }
+
+        .hero-icon {
+            width: 52px;
+            height: 52px;
+            font-size: 22px;
+        }
+
+        .grades-hero h1 {
+            font-size: 1.6rem;
+        }
+
+        .subject-selector-card {
+            align-items: flex-start;
+        }
+
+        .grades-card-header {
+            padding: 20px;
+            align-items: flex-start;
+            gap: 15px;
+            flex-direction: column;
+        }
+
+        .grade-row {
+            padding: 17px 18px;
+            gap: 12px;
+        }
+
+        .grade-result {
+            min-width: 90px;
+        }
+
+            .grade-result strong {
+                font-size: 17px;
+            }
+
+        .component-info span {
+            display: none;
+        }
+
+        .bottom-actions {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .action-btn {
+            width: 100%;
+        }
+    }
+
+</style>
