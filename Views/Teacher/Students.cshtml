@@ -1,0 +1,414 @@
+﻿@model StudentGradeApp.ViewModels.TeacherStudentsViewModel
+
+@{
+    ViewData["Title"] = "My Students";
+}
+
+<style>
+    .students-page {
+        padding: 35px 0 60px;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #0d6efd, #4f8dfd);
+        color: white;
+        border-radius: 22px;
+        padding: 35px;
+        margin-bottom: 30px;
+        box-shadow: 0 12px 30px rgba(13, 110, 253, 0.18);
+    }
+
+        .page-header h1 {
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            margin-bottom: 0;
+            opacity: 0.9;
+        }
+
+    .selection-card {
+        background: white;
+        border-radius: 18px;
+        padding: 25px;
+        border: 1px solid #edf0f4;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+        margin-bottom: 25px;
+    }
+
+        .selection-card label {
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+    .students-card {
+        background: white;
+        border-radius: 18px;
+        border: 1px solid #edf0f4;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+        overflow: hidden;
+    }
+
+    .students-card-header {
+        padding: 22px 25px;
+        border-bottom: 1px solid #edf0f4;
+    }
+
+    .student-table {
+        margin-bottom: 0;
+    }
+
+        .student-table th {
+            background: #f8f9fc;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            color: #6c757d;
+            padding: 16px;
+        }
+
+        .student-table td {
+            padding: 17px 16px;
+            vertical-align: middle;
+        }
+
+    .student-name {
+        font-weight: 700;
+        color: #212529;
+    }
+
+    .student-email {
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+    .grade-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 70px;
+        padding: 7px 11px;
+        border-radius: 9px;
+        background: #eaf2ff;
+        color: #0d6efd;
+        font-weight: 700;
+    }
+
+    .empty-state {
+        padding: 60px 20px;
+        text-align: center;
+        color: #6c757d;
+    }
+
+    .empty-icon {
+        width: 75px;
+        height: 75px;
+        margin: 0 auto 20px;
+        border-radius: 20px;
+        background: #eef4ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+    }
+</style>
+
+<div class="container students-page">
+
+    <!-- HEADER -->
+
+    <div class="page-header">
+
+        <h1>
+            <i class="bi bi-people-fill me-2"></i>
+            My Students
+        </h1>
+
+        <p>
+            Select one of your subjects to view the students enrolled in it.
+        </p>
+
+    </div>
+
+
+    <!-- SUBJECT SELECTION -->
+
+    <div class="selection-card">
+
+        <form asp-controller="Teacher"
+              asp-action="Students"
+              method="get">
+
+            <div class="row align-items-end g-3">
+
+                <div class="col-md-8">
+
+                    <label for="subjectId">
+                        Select Subject
+                    </label>
+
+                    <select name="subjectId"
+                            id="subjectId"
+                            class="form-select form-select-lg">
+
+                        <option value="">
+                            -- Select a subject --
+                        </option>
+
+                        @foreach (var subject in Model.Subjects)
+                        {
+                            <option value="@subject.Id"
+                                    selected="@(Model.SelectedSubjectId == subject.Id)">
+                                @subject.Code - @subject.Name
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <button type="submit"
+                            class="btn btn-primary btn-lg w-100">
+
+                        <i class="bi bi-search me-2"></i>
+                        View Students
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    @if (Model.SelectedSubjectId.HasValue)
+    {
+        <!-- STUDENT LIST -->
+
+        <div class="students-card">
+
+            <div class="students-card-header">
+
+                <div class="d-flex flex-column flex-md-row
+                    justify-content-between
+                    align-items-md-center">
+
+                    <div>
+
+                        <h4 class="fw-bold mb-1">
+                            Enrolled Students
+                        </h4>
+
+                        <p class="text-muted mb-0">
+                            @Model.Students.Count student(s) enrolled in this subject.
+                        </p>
+
+                    </div>
+
+
+                    <!-- SORT -->
+
+                    <div class="mt-3 mt-md-0">
+
+                        <form asp-controller="Teacher"
+                              asp-action="Students"
+                              method="get">
+
+                            <input type="hidden"
+                                   name="subjectId"
+                                   value="@Model.SelectedSubjectId" />
+
+                            <select name="sortOrder"
+                                    class="form-select"
+                                    onchange="this.form.submit()">
+
+                                <option value="name"
+                                        selected="@(ViewBag.SortOrder == "name")">
+                                    Name A-Z
+                                </option>
+
+                                <option value="nameDesc"
+                                        selected="@(ViewBag.SortOrder == "nameDesc")">
+                                    Name Z-A
+                                </option>
+
+                                <option value="gradeDesc"
+                                        selected="@(ViewBag.SortOrder == "gradeDesc")">
+                                    Highest Grade
+                                </option>
+
+                                <option value="gradeAsc"
+                                        selected="@(ViewBag.SortOrder == "gradeAsc")">
+                                    Lowest Grade
+                                </option>
+
+                            </select>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            @if (Model.Students.Any())
+            {
+                <div class="table-responsive">
+
+                    <table class="table student-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Student
+                                </th>
+
+                                <th>
+                                    Email
+                                </th>
+
+                                <th>
+                                    Average Grade
+                                </th>
+
+                                <th>
+                                    Grades
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var student in Model.Students)
+                            {
+                                <tr>
+
+                                    <td>
+
+                                        <div class="student-name">
+                                            @student.FullName
+                                        </div>
+
+                                    </td>
+
+                                    <td>
+
+                                        <div class="student-email">
+                                            @student.Email
+                                        </div>
+
+                                    </td>
+
+                                    <td>
+
+                                        @if (student.GradeCount > 0)
+                                        {
+                                            <span class="grade-badge">
+                                                @student.AverageGrade.ToString("0.##")%
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                No grades
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                    <td>
+
+                                        @student.GradeCount
+
+                                    </td>
+
+                                    <td>
+
+                                        <a asp-controller="Teacher"
+                                           asp-action="StudentProfile"
+                                           asp-route-id="@student.StudentId"
+                                           class="btn btn-outline-primary btn-sm">
+
+                                            <i class="bi bi-person me-1"></i>
+                                            View Profile
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+
+                    <h4 class="fw-bold">
+                        No Students Yet
+                    </h4>
+
+                    <p>
+                        There are currently no approved students
+                        enrolled in this subject.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+    }
+    else
+    {
+        <!-- INITIAL STATE -->
+
+        <div class="students-card">
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    <i class="bi bi-book"></i>
+                </div>
+
+                <h4 class="fw-bold">
+                    Select a Subject
+                </h4>
+
+                <p>
+                    Choose one of your subjects above to see
+                    the students enrolled in it.
+                </p>
+
+            </div>
+
+        </div>
+    }
+
+</div>

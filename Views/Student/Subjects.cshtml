@@ -18,15 +18,15 @@
         box-shadow: 0 12px 30px rgba(13, 110, 253, 0.18);
     }
 
-    .page-header h1 {
-        font-weight: 800;
-        margin-bottom: 8px;
-    }
+        .page-header h1 {
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
 
-    .page-header p {
-        margin-bottom: 0;
-        opacity: 0.9;
-    }
+        .page-header p {
+            margin-bottom: 0;
+            opacity: 0.9;
+        }
 
     .credit-summary {
         background: white;
@@ -76,17 +76,23 @@
         cursor: pointer;
     }
 
-    .subject-card:hover {
-        border-color: #b8d1ff;
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-    }
+        .subject-card:hover {
+            border-color: #b8d1ff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
 
-    .subject-card.selected {
-        border-color: #0d6efd;
-        background: #f5f8ff;
-        box-shadow: 0 8px 22px rgba(13, 110, 253, 0.12);
-    }
+        .subject-card.selected {
+            border-color: #0d6efd;
+            background: #f5f8ff;
+            box-shadow: 0 8px 22px rgba(13, 110, 253, 0.12);
+        }
+
+        .subject-card.disabled-card {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none;
+        }
 
     .subject-check {
         width: 22px;
@@ -145,21 +151,118 @@
         font-weight: 600;
     }
 
+        .submit-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.55;
+        }
+
     .error-box {
         border-radius: 12px;
     }
-</style>
 
+    .success-alert {
+        border: none;
+        border-radius: 16px;
+        padding: 16px 18px;
+        margin-bottom: 25px;
+        background: #ecfdf3;
+        color: #146c43;
+    }
+
+    .success-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: #d1fae5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 13px;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .selection-status {
+        margin-top: 10px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+        .selection-status.valid {
+            color: #198754;
+        }
+
+        .selection-status.invalid {
+            color: #dc3545;
+        }
+
+        .selection-status.warning {
+            color: #f59f00;
+        }
+
+    @@media (max-width: 767px) {
+        .subjects-page {
+            padding: 20px 0 40px;
+        }
+
+        .page-header {
+            padding: 25px 20px;
+            border-radius: 18px;
+        }
+
+            .page-header h1 {
+                font-size: 1.6rem;
+            }
+
+        .credit-summary {
+            padding: 20px;
+        }
+
+        .subject-card {
+            padding: 19px;
+        }
+
+        .submit-section {
+            padding: 20px;
+        }
+    }
+</style>
 
 <div class="container subjects-page">
 
-    <!-- PAGE HEADER -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert success-alert alert-dismissible fade show shadow-sm" role="alert">
+
+            <div class="d-flex align-items-center">
+
+                <div class="success-icon">
+                    <i class="bi bi-check-lg"></i>
+                </div>
+
+                <div>
+                    <strong>Request Submitted!</strong>
+
+                    <div class="small">
+                        @TempData["SuccessMessage"]
+                    </div>
+                </div>
+
+            </div>
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+    }
 
     <div class="page-header">
 
         <div class="d-flex flex-column flex-md-row
-                    justify-content-between
-                    align-items-md-center">
+            justify-content-between
+            align-items-md-center">
 
             <div>
 
@@ -192,27 +295,19 @@
 
     </div>
 
-
-    <!-- VALIDATION -->
-
     @if (!ViewData.ModelState.IsValid)
     {
         <div class="alert alert-danger error-box shadow-sm">
 
             <div class="fw-bold mb-1">
-
                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
                 Please check your selection
-
             </div>
 
             <div asp-validation-summary="All"></div>
 
         </div>
     }
-
-
-    <!-- CREDIT SUMMARY -->
 
     <div class="credit-summary">
 
@@ -240,7 +335,7 @@
                 <div class="d-flex justify-content-between mb-2">
 
                     <small class="text-muted">
-                        Progress
+                        Selection Progress
                     </small>
 
                     <small id="creditMessage"
@@ -256,8 +351,14 @@
                          class="progress-bar"
                          role="progressbar"
                          style="width: 0%;">
-
                     </div>
+
+                </div>
+
+                <div id="selectionStatus"
+                     class="selection-status invalid">
+
+                    Select subjects totaling exactly 30 credit hours.
 
                 </div>
 
@@ -267,31 +368,46 @@
 
     </div>
 
-
-    <!-- SUBJECT FORM -->
-
     <form asp-controller="Student"
           asp-action="SelectSubjects"
-          method="post">
+          method="post"
+          id="subjectForm">
 
         @Html.AntiForgeryToken()
-
 
         <div class="row g-4">
 
             @for (int i = 0; i < Model.Subjects.Count; i++)
             {
-
                 var subject = Model.Subjects[i];
 
                 <div class="col-md-6 col-lg-4">
 
                     <label class="subject-card d-block"
-                           for="subject_@subject.SubjectId">
+                           for="subject_@subject.SubjectId"
+                           data-card-id="@subject.SubjectId">
 
-                        <div class="d-flex
-                                    justify-content-between
-                                    align-items-start">
+                        <input type="hidden"
+                               name="Subjects[@i].SubjectId"
+                               value="@subject.SubjectId" />
+
+                        <input type="hidden"
+                               name="Subjects[@i].Name"
+                               value="@subject.Name" />
+
+                        <input type="hidden"
+                               name="Subjects[@i].Code"
+                               value="@subject.Code" />
+
+                        <input type="hidden"
+                               name="Subjects[@i].CreditHours"
+                               value="@subject.CreditHours" />
+
+                        <input type="hidden"
+                               name="Subjects[@i].TeacherName"
+                               value="@subject.TeacherName" />
+
+                        <div class="d-flex justify-content-between align-items-start">
 
                             <div>
 
@@ -303,19 +419,22 @@
 
                             <input type="checkbox"
                                    id="subject_@subject.SubjectId"
-                                   asp-for="Subjects[i].Selected"
+                                   name="Subjects[@i].Selected"
+                                   value="true"
                                    class="form-check-input subject-check"
-                                   data-credit="@subject.CreditHours" />
+                                   data-credit="@subject.CreditHours"
+                                   data-subject-id="@subject.SubjectId"
+                            @(subject.Selected ? "checked" : "") />
 
                         </div>
 
+                        <input type="hidden"
+                               name="Subjects[@i].Selected"
+                               value="false" />
 
                         <div class="subject-name">
-
                             @subject.Name
-
                         </div>
-
 
                         <div class="subject-teacher">
 
@@ -326,7 +445,6 @@
                                 : subject.TeacherName)
 
                         </div>
-
 
                         <span class="credit-badge">
 
@@ -340,21 +458,15 @@
                     </label>
 
                 </div>
-
             }
 
         </div>
 
-
-        <!-- SUBMIT -->
-
         <div class="submit-section">
 
-            <div class="d-flex
-                        flex-column
-                        flex-md-row
-                        justify-content-between
-                        align-items-md-center">
+            <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center">
 
                 <div>
 
@@ -371,7 +483,8 @@
 
                 <button type="submit"
                         id="submitButton"
-                        class="btn btn-primary submit-btn mt-3 mt-md-0">
+                        class="btn btn-primary submit-btn mt-3 mt-md-0"
+                        disabled>
 
                     <i class="bi bi-send me-2"></i>
                     Submit for Approval
@@ -386,12 +499,13 @@
 
 </div>
 
-
 @section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
 
     <script>
 
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
 
             const checkboxes =
                 document.querySelectorAll(".subject-check");
@@ -408,18 +522,24 @@
             const submitButton =
                 document.getElementById("submitButton");
 
+            const selectionStatus =
+                document.getElementById("selectionStatus");
+
+            const form =
+                document.getElementById("subjectForm");
+
 
             function updateCredits() {
 
                 let total = 0;
 
-                checkboxes.forEach(function (checkbox) {
+                checkboxes.forEach(function(checkbox) {
 
                     if (checkbox.checked) {
 
                         total += parseInt(
                             checkbox.dataset.credit
-                        );
+                        ) || 0;
 
                     }
 
@@ -432,23 +552,26 @@
                     total + " / 30";
 
 
-                let percentage =
+                const percentage =
                     Math.min((total / 30) * 100, 100);
 
                 progressBar.style.width =
                     percentage + "%";
 
 
-                // Update card appearance
-
-                checkboxes.forEach(function (checkbox) {
+                checkboxes.forEach(function(checkbox) {
 
                     const card =
                         checkbox.closest(".subject-card");
 
+                    if (!card) {
+                        return;
+                    }
+
                     if (checkbox.checked) {
 
                         card.classList.add("selected");
+                        card.classList.remove("disabled-card");
 
                     }
                     else {
@@ -460,15 +583,34 @@
                 });
 
 
-                // Button state
-
                 if (total === 30) {
 
                     submitButton.disabled = false;
 
                     submitButton.innerHTML =
-                        '<i class="bi bi-check-circle me-2"></i>' +
+                        '<i class="bi bi-check-circle-fill me-2"></i>' +
                         'Submit for Approval';
+
+                    selectionStatus.textContent =
+                        "Perfect! You have selected exactly 30 credit hours.";
+
+                    selectionStatus.className =
+                        "selection-status valid";
+
+                }
+                else if (total > 30) {
+
+                    submitButton.disabled = true;
+
+                    submitButton.innerHTML =
+                        '<i class="bi bi-exclamation-circle me-2"></i>' +
+                        '30 Credits Required';
+
+                    selectionStatus.textContent =
+                        "You have selected too many credit hours.";
+
+                    selectionStatus.className =
+                        "selection-status invalid";
 
                 }
                 else {
@@ -479,29 +621,47 @@
                         '<i class="bi bi-send me-2"></i>' +
                         'Submit for Approval';
 
+                    selectionStatus.textContent =
+                        "You need " +
+                        (30 - total) +
+                        " more credit hours.";
+
+                    selectionStatus.className =
+                        "selection-status warning";
+
                 }
 
 
-                // Prevent selecting beyond 30
+                checkboxes.forEach(function(checkbox) {
 
-                checkboxes.forEach(function (checkbox) {
+                    if (checkbox.checked) {
 
-                    if (!checkbox.checked) {
+                        checkbox.disabled = false;
 
-                        const credit =
-                            parseInt(
-                                checkbox.dataset.credit
-                            );
+                        return;
+                    }
 
-                        if (total + credit > 30) {
+                    const credit =
+                        parseInt(checkbox.dataset.credit) || 0;
 
-                            checkbox.disabled = true;
+                    const card =
+                        checkbox.closest(".subject-card");
 
+                    if (total + credit > 30) {
+
+                        checkbox.disabled = true;
+
+                        if (card) {
+                            card.classList.add("disabled-card");
                         }
-                        else {
 
-                            checkbox.disabled = false;
+                    }
+                    else {
 
+                        checkbox.disabled = false;
+
+                        if (card) {
+                            card.classList.remove("disabled-card");
                         }
 
                     }
@@ -511,7 +671,7 @@
             }
 
 
-            checkboxes.forEach(function (checkbox) {
+            checkboxes.forEach(function(checkbox) {
 
                 checkbox.addEventListener(
                     "change",
@@ -521,10 +681,54 @@
             });
 
 
+            form.addEventListener("submit", function(event) {
+
+                let total = 0;
+
+                checkboxes.forEach(function(checkbox) {
+
+                    if (checkbox.checked) {
+
+                        total += parseInt(
+                            checkbox.dataset.credit
+                        ) || 0;
+
+                    }
+
+                });
+
+
+                if (total !== 30) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "You must select exactly 30 credit hours before submitting."
+                    );
+
+                    return;
+                }
+
+
+                checkboxes.forEach(function(checkbox) {
+
+                    checkbox.disabled = false;
+
+                });
+
+
+                submitButton.disabled = true;
+
+                submitButton.innerHTML =
+                    '<span class="spinner-border spinner-border-sm me-2"></span>' +
+                    'Submitting...';
+
+            });
+
+
             updateCredits();
 
         });
 
     </script>
-
 }

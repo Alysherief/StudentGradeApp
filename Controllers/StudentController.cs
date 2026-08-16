@@ -50,8 +50,7 @@ namespace StudentGradeApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SelectSubjects(
-            SelectSubjectsViewModel model)
+        public async Task<IActionResult> SelectSubjects(SelectSubjectsViewModel model)
         {
             var student = await _userManager.GetUserAsync(User);
 
@@ -63,6 +62,7 @@ namespace StudentGradeApp.Controllers
             var selectedSubjectIds = model.Subjects
                 .Where(s => s.Selected)
                 .Select(s => s.SubjectId)
+                .Distinct()
                 .ToList();
 
             if (!selectedSubjectIds.Any())
@@ -85,8 +85,7 @@ namespace StudentGradeApp.Controllers
             {
                 ModelState.AddModelError(
                     string.Empty,
-                    $"You must select exactly 30 credit hours. " +
-                    $"You currently selected {totalCreditHours}.");
+                    $"You must select exactly 30 credit hours. You currently selected {totalCreditHours}.");
 
                 return View("Subjects", model);
             }
@@ -101,27 +100,28 @@ namespace StudentGradeApp.Controllers
             {
                 ModelState.AddModelError(
                     string.Empty,
-                    "You have already requested one or more of these subjects.");
+                    "You have already submitted a request for one or more of these subjects.");
 
                 return View("Subjects", model);
             }
 
             foreach (var subjectId in selectedSubjectIds)
             {
-                var studentSubject = new StudentSubject
+                _context.StudentSubjects.Add(new StudentSubject
                 {
                     StudentId = student.Id,
                     SubjectId = subjectId,
                     Status = EnrollmentStatus.Pending,
                     RequestedAt = DateTime.UtcNow
-                };
-
-                _context.StudentSubjects.Add(studentSubject);
+                });
             }
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Subjects");
+            TempData["SuccessMessage"] =
+                "Your subject selection has been successfully submitted for administrator approval.";
+
+            return RedirectToAction(nameof(Subjects));
         }
 
         [HttpGet]

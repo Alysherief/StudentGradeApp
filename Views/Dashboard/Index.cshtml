@@ -91,14 +91,17 @@
 
     <div class="container dashboard-page mt-5">
 
+        <!-- Hero -->
         <div class="dashboard-hero">
             <h1>Admin Dashboard</h1>
             <p>
                 Welcome back, @User.Identity?.Name.
-                Manage your university grade portal from here.
+                Manage users, subjects, and academic activities from here.
             </p>
         </div>
 
+
+        <!-- ACCOUNT MANAGEMENT -->
         <h4 class="section-title">Account Management</h4>
 
         <div class="row g-4">
@@ -128,6 +131,7 @@
                 </div>
             </div>
 
+
             <!-- Students -->
             <div class="col-md-4">
                 <div class="card dashboard-card shadow-sm h-100">
@@ -152,6 +156,7 @@
                     </div>
                 </div>
             </div>
+
 
             <!-- Subjects -->
             <div class="col-md-4">
@@ -181,6 +186,7 @@
         </div>
 
 
+        <!-- ACADEMIC MANAGEMENT -->
         <h4 class="section-title mt-5">Academic Management</h4>
 
         <div class="row g-4">
@@ -210,6 +216,7 @@
                 </div>
             </div>
 
+
             <!-- Assign Teachers -->
             <div class="col-md-4">
                 <div class="card dashboard-card shadow-sm h-100">
@@ -234,6 +241,7 @@
                     </div>
                 </div>
             </div>
+
 
             <!-- Grade Components -->
             <div class="col-md-4">
@@ -263,20 +271,69 @@
         </div>
 
 
-        <div class="logout-container text-center">
+        <!-- ACCOUNT -->
+        <h4 class="section-title mt-5">Account</h4>
 
-            <form asp-controller="Account"
-                  asp-action="Logout"
-                  method="post">
+        <div class="row g-4">
 
-                @Html.AntiForgeryToken()
+            <!-- Profile -->
+            <div class="col-md-6">
+                <div class="card dashboard-card shadow-sm h-100">
+                    <div class="card-body text-center">
 
-                <button type="submit"
-                        class="btn btn-outline-danger px-4">
-                    Logout
-                </button>
+                        <div class="dashboard-icon">
+                            👤
+                        </div>
 
-            </form>
+                        <h3>My Profile</h3>
+
+                        <p>
+                            View and manage your personal account
+                            information.
+                        </p>
+
+                        <a asp-controller="Account"
+                           asp-action="Profile"
+                           class="btn btn-info w-100">
+                            View Profile
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Logout -->
+            <div class="col-md-6">
+                <div class="card dashboard-card shadow-sm h-100">
+                    <div class="card-body text-center">
+
+                        <div class="dashboard-icon">
+                            🚪
+                        </div>
+
+                        <h3>Logout</h3>
+
+                        <p>
+                            Sign out of your administrator account securely.
+                        </p>
+
+                        <form asp-controller="Account"
+                              asp-action="Logout"
+                              method="post">
+
+                            @Html.AntiForgeryToken()
+
+                            <button type="submit"
+                                    class="btn btn-outline-danger w-100">
+                                Logout
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
 
         </div>
 
@@ -298,7 +355,7 @@
             <h1>Teacher Dashboard</h1>
             <p>
                 Welcome back, @User.Identity?.Name.
-                Manage your classes, students, and grades.
+                Manage your subjects, students, and grades.
             </p>
         </div>
 
@@ -315,10 +372,11 @@
                             👨‍🎓
                         </div>
 
-                        <h3>Students</h3>
+                        <h3>My Students</h3>
 
                         <p>
-                            View students assigned to your classes.
+                            View the students enrolled in the subjects
+                            you teach.
                         </p>
 
                         <a asp-controller="Teacher"
@@ -331,6 +389,7 @@
                 </div>
             </div>
 
+
             <!-- Grades -->
             <div class="col-md-4">
                 <div class="card dashboard-card shadow-sm h-100">
@@ -340,10 +399,11 @@
                             📊
                         </div>
 
-                        <h3>Grades</h3>
+                        <h3>Manage Grades</h3>
 
                         <p>
-                            Add, edit, and manage student grades.
+                            Add quizzes, assignments, exams, and
+                            manage student grades.
                         </p>
 
                         <a asp-controller="Teacher"
@@ -355,6 +415,7 @@
                     </div>
                 </div>
             </div>
+
 
             <!-- Subjects -->
             <div class="col-md-4">
@@ -368,63 +429,14 @@
                         <h3>My Subjects</h3>
 
                         <p>
-                            View the subjects currently assigned to you.
+                            View the subjects assigned to you and
+                            manage their grade components.
                         </p>
 
                         <a asp-controller="Teacher"
                            asp-action="Subjects"
                            class="btn btn-primary w-100">
-                            View Subjects
-                        </a>
-
-                    </div>
-                </div>
-            </div>
-
-            <!-- Classes -->
-            <div class="col-md-6">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
-
-                        <div class="dashboard-icon">
-                            🏫
-                        </div>
-
-                        <h3>My Classes</h3>
-
-                        <p>
-                            View and manage your assigned classes.
-                        </p>
-
-                        <a asp-controller="Teacher"
-                           asp-action="Classes"
-                           class="btn btn-primary w-100">
-                            View Classes
-                        </a>
-
-                    </div>
-                </div>
-            </div>
-
-            <!-- Performance -->
-            <div class="col-md-6">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
-
-                        <div class="dashboard-icon">
-                            📈
-                        </div>
-
-                        <h3>Student Performance</h3>
-
-                        <p>
-                            Monitor the academic performance of your students.
-                        </p>
-
-                        <a asp-controller="Teacher"
-                           asp-action="Grades"
-                           class="btn btn-info w-100">
-                            View Performance
+                            View My Subjects
                         </a>
 
                     </div>
@@ -434,20 +446,68 @@
         </div>
 
 
-        <div class="logout-container text-center">
+        <h4 class="section-title mt-5">Account</h4>
 
-            <form asp-controller="Account"
-                  asp-action="Logout"
-                  method="post">
+        <div class="row g-4">
 
-                @Html.AntiForgeryToken()
+            <!-- Profile -->
+            <div class="col-md-6">
+                <div class="card dashboard-card shadow-sm h-100">
+                    <div class="card-body text-center">
 
-                <button type="submit"
-                        class="btn btn-outline-danger px-4">
-                    Logout
-                </button>
+                        <div class="dashboard-icon">
+                            👤
+                        </div>
 
-            </form>
+                        <h3>My Profile</h3>
+
+                        <p>
+                            View and manage your personal account
+                            information.
+                        </p>
+
+                        <a asp-controller="Account"
+                           asp-action="Profile"
+                           class="btn btn-info w-100">
+                            View Profile
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Logout -->
+            <div class="col-md-6">
+                <div class="card dashboard-card shadow-sm h-100">
+                    <div class="card-body text-center">
+
+                        <div class="dashboard-icon">
+                            🚪
+                        </div>
+
+                        <h3>Logout</h3>
+
+                        <p>
+                            Sign out of your teacher account securely.
+                        </p>
+
+                        <form asp-controller="Account"
+                              asp-action="Logout"
+                              method="post">
+
+                            @Html.AntiForgeryToken()
+
+                            <button type="submit"
+                                    class="btn btn-outline-danger w-100">
+                                Logout
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
 
         </div>
 
@@ -542,7 +602,7 @@
                             View and manage your account information.
                         </p>
 
-                        <a asp-controller="Student"
+                        <a asp-controller="Account"
                            asp-action="Profile"
                            class="btn btn-primary w-100">
                             View Profile
