@@ -2,78 +2,452 @@
     ViewData["Title"] = "Login";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
+<style>
+    .login-page {
+        min-height: calc(100vh - 145px);
+        display: flex;
+        align-items: center;
+        padding: 50px 0;
+    }
 
-            <div class="card shadow">
-                <div class="card-body p-4">
+    .login-wrapper {
+        max-width: 1000px;
+        margin: auto;
+    }
 
-                    <h2 class="text-center mb-4">Student Grade App</h2>
-                    <h4 class="text-center mb-4">Login</h4>
+    .login-card {
+        border: none;
+        border-radius: 24px;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+    }
 
-                    @if (ViewBag.Error != null)
-                    {
-                        <div class="alert alert-danger">
-                            @ViewBag.Error
+    .login-brand-panel {
+        background: linear-gradient(145deg, #0d6efd, #4f8dfd);
+        color: white;
+        padding: 55px 45px;
+        min-height: 540px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .login-brand-panel::before {
+            content: "";
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            top: -170px;
+            right: -120px;
+        }
+
+        .login-brand-panel::after {
+            content: "";
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+            bottom: -150px;
+            left: -100px;
+        }
+
+    .login-brand-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .login-logo {
+        width: 75px;
+        height: 75px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        margin-bottom: 28px;
+    }
+
+    .login-brand-panel h1 {
+        font-size: 2.4rem;
+        font-weight: 800;
+        letter-spacing: -0.7px;
+        margin-bottom: 15px;
+    }
+
+    .login-brand-panel p {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        opacity: 0.88;
+        max-width: 400px;
+    }
+
+    .login-feature {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 28px;
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+        .login-feature i {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.14);
+        }
+
+    .login-form-panel {
+        padding: 55px 50px;
+        background: white;
+    }
+
+    .login-form-header {
+        margin-bottom: 32px;
+    }
+
+        .login-form-header h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .login-form-header p {
+            color: #6b7280;
+            margin-bottom: 0;
+        }
+
+    .login-field {
+        margin-bottom: 22px;
+    }
+
+        .login-field .form-label {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+        .input-wrapper > i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            z-index: 2;
+        }
+
+    .login-input {
+        padding-left: 43px !important;
+        min-height: 48px;
+    }
+
+        .login-input:focus + i {
+            color: #0d6efd;
+        }
+
+    .remember-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 25px;
+    }
+
+        .remember-row .form-check {
+            margin: 0;
+        }
+
+        .remember-row .form-check-label {
+            color: #6b7280;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+    .login-button {
+        min-height: 50px;
+        font-size: 15px;
+        border-radius: 11px;
+        font-weight: 700;
+        box-shadow: 0 7px 18px rgba(13, 110, 253, 0.18);
+    }
+
+        .login-button:hover {
+            transform: translateY(-1px);
+        }
+
+    .security-note {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 7px;
+        margin-top: 24px;
+        color: #9ca3af;
+        font-size: 13px;
+    }
+
+    .error-message {
+        border: none;
+        border-radius: 11px;
+        font-size: 14px;
+        margin-bottom: 22px;
+    }
+
+    @@media (max-width: 767px) {
+
+        .login-page {
+            padding: 30px 15px;
+        }
+
+        .login-brand-panel {
+            min-height: auto;
+            padding: 40px 30px;
+        }
+
+            .login-brand-panel h1 {
+                font-size: 2rem;
+            }
+
+        .login-form-panel {
+            padding: 40px 30px;
+        }
+
+        .login-feature {
+            margin-top: 20px;
+        }
+    }
+</style>
+
+
+<div class="login-page">
+
+    <div class="container">
+
+        <div class="login-wrapper">
+
+            <div class="login-card">
+
+                <div class="row g-0">
+
+                    <!-- LEFT SIDE -->
+                    <div class="col-lg-6">
+
+                        <div class="login-brand-panel">
+
+                            <div class="login-brand-content">
+
+                                <div class="login-logo">
+                                    <i class="bi bi-mortarboard-fill"></i>
+                                </div>
+
+                                <h1>
+                                    Student Grade Portal
+                                </h1>
+
+                                <p>
+                                    Manage your academic journey from one
+                                    secure and convenient platform.
+                                </p>
+
+                                <div class="login-feature">
+
+                                    <i class="bi bi-shield-check"></i>
+
+                                    <span>
+                                        Secure role-based access
+                                    </span>
+
+                                </div>
+
+                                <div class="login-feature">
+
+                                    <i class="bi bi-bar-chart-fill"></i>
+
+                                    <span>
+                                        Track academic performance
+                                    </span>
+
+                                </div>
+
+                                <div class="login-feature">
+
+                                    <i class="bi bi-book-fill"></i>
+
+                                    <span>
+                                        Manage subjects and grades
+                                    </span>
+
+                                </div>
+
+                            </div>
+
                         </div>
-                    }
 
-                    <form asp-controller="Account"
-                          asp-action="Login"
-                          method="post">
+                    </div>
 
-                        @Html.AntiForgeryToken()
 
-                        <div class="mb-3">
-                            <label for="usernameOrEmail" class="form-label">
-                                Username or Email
-                            </label>
+                    <!-- RIGHT SIDE -->
+                    <div class="col-lg-6">
 
-                            <input type="text"
-                                   id="usernameOrEmail"
-                                   name="usernameOrEmail"
-                                   class="form-control"
-                                   placeholder="Enter username or email"
-                                   required />
+                        <div class="login-form-panel">
+
+                            <div class="login-form-header">
+
+                                <h2>
+                                    Welcome back
+                                </h2>
+
+                                <p>
+                                    Sign in to access your portal.
+                                </p>
+
+                            </div>
+
+
+                            @if (ViewBag.Error != null)
+                            {
+                                <div class="alert alert-danger error-message">
+
+                                    <i class="bi bi-exclamation-circle me-2"></i>
+
+                                    @ViewBag.Error
+
+                                </div>
+                            }
+
+
+                            <form asp-controller="Account"
+                                  asp-action="Login"
+                                  method="post">
+
+                                @Html.AntiForgeryToken()
+
+
+                                <!-- USERNAME / EMAIL -->
+
+                                <div class="login-field">
+
+                                    <label for="usernameOrEmail"
+                                           class="form-label">
+
+                                        Username or Email
+
+                                    </label>
+
+                                    <div class="input-wrapper">
+
+                                        <i class="bi bi-person"></i>
+
+                                        <input type="text"
+                                               id="usernameOrEmail"
+                                               name="usernameOrEmail"
+                                               class="form-control login-input"
+                                               placeholder="Enter your username or email"
+                                               autocomplete="username"
+                                               required />
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- PASSWORD -->
+
+                                <div class="login-field">
+
+                                    <label for="password"
+                                           class="form-label">
+
+                                        Password
+
+                                    </label>
+
+                                    <div class="input-wrapper">
+
+                                        <i class="bi bi-lock"></i>
+
+                                        <input type="password"
+                                               id="password"
+                                               name="password"
+                                               class="form-control login-input"
+                                               placeholder="Enter your password"
+                                               autocomplete="current-password"
+                                               required />
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- REMEMBER ME -->
+
+                                <div class="remember-row">
+
+                                    <div class="form-check">
+
+                                        <input type="checkbox"
+                                               id="rememberMe"
+                                               name="rememberMe"
+                                               value="true"
+                                               class="form-check-input" />
+
+                                        <label for="rememberMe"
+                                               class="form-check-label">
+
+                                            Remember me
+
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- LOGIN -->
+
+                                <button type="submit"
+                                        class="btn btn-primary login-button w-100">
+
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>
+
+                                    Sign In
+
+                                </button>
+
+
+                                <div class="security-note">
+
+                                    <i class="bi bi-shield-lock"></i>
+
+                                    Your account information is protected
+
+                                </div>
+
+                            </form>
+
                         </div>
 
-                        <div class="mb-3">
-                            <label for="password" class="form-label">
-                                Password
-                            </label>
-
-                            <input type="password"
-                                   id="password"
-                                   name="password"
-                                   class="form-control"
-                                   placeholder="Enter password"
-                                   required />
-                        </div>
-
-                        <div class="form-check mb-3">
-                            <input type="checkbox"
-                                   id="rememberMe"
-                                   name="rememberMe"
-                                   value="true"
-                                   class="form-check-input" />
-
-                            <label for="rememberMe" class="form-check-label">
-                                Remember me
-                            </label>
-                        </div>
-
-                        <button type="submit"
-                                class="btn btn-primary w-100">
-                            Login
-                        </button>
-
-                    </form>
+                    </div>
 
                 </div>
+
             </div>
 
         </div>
-    </div>
-</div>
 
+    </div>
+
+</div>

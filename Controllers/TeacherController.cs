@@ -21,6 +21,10 @@ namespace StudentGradeApp.Controllers
             _context = context;
             _userManager = userManager;
         }
+        public IActionResult Index()
+        {
+            return RedirectToAction("Index", "DashBoard");
+        }
 
         [HttpGet]
         public async Task<IActionResult> Subjects()
