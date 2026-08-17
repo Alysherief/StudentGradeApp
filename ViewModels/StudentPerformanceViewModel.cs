@@ -15,5 +15,11 @@
         public string LetterGrade { get; set; } = string.Empty;
 
         public decimal GPA { get; set; }
+
+        public bool IsComplete { get; set; }
+
+        public int GradedComponents { get; set; }
+
+        public int TotalComponents { get; set; }
     }
 }

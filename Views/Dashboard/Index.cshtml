@@ -5,85 +5,152 @@
 <style>
     .dashboard-page {
         min-height: 80vh;
+        padding-bottom: 60px;
     }
 
     .dashboard-hero {
-        border-radius: 20px;
-        padding: 35px;
-        margin-bottom: 30px;
-        background: linear-gradient(135deg, #0d6efd, #4f8dfd);
+        border-radius: 24px;
+        padding: 38px 40px;
+        margin-bottom: 35px;
+        background: linear-gradient(135deg, #0d6efd 0%, #4f8dfd 100%);
         color: white;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
+        box-shadow: 0 15px 35px rgba(13, 110, 253, 0.18);
     }
 
-    .dashboard-hero h1 {
-        font-weight: 700;
-        margin-bottom: 8px;
+        .dashboard-hero h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-hero p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 15px;
+        }
+
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #172b4d;
+        margin-bottom: 18px;
     }
 
-    .dashboard-hero p {
-        margin-bottom: 0;
-        opacity: 0.9;
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 22px;
     }
 
     .dashboard-card {
-        border: none;
-        border-radius: 18px;
-        transition: all 0.25s ease;
+        border: 1px solid #edf0f5;
+        border-radius: 22px;
+        background: white;
         overflow: hidden;
+        transition: all 0.25s ease;
+        height: 100%;
     }
 
-    .dashboard-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12) !important;
-    }
+        .dashboard-card:hover {
+            transform: translateY(-4px);
+            border-color: #dce7fa;
+            box-shadow: 0 15px 35px rgba(30, 60, 90, 0.10) !important;
+        }
 
-    .dashboard-card .card-body {
-        padding: 28px;
-    }
+        .dashboard-card .card-body {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
 
     .dashboard-icon {
-        width: 55px;
-        height: 55px;
-        border-radius: 14px;
+        width: 58px;
+        height: 58px;
+        border-radius: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 25px;
-        margin: 0 auto 18px auto;
-        background-color: #eef4ff;
+        font-size: 24px;
+        margin-bottom: 20px;
+        background: #edf4ff;
+        color: #0d6efd;
     }
 
-    .dashboard-card h4,
-    .dashboard-card h3 {
-        font-weight: 650;
+    .dashboard-card h3,
+    .dashboard-card h4 {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #172b4d;
+        margin-bottom: 8px;
     }
 
     .dashboard-card p {
         color: #6c757d;
-        min-height: 48px;
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 25px;
+        flex: 1;
     }
 
-    .section-title {
+    .dashboard-btn {
+        border-radius: 12px;
+        padding: 11px 18px;
         font-weight: 700;
-        margin-bottom: 18px;
+        border: none;
+        transition: all 0.2s ease;
     }
 
-    .logout-container {
-        margin-top: 40px;
-        padding-top: 25px;
-        border-top: 1px solid #e9ecef;
+        .dashboard-btn:hover {
+            transform: translateY(-1px);
+        }
+
+    .account-section {
+        margin-top: 42px;
     }
 
-    .quick-action {
-        text-decoration: none;
+    .account-card .dashboard-icon {
+        background: #f0f7ff;
+        color: #0d6efd;
+    }
+
+    .logout-card .dashboard-icon {
+        background: #fff1f1;
+        color: #dc3545;
+    }
+
+    .logout-btn {
+        border-radius: 12px;
+        padding: 11px 18px;
+        font-weight: 700;
+    }
+
+    @@media (max-width: 767px) {
+
+        .dashboard-page {
+            padding-bottom: 40px;
+        }
+
+        .dashboard-hero {
+            padding: 28px 22px;
+            border-radius: 20px;
+        }
+
+            .dashboard-hero h1 {
+                font-size: 1.65rem;
+            }
+
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .dashboard-card .card-body {
+            padding: 24px;
+        }
     }
 </style>
 
-
-@* =========================================================
-   ADMIN DASHBOARD
-   ========================================================= *@
 
 @if (User.IsInRole("Admin"))
 {
@@ -91,7 +158,6 @@
 
     <div class="container dashboard-page mt-5">
 
-        <!-- Hero -->
         <div class="dashboard-hero">
             <h1>Admin Dashboard</h1>
             <p>
@@ -100,186 +166,158 @@
             </p>
         </div>
 
-
-        <!-- ACCOUNT MANAGEMENT -->
         <h4 class="section-title">Account Management</h4>
 
-        <div class="row g-4">
+        <div class="dashboard-grid">
 
-            <!-- Teachers -->
-            <div class="col-md-4">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-body">
 
-                        <div class="dashboard-icon">
-                            <i class="bi bi-person-workspace"></i>
-                        </div>
-
-                        <h4>Teachers</h4>
-
-                        <p>
-                            Create, edit, and manage teacher accounts.
-                        </p>
-
-                        <a asp-controller="Admin"
-                           asp-action="ManageTeachers"
-                           class="btn btn-primary w-100">
-                            Manage Teachers
-                        </a>
-
+                    <div class="dashboard-icon">
+                        <i class="bi bi-person-workspace"></i>
                     </div>
+
+                    <h4>Teachers</h4>
+
+                    <p>
+                        Create, edit, and manage teacher accounts.
+                    </p>
+
+                    <a asp-controller="Admin"
+                       asp-action="ManageTeachers"
+                       class="btn btn-primary dashboard-btn w-100">
+                        Manage Teachers
+                    </a>
+
                 </div>
             </div>
 
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-body">
 
-            <!-- Students -->
-            <div class="col-md-4">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
-
-                        <div class="dashboard-icon">
-                            <i class="bi bi-mortarboard-fill"></i>
-                        </div>
-
-                        <h4>Students</h4>
-
-                        <p>
-                            Create, edit, and manage student accounts.
-                        </p>
-
-                        <a asp-controller="Admin"
-                           asp-action="ManageStudents"
-                           class="btn btn-primary w-100">
-                            Manage Students
-                        </a>
-
+                    <div class="dashboard-icon">
+                        <i class="bi bi-mortarboard-fill"></i>
                     </div>
+
+                    <h4>Students</h4>
+
+                    <p>
+                        Create, edit, and manage student accounts.
+                    </p>
+
+                    <a asp-controller="Admin"
+                       asp-action="ManageStudents"
+                       class="btn btn-primary dashboard-btn w-100">
+                        Manage Students
+                    </a>
+
                 </div>
             </div>
 
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-body">
 
-            <!-- Subjects -->
-            <div class="col-md-4">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
-
-                        <div class="dashboard-icon">
-                            <i class="bi bi-journal-bookmark-fill"></i>
-                        </div>
-
-                        <h4>Subjects</h4>
-
-                        <p>
-                            Create and manage university subjects and credit hours.
-                        </p>
-
-                        <a asp-controller="Admin"
-                           asp-action="ManageSubjects"
-                           class="btn btn-primary w-100">
-                            Manage Subjects
-                        </a>
-
+                    <div class="dashboard-icon">
+                        <i class="bi bi-journal-bookmark-fill"></i>
                     </div>
+
+                    <h4>Subjects</h4>
+
+                    <p>
+                        Create and manage university subjects and credit hours.
+                    </p>
+
+                    <a asp-controller="Admin"
+                       asp-action="ManageSubjects"
+                       class="btn btn-primary dashboard-btn w-100">
+                        Manage Subjects
+                    </a>
+
                 </div>
             </div>
 
         </div>
 
-
-        <!-- ACADEMIC MANAGEMENT -->
         <h4 class="section-title mt-5">Academic Management</h4>
 
-        <div class="row g-4">
+        <div class="dashboard-grid">
 
-            <!-- Subject Requests -->
-            <div class="col-md-4">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-body">
 
-                        <div class="dashboard-icon">
-                            <i class="bi bi-clipboard-check-fill"></i>
-                        </div>
-
-                        <h4>Subject Requests</h4>
-
-                        <p>
-                            Review and approve student subject selections.
-                        </p>
-
-                        <a asp-controller="Admin"
-                           asp-action="SubjectRequests"
-                           class="btn btn-warning w-100">
-                            Review Requests
-                        </a>
-
+                    <div class="dashboard-icon">
+                        <i class="bi bi-clipboard-check-fill"></i>
                     </div>
+
+                    <h4>Subject Requests</h4>
+
+                    <p>
+                        Review and approve student subject selections.
+                    </p>
+
+                    <a asp-controller="Admin"
+                       asp-action="SubjectRequests"
+                       class="btn btn-warning dashboard-btn w-100">
+                        Review Requests
+                    </a>
+
                 </div>
             </div>
 
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-body">
 
-            <!-- Assign Teachers -->
-            <div class="col-md-4">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
-
-                        <div class="dashboard-icon">
-                            <i class="bi bi-diagram-3-fill"></i>
-                        </div>
-
-                        <h4>Assign Teachers</h4>
-
-                        <p>
-                            Assign teachers to the subjects they will teach.
-                        </p>
-
-                        <a asp-controller="Admin"
-                           asp-action="AssignTeacher"
-                           class="btn btn-success w-100">
-                            Assign Teachers
-                        </a>
-
+                    <div class="dashboard-icon">
+                        <i class="bi bi-diagram-3-fill"></i>
                     </div>
+
+                    <h4>Assign Teachers</h4>
+
+                    <p>
+                        Assign teachers to the subjects they will teach.
+                    </p>
+
+                    <a asp-controller="Admin"
+                       asp-action="AssignTeacher"
+                       class="btn btn-success dashboard-btn w-100">
+                        Assign Teachers
+                    </a>
+
                 </div>
             </div>
 
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-body">
 
-            <!-- Grade Components -->
-            <div class="col-md-4">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
-
-                        <div class="dashboard-icon">
-                            <i class="bi bi-journal-text"></i>
-                        </div>
-
-                        <h4>Grade Components</h4>
-
-                        <p>
-                            Manage quizzes, assignments, exams, and other grades.
-                        </p>
-
-                        <a asp-controller="Admin"
-                           asp-action="GradeComponents"
-                           class="btn btn-success w-100">
-                            Manage Grades
-                        </a>
-
+                    <div class="dashboard-icon">
+                        <i class="bi bi-journal-text"></i>
                     </div>
+
+                    <h4>Grade Components</h4>
+
+                    <p>
+                        Manage quizzes, assignments, exams, and other grades.
+                    </p>
+
+                    <a asp-controller="Admin"
+                       asp-action="GradeComponents"
+                       class="btn btn-success dashboard-btn w-100">
+                        Manage Grades
+                    </a>
+
                 </div>
             </div>
 
         </div>
 
+        <div class="account-section">
 
-        <!-- ACCOUNT -->
-        <h4 class="section-title mt-5">Account</h4>
+            <h4 class="section-title">Account</h4>
 
-        <div class="row g-4">
+            <div class="dashboard-grid">
 
-            <!-- Profile -->
-            <div class="col-md-6">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
+                <div class="card dashboard-card account-card shadow-sm">
+                    <div class="card-body">
 
                         <div class="dashboard-icon">
                             <i class="bi bi-person-fill"></i>
@@ -288,25 +326,20 @@
                         <h3>My Profile</h3>
 
                         <p>
-                            View and manage your personal account
-                            information.
+                            View and manage your personal account information.
                         </p>
 
                         <a asp-controller="Account"
                            asp-action="Profile"
-                           class="btn btn-info w-100">
+                           class="btn btn-info dashboard-btn w-100">
                             View Profile
                         </a>
 
                     </div>
                 </div>
-            </div>
 
-
-            <!-- Logout -->
-            <div class="col-md-6">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
+                <div class="card dashboard-card logout-card shadow-sm">
+                    <div class="card-body">
 
                         <div class="dashboard-icon">
                             <i class="bi bi-box-arrow-right"></i>
@@ -325,7 +358,7 @@
                             @Html.AntiForgeryToken()
 
                             <button type="submit"
-                                    class="btn btn-outline-danger w-100">
+                                    class="btn btn-outline-danger logout-btn w-100">
                                 Logout
                             </button>
 
@@ -333,6 +366,7 @@
 
                     </div>
                 </div>
+
             </div>
 
         </div>
@@ -340,10 +374,6 @@
     </div>
 }
 
-
-@* =========================================================
-   TEACHER DASHBOARD
-   ========================================================= *@
 
 @if (User.IsInRole("Teacher"))
 {
@@ -361,99 +391,84 @@
 
         <h4 class="section-title">Teaching Tools</h4>
 
-        <div class="row g-4">
+        <div class="dashboard-grid">
 
-            <!-- Students -->
-            <div class="col-md-4">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-body">
 
-                        <div class="dashboard-icon">
-                            <i class="bi bi-mortarboard-fill"></i>
-                        </div>
-
-                        <h3>My Students</h3>
-
-                        <p>
-                            View the students enrolled in the subjects
-                            you teach.
-                        </p>
-
-                        <a asp-controller="Teacher"
-                           asp-action="Students"
-                           class="btn btn-primary w-100">
-                            View Students
-                        </a>
-
+                    <div class="dashboard-icon">
+                        <i class="bi bi-mortarboard-fill"></i>
                     </div>
+
+                    <h3>My Students</h3>
+
+                    <p>
+                        View the students enrolled in the subjects you teach.
+                    </p>
+
+                    <a asp-controller="Teacher"
+                       asp-action="Students"
+                       class="btn btn-primary dashboard-btn w-100">
+                        View Students
+                    </a>
+
                 </div>
             </div>
 
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-body">
 
-            <!-- Grades -->
-            <div class="col-md-4">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
-
-                        <div class="dashboard-icon">
-                            <i class="bi bi-bar-chart-fill"></i>
-                        </div>
-
-                        <h3>Manage Grades</h3>
-
-                        <p>
-                            Add quizzes, assignments, exams, and
-                            manage student grades.
-                        </p>
-
-                        <a asp-controller="Teacher"
-                           asp-action="Grades"
-                           class="btn btn-success w-100">
-                            Manage Grades
-                        </a>
-
+                    <div class="dashboard-icon">
+                        <i class="bi bi-bar-chart-fill"></i>
                     </div>
+
+                    <h3>Manage Grades</h3>
+
+                    <p>
+                        Add quizzes, assignments, exams, and manage student grades.
+                    </p>
+
+                    <a asp-controller="Teacher"
+                       asp-action="Grades"
+                       class="btn btn-success dashboard-btn w-100">
+                        Manage Grades
+                    </a>
+
                 </div>
             </div>
 
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-body">
 
-            <!-- Subjects -->
-            <div class="col-md-4">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
-
-                        <div class="dashboard-icon">
-                            <i class="bi bi-journal-bookmark-fill"></i>
-                        </div>
-
-                        <h3>My Subjects</h3>
-
-                        <p>
-                            View the subjects assigned to you and
-                            manage their grade components.
-                        </p>
-
-                        <a asp-controller="Teacher"
-                           asp-action="Subjects"
-                           class="btn btn-primary w-100">
-                            View My Subjects
-                        </a>
-
+                    <div class="dashboard-icon">
+                        <i class="bi bi-journal-bookmark-fill"></i>
                     </div>
+
+                    <h3>My Subjects</h3>
+
+                    <p>
+                        View the subjects assigned to you and manage their grade components.
+                    </p>
+
+                    <a asp-controller="Teacher"
+                       asp-action="Subjects"
+                       class="btn btn-primary dashboard-btn w-100">
+                        View My Subjects
+                    </a>
+
                 </div>
             </div>
 
         </div>
 
+        <div class="account-section">
 
-        <h4 class="section-title mt-5">Account</h4>
+            <h4 class="section-title">Account</h4>
 
-        <div class="row g-4">
+            <div class="dashboard-grid">
 
-            <!-- Profile -->
-            <div class="col-md-6">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
+                <div class="card dashboard-card account-card shadow-sm">
+                    <div class="card-body">
 
                         <div class="dashboard-icon">
                             <i class="bi bi-person-fill"></i>
@@ -462,25 +477,20 @@
                         <h3>My Profile</h3>
 
                         <p>
-                            View and manage your personal account
-                            information.
+                            View and manage your personal account information.
                         </p>
 
                         <a asp-controller="Account"
                            asp-action="Profile"
-                           class="btn btn-info w-100">
+                           class="btn btn-info dashboard-btn w-100">
                             View Profile
                         </a>
 
                     </div>
                 </div>
-            </div>
 
-
-            <!-- Logout -->
-            <div class="col-md-6">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
+                <div class="card dashboard-card logout-card shadow-sm">
+                    <div class="card-body">
 
                         <div class="dashboard-icon">
                             <i class="bi bi-box-arrow-right"></i>
@@ -499,7 +509,7 @@
                             @Html.AntiForgeryToken()
 
                             <button type="submit"
-                                    class="btn btn-outline-danger w-100">
+                                    class="btn btn-outline-danger logout-btn w-100">
                                 Logout
                             </button>
 
@@ -507,6 +517,7 @@
 
                     </div>
                 </div>
+
             </div>
 
         </div>
@@ -514,10 +525,6 @@
     </div>
 }
 
-
-@* =========================================================
-   STUDENT DASHBOARD
-   ========================================================= *@
 
 @if (User.IsInRole("Student"))
 {
@@ -535,62 +542,107 @@
 
         <h4 class="section-title">Academic Overview</h4>
 
-        <div class="row g-4">
+        <div class="dashboard-grid">
 
-            <!-- Grades -->
-            <div class="col-md-4">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-body">
 
-                        <div class="dashboard-icon">
-                            <i class="bi bi-bar-chart-fill"></i>
-                        </div>
-
-                        <h3>My Grades</h3>
-
-                        <p>
-                            View your grades for all approved subjects.
-                        </p>
-
-                        <a asp-controller="Student"
-                           asp-action="Grades"
-                           class="btn btn-primary w-100">
-                            View Grades
-                        </a>
-
+                    <div class="dashboard-icon">
+                        <i class="bi bi-bar-chart-fill"></i>
                     </div>
+
+                    <h3>My Grades</h3>
+
+                    <p>
+                        View your grades for all approved subjects.
+                    </p>
+
+                    <a asp-controller="Student"
+                       asp-action="Grades"
+                       class="btn btn-primary dashboard-btn w-100">
+                        View Grades
+                    </a>
+
                 </div>
             </div>
 
-            <!-- My Subjects -->
-            <div class="col-md-4">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-body">
 
-                        <div class="dashboard-icon">
-                            <i class="bi bi-journal-bookmark-fill"></i>
-                        </div>
-
-                        <h3>My Subjects</h3>
-
-                        <p>
-                            View the subjects approved by the administrator.
-                        </p>
-
-                        <a asp-controller="Student"
-                           asp-action="MySubjects"
-                           class="btn btn-primary w-100">
-                            View My Subjects
-                        </a>
-
+                    <div class="dashboard-icon">
+                        <i class="bi bi-journal-bookmark-fill"></i>
                     </div>
+
+                    <h3>My Subjects</h3>
+
+                    <p>
+                        View the subjects approved by the administrator.
+                    </p>
+
+                    <a asp-controller="Student"
+                       asp-action="MySubjects"
+                       class="btn btn-primary dashboard-btn w-100">
+                        View My Subjects
+                    </a>
+
                 </div>
             </div>
 
-            <!-- Profile -->
-            <div class="col-md-4">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-body">
+
+                    <div class="dashboard-icon">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+
+                    <h3>My Performance</h3>
+
+                    <p>
+                        View your academic performance and overall results.
+                    </p>
+
+                    <a asp-controller="Student"
+                       asp-action="Performance"
+                       class="btn btn-success dashboard-btn w-100">
+                        View Performance
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-body">
+
+                    <div class="dashboard-icon">
+                        <i class="bi bi-bookmark-star-fill"></i>
+                    </div>
+
+                    <h3>Choose Subjects</h3>
+
+                    <p>
+                        Select subjects for your semester and submit them
+                        for administrator approval.
+                    </p>
+
+                    <a asp-controller="Student"
+                       asp-action="Subjects"
+                       class="btn btn-success dashboard-btn w-100">
+                        Choose Subjects
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="account-section">
+
+            <h4 class="section-title">Account</h4>
+
+            <div class="dashboard-grid">
+
+                <div class="card dashboard-card account-card shadow-sm">
+                    <div class="card-body">
 
                         <div class="dashboard-icon">
                             <i class="bi bi-person-fill"></i>
@@ -599,87 +651,48 @@
                         <h3>My Profile</h3>
 
                         <p>
-                            View and manage your account information.
+                            View and manage your personal account information.
                         </p>
 
                         <a asp-controller="Account"
                            asp-action="Profile"
-                           class="btn btn-primary w-100">
+                           class="btn btn-info dashboard-btn w-100">
                             View Profile
                         </a>
 
                     </div>
                 </div>
-            </div>
 
-            <!-- Performance -->
-            <div class="col-md-6">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
+                <div class="card dashboard-card logout-card shadow-sm">
+                    <div class="card-body">
 
                         <div class="dashboard-icon">
-                            <i class="bi bi-graph-up-arrow"></i>
+                            <i class="bi bi-box-arrow-right"></i>
                         </div>
 
-                        <h3>My Performance</h3>
+                        <h3>Logout</h3>
 
                         <p>
-                            View your academic performance and overall results.
+                            Sign out of your student account securely.
                         </p>
 
-                        <a asp-controller="Student"
-                           asp-action="Performance"
-                           class="btn btn-success w-100">
-                            View Performance
-                        </a>
+                        <form asp-controller="Account"
+                              asp-action="Logout"
+                              method="post">
+
+                            @Html.AntiForgeryToken()
+
+                            <button type="submit"
+                                    class="btn btn-outline-danger logout-btn w-100">
+                                Logout
+                            </button>
+
+                        </form>
 
                     </div>
                 </div>
+
             </div>
-
-            <!-- Subject Selection -->
-            <div class="col-md-6">
-                <div class="card dashboard-card shadow-sm h-100">
-                    <div class="card-body text-center">
-
-                        <div class="dashboard-icon">
-                            <i class="bi bi-bookmark-star-fill"></i>
-                        </div>
-
-                        <h3>Choose Subjects</h3>
-
-                        <p>
-                            Select subjects for your semester and submit them
-                            for administrator approval.
-                        </p>
-
-                        <a asp-controller="Student"
-                           asp-action="Subjects"
-                           class="btn btn-success w-100">
-                            Choose Subjects
-                        </a>
-
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-
-        <div class="logout-container text-center">
-
-            <form asp-controller="Account"
-                  asp-action="Logout"
-                  method="post">
-
-                @Html.AntiForgeryToken()
-
-                <button type="submit"
-                        class="btn btn-outline-danger px-4">
-                    Logout
-                </button>
-
-            </form>
 
         </div>
 

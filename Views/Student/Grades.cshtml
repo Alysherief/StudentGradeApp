@@ -9,6 +9,29 @@
         ?? new List<Subject>();
 
     var selectedSubjectId = ViewBag.SelectedSubjectId as int?;
+
+    var gradedComponentIds = ViewBag.GradedComponentIds as HashSet<int>
+        ?? new HashSet<int>();
+
+    var gradedComponents = ViewBag.GradedComponents is int
+        ? (int)ViewBag.GradedComponents
+        : 0;
+
+    var totalComponents = ViewBag.TotalComponents is int
+        ? (int)ViewBag.TotalComponents
+        : 0;
+
+    var isComplete = ViewBag.IsComplete is bool
+        ? (bool)ViewBag.IsComplete
+        : false;
+
+    var finalPercentage = ViewBag.FinalPercentage is decimal
+        ? (decimal)ViewBag.FinalPercentage
+        : 0m;
+
+    var finalLetterGrade = ViewBag.FinalLetterGrade as string ?? "Pending";
+
+    var finalGpa = ViewBag.FinalGPA as decimal?;
 }
 
 <div class="container student-grades-page">
@@ -86,10 +109,11 @@
                 <i class="bi bi-clipboard-x"></i>
             </div>
 
-            <h3>No Grades Yet</h3>
+            <h3>No Grade Components</h3>
 
             <p>
-                There are no grades available for this subject yet.
+                There are currently no grade components available
+                for this subject.
             </p>
 
         </div>
@@ -115,10 +139,32 @@
 
                 <div class="grade-count">
                     <i class="bi bi-list-check"></i>
-                    @Model.Count() Grades
+
+                    @gradedComponents / @totalComponents
+                    Graded
                 </div>
 
             </div>
+
+            @if (!isComplete)
+            {
+                <div class="pending-banner">
+
+                    <div class="pending-banner-icon">
+                        <i class="bi bi-lock-fill"></i>
+                    </div>
+
+                    <div>
+                        <strong>Final Grade Pending</strong>
+
+                        <p>
+                            Your final grade will become available once
+                            all grade components have been completed.
+                        </p>
+                    </div>
+
+                </div>
+            }
 
             <div class="grade-list">
 
@@ -131,15 +177,23 @@
                         continue;
                     }
 
-                    var percentage = component.MaxGrade > 0
-                        ? (grade.Grade / component.MaxGrade) * 100
-                        : 0;
+                    var hasGrade =
+                        gradedComponentIds.Contains(component.Id);
 
                     <div class="grade-row">
 
-                        <div class="component-icon-small">
-                            <i class="bi bi-check2-circle"></i>
-                        </div>
+                        @if (hasGrade)
+                        {
+                            <div class="component-icon-small">
+                                <i class="bi bi-check2-circle"></i>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="component-icon-small not-graded-icon">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+                        }
 
                         <div class="component-info">
 
@@ -153,22 +207,115 @@
 
                         </div>
 
-                        <div class="grade-result">
+                        @if (hasGrade)
+                        {
+                            var percentage = component.MaxGrade > 0
+                                ? (grade.Grade / component.MaxGrade) * 100
+                                : 0;
 
-                            <strong>
-                                @grade.Grade.ToString("0.##")
-                            </strong>
+                            <div class="grade-result">
 
-                            <span>
-                                / @component.MaxGrade.ToString("0.##")
-                            </span>
+                                <strong>
+                                    @grade.Grade.ToString("0.##")
+                                </strong>
 
-                        </div>
+                                <span>
+                                    / @component.MaxGrade.ToString("0.##")
+                                </span>
+
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="not-graded-result">
+
+                                <strong>
+                                    Not Graded
+                                </strong>
+
+                                <span>
+                                    / @component.MaxGrade.ToString("0.##")
+                                </span>
+
+                            </div>
+                        }
 
                     </div>
                 }
 
             </div>
+
+            @if (isComplete)
+            {
+                <div class="final-grade-card">
+
+                    <div class="final-grade-icon">
+                        <i class="bi bi-trophy-fill"></i>
+                    </div>
+
+                    <div class="final-grade-info">
+
+                        <span>
+                            Final Grade
+                        </span>
+
+                        <strong>
+                            @finalPercentage.ToString("0.##")%
+                        </strong>
+
+                    </div>
+
+                    <div class="final-letter">
+
+                        <span>
+                            Letter
+                        </span>
+
+                        <strong>
+                            @finalLetterGrade
+                        </strong>
+
+                    </div>
+
+                    <div class="final-gpa">
+
+                        <span>
+                            GPA
+                        </span>
+
+                        <strong>
+                            @(finalGpa?.ToString("0.0") ?? "N/A")
+                        </strong>
+
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <div class="final-grade-pending">
+
+                    <div class="final-pending-icon">
+                        <i class="bi bi-lock-fill"></i>
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Final Grade Locked
+                        </strong>
+
+                        <p>
+                            @gradedComponents of @totalComponents
+                            grade components have been completed.
+                            Your final grade will appear here when all
+                            components have been graded.
+                        </p>
+
+                    </div>
+
+                </div>
+            }
 
         </div>
     }
@@ -369,6 +516,41 @@
         font-weight: 700;
     }
 
+    .pending-banner {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin: 20px 28px 10px;
+        padding: 16px 18px;
+        background: #fff8eb;
+        border: 1px solid #ffe4ad;
+        border-radius: 14px;
+    }
+
+    .pending-banner-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 11px;
+        background: #fff0d2;
+        color: #f59f00;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .pending-banner strong {
+        display: block;
+        color: #9a6500;
+        font-size: 14px;
+    }
+
+    .pending-banner p {
+        margin: 3px 0 0;
+        color: #856f47;
+        font-size: 12px;
+    }
+
     .grade-list {
         padding: 5px 0;
     }
@@ -402,6 +584,11 @@
         flex-shrink: 0;
     }
 
+    .not-graded-icon {
+        background: #fff4e5;
+        color: #f59f00;
+    }
+
     .component-info {
         flex: 1;
     }
@@ -432,6 +619,116 @@
             color: #6c757d;
             font-size: 14px;
         }
+
+    .not-graded-result {
+        min-width: 120px;
+        text-align: right;
+    }
+
+        .not-graded-result strong {
+            display: block;
+            color: #f59f00;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .not-graded-result span {
+            color: #adb5bd;
+            font-size: 12px;
+        }
+
+    .final-grade-card {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin: 20px 28px 28px;
+        padding: 22px;
+        background: #f4f8ff;
+        border: 1px solid #dce9ff;
+        border-radius: 17px;
+    }
+
+    .final-grade-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        background: #0d6efd;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+    }
+
+    .final-grade-info {
+        flex: 1;
+    }
+
+        .final-grade-info span,
+        .final-letter span,
+        .final-gpa span {
+            display: block;
+            color: #6c757d;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .final-grade-info strong {
+            font-size: 25px;
+            font-weight: 900;
+            color: #0d6efd;
+        }
+
+    .final-letter,
+    .final-gpa {
+        text-align: center;
+        min-width: 75px;
+        padding-left: 20px;
+        border-left: 1px solid #dce5f2;
+    }
+
+        .final-letter strong,
+        .final-gpa strong {
+            font-size: 20px;
+            font-weight: 900;
+            color: #212529;
+        }
+
+    .final-grade-pending {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin: 20px 28px 28px;
+        padding: 20px;
+        background: #fff8eb;
+        border: 1px solid #ffe4ad;
+        border-radius: 17px;
+    }
+
+    .final-pending-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        background: #fff0d2;
+        color: #f59f00;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .final-grade-pending strong {
+        color: #9a6500;
+        font-size: 16px;
+    }
+
+    .final-grade-pending p {
+        margin: 4px 0 0;
+        color: #856f47;
+        font-size: 13px;
+    }
 
     .bottom-actions {
         display: flex;
@@ -476,12 +773,18 @@
             flex-direction: column;
         }
 
+        .pending-banner {
+            margin-left: 18px;
+            margin-right: 18px;
+        }
+
         .grade-row {
             padding: 17px 18px;
             gap: 12px;
         }
 
-        .grade-result {
+        .grade-result,
+        .not-graded-result {
             min-width: 90px;
         }
 
@@ -491,6 +794,20 @@
 
         .component-info span {
             display: none;
+        }
+
+        .final-grade-card {
+            margin: 18px;
+            padding: 18px;
+            gap: 12px;
+        }
+
+        .final-grade-info strong {
+            font-size: 21px;
+        }
+
+        .final-grade-pending {
+            margin: 18px;
         }
 
         .bottom-actions {

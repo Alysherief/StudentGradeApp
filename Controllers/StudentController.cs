@@ -21,9 +21,10 @@ namespace StudentGradeApp.Controllers
             _context = context;
             _userManager = userManager;
         }
+
         public IActionResult Index()
         {
-            return RedirectToAction("Index", "DashBoard");
+            return RedirectToAction("Index", "Dashboard");
         }
 
         [HttpGet]
@@ -38,7 +39,7 @@ namespace StudentGradeApp.Controllers
 
             foreach (var subject in subjects)
             {
-                model.Subjects.Add(item: new SubjectSelectionItemViewModel
+                model.Subjects.Add(new SubjectSelectionItemViewModel
                 {
                     SubjectId = subject.Id,
                     Name = subject.Name,
@@ -175,6 +176,14 @@ namespace StudentGradeApp.Controllers
 
             if (!subjectId.HasValue)
             {
+                ViewBag.GradedComponentIds = new HashSet<int>();
+                ViewBag.GradedComponents = 0;
+                ViewBag.TotalComponents = 0;
+                ViewBag.IsComplete = false;
+                ViewBag.FinalPercentage = 0m;
+                ViewBag.FinalLetterGrade = "Pending";
+                ViewBag.FinalGPA = null;
+
                 return View(new List<StudentGrade>());
             }
 
@@ -186,18 +195,103 @@ namespace StudentGradeApp.Controllers
 
             if (!belongsToStudent)
             {
+                ViewBag.GradedComponentIds = new HashSet<int>();
+                ViewBag.GradedComponents = 0;
+                ViewBag.TotalComponents = 0;
+                ViewBag.IsComplete = false;
+                ViewBag.FinalPercentage = 0m;
+                ViewBag.FinalLetterGrade = "Pending";
+                ViewBag.FinalGPA = null;
+
                 return View(new List<StudentGrade>());
             }
 
-            var grades = await _context.StudentGrades
+            var components = await _context.GradeComponents
+                .Where(gc => gc.SubjectId == subjectId.Value)
+                .OrderBy(gc => gc.Id)
+                .ToListAsync();
+
+            var studentGrades = await _context.StudentGrades
                 .Include(g => g.GradeComponent)
-                    .ThenInclude(gc => gc!.Subject)
                 .Where(g =>
                     g.StudentId == student.Id &&
                     g.GradeComponent != null &&
                     g.GradeComponent.SubjectId == subjectId.Value)
-                .OrderBy(g => g.GradeComponent!.Name)
                 .ToListAsync();
+
+            var gradedComponentIds = studentGrades
+                .Select(g => g.GradeComponentId)
+                .ToHashSet();
+
+            var grades = new List<StudentGrade>();
+
+            foreach (var component in components)
+            {
+                var existingGrade = studentGrades
+                    .FirstOrDefault(g => g.GradeComponentId == component.Id);
+
+                if (existingGrade != null)
+                {
+                    grades.Add(existingGrade);
+                }
+                else
+                {
+                    grades.Add(new StudentGrade
+                    {
+                        StudentId = student.Id,
+                        GradeComponentId = component.Id,
+                        GradeComponent = component
+                    });
+                }
+            }
+
+            var gradedComponents = gradedComponentIds.Count;
+            var totalComponents = components.Count;
+
+            var isComplete =
+                totalComponents > 0 &&
+                gradedComponents == totalComponents;
+
+            decimal finalPercentage = 0m;
+
+            if (isComplete)
+            {
+                foreach (var grade in studentGrades)
+                {
+                    var component = grade.GradeComponent;
+
+                    if (component == null || component.MaxGrade <= 0)
+                    {
+                        continue;
+                    }
+
+                    var componentPercentage =
+                        (grade.Grade / component.MaxGrade) * 100m;
+
+                    var weightedContribution =
+                        componentPercentage *
+                        (component.WeightPercentage / 100m);
+
+                    finalPercentage += weightedContribution;
+                }
+            }
+
+            ViewBag.GradedComponentIds = gradedComponentIds;
+            ViewBag.GradedComponents = gradedComponents;
+            ViewBag.TotalComponents = totalComponents;
+            ViewBag.IsComplete = isComplete;
+            ViewBag.FinalPercentage = finalPercentage;
+
+            if (isComplete)
+            {
+                ViewBag.FinalLetterGrade = GetLetterGrade(finalPercentage);
+                ViewBag.FinalGPA = GetGpa(finalPercentage);
+            }
+            else
+            {
+                ViewBag.FinalLetterGrade = "Pending";
+                ViewBag.FinalGPA = null;
+            }
 
             return View(grades);
         }
@@ -233,35 +327,61 @@ namespace StudentGradeApp.Controllers
 
             foreach (var subject in subjects)
             {
+                var components = await _context.GradeComponents
+                    .Where(gc => gc.SubjectId == subject.Id)
+                    .OrderBy(gc => gc.Id)
+                    .ToListAsync();
+
                 var subjectGrades = grades
                     .Where(g =>
                         g.GradeComponent != null &&
                         g.GradeComponent.SubjectId == subject.Id)
                     .ToList();
 
-                decimal totalPercentage = 0;
+                var gradedComponentIds = subjectGrades
+                    .Select(g => g.GradeComponentId)
+                    .ToHashSet();
 
-                foreach (var grade in subjectGrades)
+                var gradedComponents = components.Count(component =>
+                    gradedComponentIds.Contains(component.Id));
+
+                var totalComponents = components.Count;
+
+                var isComplete =
+                    totalComponents > 0 &&
+                    gradedComponents == totalComponents;
+
+                decimal totalPercentage = 0m;
+
+                if (isComplete)
                 {
-                    var component = grade.GradeComponent;
-
-                    if (component == null || component.MaxGrade <= 0)
+                    foreach (var grade in subjectGrades)
                     {
-                        continue;
+                        var component = grade.GradeComponent;
+
+                        if (component == null || component.MaxGrade <= 0)
+                        {
+                            continue;
+                        }
+
+                        var componentPercentage =
+                            (grade.Grade / component.MaxGrade) * 100m;
+
+                        var weightedContribution =
+                            componentPercentage *
+                            (component.WeightPercentage / 100m);
+
+                        totalPercentage += weightedContribution;
                     }
-
-                    var componentPercentage =
-                        (grade.Grade / component.MaxGrade) * 100m;
-
-                    var weightedContribution =
-                        componentPercentage *
-                        (component.WeightPercentage / 100m);
-
-                    totalPercentage += weightedContribution;
                 }
 
-                var letterGrade = GetLetterGrade(totalPercentage);
-                var gpa = GetGpa(totalPercentage);
+                var letterGrade = isComplete
+                    ? GetLetterGrade(totalPercentage)
+                    : "Pending";
+
+                var gpa = isComplete
+                    ? GetGpa(totalPercentage)
+                    : 0m;
 
                 performance.Add(new StudentPerformanceViewModel
                 {
@@ -271,24 +391,34 @@ namespace StudentGradeApp.Controllers
                     CreditHours = subject.CreditHours,
                     Percentage = totalPercentage,
                     LetterGrade = letterGrade,
-                    GPA = gpa
+                    GPA = gpa,
+                    IsComplete = isComplete,
+                    GradedComponents = gradedComponents,
+                    TotalComponents = totalComponents
                 });
             }
 
-            decimal totalCredits = performance
-                .Where(p => p.CreditHours > 0)
+            var completedPerformance = performance
+                .Where(p => p.IsComplete && p.CreditHours > 0)
+                .ToList();
+
+            decimal totalCredits = completedPerformance
                 .Sum(p => p.CreditHours);
 
-            decimal overallGpa = 0;
+            decimal overallGpa = 0m;
 
             if (totalCredits > 0)
             {
-                overallGpa = performance.Sum(p =>
+                overallGpa = completedPerformance.Sum(p =>
                     p.GPA * p.CreditHours) / totalCredits;
             }
 
             ViewBag.OverallGPA = overallGpa;
-            ViewBag.OverallLetterGrade = GetGpaLetterGrade(overallGpa);
+
+            ViewBag.OverallLetterGrade =
+                completedPerformance.Any()
+                    ? GetGpaLetterGrade(overallGpa)
+                    : "N/A";
 
             return View(performance);
         }

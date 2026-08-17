@@ -6,9 +6,11 @@
     var performance = Model.ToList();
 
     decimal overallGpa = ViewBag.OverallGPA ?? 0m;
-    string overallLetterGrade = ViewBag.OverallLetterGrade ?? "F";
+    string overallLetterGrade = ViewBag.OverallLetterGrade ?? "N/A";
 
     var totalCredits = performance.Sum(x => x.CreditHours);
+    var completedSubjects = performance.Count(x => x.IsComplete);
+    var pendingSubjects = performance.Count(x => !x.IsComplete);
 }
 
 <div class="container performance-page">
@@ -42,7 +44,14 @@
         <div class="overall-content">
 
             <div class="overall-gpa">
-                @overallGpa.ToString("0.00")
+                @if (completedSubjects > 0)
+                {
+                    @overallGpa.ToString("0.00")
+                }
+                else
+                {
+                    <span style="font-size: 2rem;">Pending</span>
+                }
             </div>
 
             <div class="overall-divider"></div>
@@ -52,7 +61,14 @@
                 <span>Overall Grade</span>
 
                 <strong>
-                    @overallLetterGrade
+                    @if (completedSubjects > 0)
+                    {
+                        @overallLetterGrade
+                    }
+                    else
+                    {
+                        <span class="text-muted">N/A</span>
+                    }
                 </strong>
 
             </div>
@@ -65,6 +81,19 @@
                 <i class="bi bi-book me-1"></i>
                 @performance.Count Subjects
             </span>
+
+            <span>
+                <i class="bi bi-check-circle me-1"></i>
+                @completedSubjects Completed
+            </span>
+
+            @if (pendingSubjects > 0)
+            {
+                <span>
+                    <i class="bi bi-hourglass-split me-1"></i>
+                    @pendingSubjects Pending
+                </span>
+            }
 
             <span>
                 <i class="bi bi-clock me-1"></i>
@@ -112,9 +141,18 @@
             {
                 <div class="performance-card">
 
-                    <div class="subject-icon">
-                        <i class="bi bi-book-fill"></i>
-                    </div>
+                    @if (subject.IsComplete)
+                    {
+                        <div class="subject-icon">
+                            <i class="bi bi-book-fill"></i>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="subject-icon pending-icon">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                    }
 
                     <div class="subject-info">
 
@@ -128,29 +166,53 @@
                             @subject.CreditHours Credit Hours
                         </span>
 
-                    </div>
-
-                    <div class="subject-result">
-
-                        <div class="percentage">
-                            @subject.Percentage.ToString("0.##")%
-                        </div>
-
-                        <div class="letter">
-                            @subject.LetterGrade
+                        <div class="component-progress">
+                            @subject.GradedComponents /
+                            @subject.TotalComponents
+                            Components Graded
                         </div>
 
                     </div>
 
-                    <div class="subject-gpa">
+                    @if (subject.IsComplete)
+                    {
+                        <div class="subject-result">
 
-                        <span>GPA</span>
+                            <div class="percentage">
+                                @subject.Percentage.ToString("0.##")%
+                            </div>
 
-                        <strong>
-                            @subject.GPA.ToString("0.0")
-                        </strong>
+                            <div class="letter">
+                                @subject.LetterGrade
+                            </div>
 
-                    </div>
+                        </div>
+
+                        <div class="subject-gpa">
+
+                            <span>GPA</span>
+
+                            <strong>
+                                @subject.GPA.ToString("0.0")
+                            </strong>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="subject-pending">
+
+                            <div class="pending-title">
+                                <i class="bi bi-lock-fill me-1"></i>
+                                Pending
+                            </div>
+
+                            <div class="pending-text">
+                                Final grade unavailable
+                            </div>
+
+                        </div>
+                    }
 
                 </div>
             }
@@ -294,6 +356,7 @@
         color: #6c757d;
         font-size: 13px;
         font-weight: 600;
+        flex-wrap: wrap;
     }
 
     .section-heading {
@@ -346,6 +409,11 @@
         flex-shrink: 0;
     }
 
+    .pending-icon {
+        background: #fff4e5;
+        color: #f59f00;
+    }
+
     .subject-info {
         flex: 1;
     }
@@ -360,6 +428,13 @@
             color: #8a94a6;
             font-size: 12px;
         }
+
+    .component-progress {
+        color: #8a94a6;
+        font-size: 11px;
+        font-weight: 600;
+        margin-top: 5px;
+    }
 
     .subject-result {
         text-align: right;
@@ -399,6 +474,23 @@
             font-weight: 800;
             color: #212529;
         }
+
+    .subject-pending {
+        min-width: 180px;
+        text-align: right;
+    }
+
+    .pending-title {
+        color: #f59f00;
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .pending-text {
+        color: #8a94a6;
+        font-size: 11px;
+        margin-top: 3px;
+    }
 
     .empty-card {
         background: white;
@@ -501,6 +593,10 @@
         .subject-gpa {
             min-width: 55px;
             padding-left: 10px;
+        }
+
+        .subject-pending {
+            min-width: 100px;
         }
 
         .bottom-actions {
