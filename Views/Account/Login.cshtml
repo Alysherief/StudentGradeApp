@@ -35,27 +35,27 @@
         overflow: hidden;
     }
 
-        .login-brand-panel::before {
-            content: "";
-            position: absolute;
-            width: 350px;
-            height: 350px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.08);
-            top: -170px;
-            right: -120px;
-        }
+    .login-brand-panel::before {
+        content: "";
+        position: absolute;
+        width: 350px;
+        height: 350px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        top: -170px;
+        right: -120px;
+    }
 
-        .login-brand-panel::after {
-            content: "";
-            position: absolute;
-            width: 280px;
-            height: 280px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.06);
-            bottom: -150px;
-            left: -100px;
-        }
+    .login-brand-panel::after {
+        content: "";
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.06);
+        bottom: -150px;
+        left: -100px;
+    }
 
     .login-brand-content {
         position: relative;
@@ -98,15 +98,15 @@
         opacity: 0.9;
     }
 
-        .login-feature i {
-            width: 34px;
-            height: 34px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.14);
-        }
+    .login-feature i {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.14);
+    }
 
     .login-form-panel {
         padding: 55px 50px;
@@ -117,48 +117,48 @@
         margin-bottom: 32px;
     }
 
-        .login-form-header h2 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #1f2937;
-            margin-bottom: 8px;
-        }
+    .login-form-header h2 {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #1f2937;
+        margin-bottom: 8px;
+    }
 
-        .login-form-header p {
-            color: #6b7280;
-            margin-bottom: 0;
-        }
+    .login-form-header p {
+        color: #6b7280;
+        margin-bottom: 0;
+    }
 
     .login-field {
         margin-bottom: 22px;
     }
 
-        .login-field .form-label {
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
+    .login-field .form-label {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
 
     .input-wrapper {
         position: relative;
     }
 
-        .input-wrapper > i {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #9ca3af;
-            z-index: 2;
-        }
+    .input-wrapper > i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+        z-index: 2;
+    }
 
     .login-input {
         padding-left: 43px !important;
         min-height: 48px;
     }
 
-        .login-input:focus + i {
-            color: #0d6efd;
-        }
+    .login-input:focus + i {
+        color: #0d6efd;
+    }
 
     .remember-row {
         display: flex;
@@ -167,15 +167,28 @@
         margin-bottom: 25px;
     }
 
-        .remember-row .form-check {
-            margin: 0;
-        }
+    .remember-row .form-check {
+        margin: 0;
+    }
 
-        .remember-row .form-check-label {
-            color: #6b7280;
-            font-size: 14px;
-            cursor: pointer;
-        }
+    .remember-row .form-check-label {
+        color: #6b7280;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .forgot-password-link {
+        color: #0d6efd;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all .2s ease;
+    }
+
+    .forgot-password-link:hover {
+        color: #0a58ca;
+        text-decoration: underline;
+    }
 
     .login-button {
         min-height: 50px;
@@ -183,11 +196,12 @@
         border-radius: 11px;
         font-weight: 700;
         box-shadow: 0 7px 18px rgba(13, 110, 253, 0.18);
+        transition: all .2s ease;
     }
 
-        .login-button:hover {
-            transform: translateY(-1px);
-        }
+    .login-button:hover {
+        transform: translateY(-1px);
+    }
 
     .security-note {
         display: flex;
@@ -217,9 +231,9 @@
             padding: 40px 30px;
         }
 
-            .login-brand-panel h1 {
-                font-size: 2rem;
-            }
+        .login-brand-panel h1 {
+            font-size: 2rem;
+        }
 
         .login-form-panel {
             padding: 40px 30px;
@@ -228,9 +242,16 @@
         .login-feature {
             margin-top: 20px;
         }
+
+        .remember-row {
+            gap: 10px;
+        }
+
+        .forgot-password-link {
+            font-size: 13px;
+        }
     }
 </style>
-
 
 <div class="login-page">
 
@@ -242,7 +263,6 @@
 
                 <div class="row g-0">
 
-                    <!-- LEFT SIDE -->
                     <div class="col-lg-6">
 
                         <div class="login-brand-panel">
@@ -298,8 +318,6 @@
 
                     </div>
 
-
-                    <!-- RIGHT SIDE -->
                     <div class="col-lg-6">
 
                         <div class="login-form-panel">
@@ -316,7 +334,6 @@
 
                             </div>
 
-
                             @if (ViewBag.Error != null)
                             {
                                 <div class="alert alert-danger error-message">
@@ -328,15 +345,11 @@
                                 </div>
                             }
 
-
                             <form asp-controller="Account"
                                   asp-action="Login"
                                   method="post">
 
                                 @Html.AntiForgeryToken()
-
-
-                                <!-- USERNAME / EMAIL -->
 
                                 <div class="login-field">
 
@@ -363,9 +376,6 @@
 
                                 </div>
 
-
-                                <!-- PASSWORD -->
-
                                 <div class="login-field">
 
                                     <label for="password"
@@ -391,9 +401,6 @@
 
                                 </div>
 
-
-                                <!-- REMEMBER ME -->
-
                                 <div class="remember-row">
 
                                     <div class="form-check">
@@ -413,10 +420,15 @@
 
                                     </div>
 
+                                    <a asp-controller="Account"
+                                       asp-action="ForgotPassword"
+                                       class="forgot-password-link">
+
+                                        Forgot password?
+
+                                    </a>
+
                                 </div>
-
-
-                                <!-- LOGIN -->
 
                                 <button type="submit"
                                         class="btn btn-primary login-button w-100">
@@ -426,7 +438,6 @@
                                     Sign In
 
                                 </button>
-
 
                                 <div class="security-note">
 

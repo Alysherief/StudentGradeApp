@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StudentGradeApp.Data;
+using StudentGradeApp.Interfaces;
 using StudentGradeApp.Models;
+using StudentGradeApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 
 // Add MVC
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
