@@ -266,6 +266,13 @@
             font-weight: 600;
         }
 
+    .performance-button {
+        border-radius: 10px;
+        font-weight: 700;
+        margin-top: 10px;
+        width: 100%;
+    }
+
     .empty-state {
         background: white;
         border: 1px solid #edf0f4;
@@ -373,7 +380,7 @@
         </h1>
 
         <p>
-            Create, edit and manage student accounts and their system access.
+            Create, edit and manage student accounts and their academic performance.
         </p>
 
         <div class="header-action">
@@ -629,6 +636,18 @@
                                 </span>
 
                             </div>
+
+
+                            <a asp-controller="Admin"
+                               asp-action="ViewStudentPerformance"
+                               asp-route-id="@student.Id"
+                               class="btn btn-primary performance-button">
+
+                                <i class="bi bi-bar-chart-fill me-2"></i>
+
+                                View Performance
+
+                            </a>
 
 
                             <div class="card-actions">

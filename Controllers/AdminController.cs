@@ -1191,5 +1191,274 @@ namespace StudentGradeApp.Controllers
                     subjectId
                 });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ViewStudentPerformance(
+            string id)
+        {
+            var student =
+                await _userManager.FindByIdAsync(id);
+
+            if (student == null)
+            {
+                return NotFound();
+            }
+
+            var isStudent =
+                await _userManager.IsInRoleAsync(
+                    student,
+                    "Student");
+
+            if (!isStudent)
+            {
+                return NotFound();
+            }
+
+            var subjects = await _context.StudentSubjects
+                .Include(ss => ss.Subject)
+                .Where(ss =>
+                    ss.StudentId == student.Id &&
+                    ss.Status == EnrollmentStatus.Approved &&
+                    ss.Subject != null)
+                .Select(ss => ss.Subject!)
+                .OrderBy(s => s.Name)
+                .ToListAsync();
+
+            var grades = await _context.StudentGrades
+                .Include(g => g.GradeComponent)
+                .Where(g =>
+                    g.StudentId == student.Id &&
+                    g.GradeComponent != null)
+                .ToListAsync();
+
+            var performance =
+                new List<StudentPerformanceViewModel>();
+
+            foreach (var subject in subjects)
+            {
+                var components =
+                    await _context.GradeComponents
+                        .Where(gc =>
+                            gc.SubjectId == subject.Id)
+                        .OrderBy(gc => gc.Id)
+                        .ToListAsync();
+
+                var subjectGrades =
+                    grades
+                        .Where(g =>
+                            g.GradeComponent != null &&
+                            g.GradeComponent.SubjectId ==
+                            subject.Id)
+                        .ToList();
+
+                var gradedComponentIds =
+                    subjectGrades
+                        .Select(g => g.GradeComponentId)
+                        .ToHashSet();
+
+                var gradedComponents =
+                    components.Count(component =>
+                        gradedComponentIds.Contains(
+                            component.Id));
+
+                var totalComponents =
+                    components.Count;
+
+                var isComplete =
+                    totalComponents > 0 &&
+                    gradedComponents ==
+                    totalComponents;
+
+                decimal totalPercentage = 0m;
+
+                if (isComplete)
+                {
+                    foreach (var grade in subjectGrades)
+                    {
+                        var component =
+                            grade.GradeComponent;
+
+                        if (component == null ||
+                            component.MaxGrade <= 0)
+                        {
+                            continue;
+                        }
+
+                        var componentPercentage =
+                            (grade.Grade /
+                             component.MaxGrade) *
+                            100m;
+
+                        var weightedContribution =
+                            componentPercentage *
+                            (component.WeightPercentage /
+                             100m);
+
+                        totalPercentage +=
+                            weightedContribution;
+                    }
+                }
+
+                var letterGrade =
+                    isComplete
+                        ? GetLetterGrade(totalPercentage)
+                        : "Pending";
+
+                var gpa =
+                    isComplete
+                        ? GetGpa(totalPercentage)
+                        : 0m;
+
+                performance.Add(
+                    new StudentPerformanceViewModel
+                    {
+                        SubjectId = subject.Id,
+                        SubjectName = subject.Name,
+                        SubjectCode = subject.Code,
+                        CreditHours = subject.CreditHours,
+                        Percentage = totalPercentage,
+                        LetterGrade = letterGrade,
+                        GPA = gpa,
+                        IsComplete = isComplete,
+                        GradedComponents =
+                            gradedComponents,
+                        TotalComponents =
+                            totalComponents
+                    });
+            }
+
+            var completedPerformance =
+                performance
+                    .Where(p =>
+                        p.IsComplete &&
+                        p.CreditHours > 0)
+                    .ToList();
+
+            decimal totalCredits =
+                completedPerformance
+                    .Sum(p => p.CreditHours);
+
+            decimal overallGpa = 0m;
+
+            if (totalCredits > 0)
+            {
+                overallGpa =
+                    completedPerformance.Sum(p =>
+                        p.GPA * p.CreditHours) /
+                    totalCredits;
+            }
+
+            ViewBag.OverallGPA =
+                overallGpa;
+
+            ViewBag.OverallLetterGrade =
+                completedPerformance.Any()
+                    ? GetGpaLetterGrade(overallGpa)
+                    : "N/A";
+
+            ViewBag.Student =
+                student;
+
+            return View(performance);
+        }
+
+        private static string GetLetterGrade(
+            decimal percentage)
+        {
+            if (percentage >= 90)
+                return "A";
+
+            if (percentage >= 85)
+                return "A-";
+
+            if (percentage >= 80)
+                return "B+";
+
+            if (percentage >= 75)
+                return "B";
+
+            if (percentage >= 70)
+                return "B-";
+
+            if (percentage >= 65)
+                return "C+";
+
+            if (percentage >= 60)
+                return "C";
+
+            if (percentage >= 55)
+                return "C-";
+
+            if (percentage >= 50)
+                return "D";
+
+            return "F";
+        }
+
+        private static decimal GetGpa(
+            decimal percentage)
+        {
+            if (percentage >= 90)
+                return 4.0m;
+
+            if (percentage >= 85)
+                return 3.7m;
+
+            if (percentage >= 80)
+                return 3.3m;
+
+            if (percentage >= 75)
+                return 3.0m;
+
+            if (percentage >= 70)
+                return 2.7m;
+
+            if (percentage >= 65)
+                return 2.3m;
+
+            if (percentage >= 60)
+                return 2.0m;
+
+            if (percentage >= 55)
+                return 1.7m;
+
+            if (percentage >= 50)
+                return 1.0m;
+
+            return 0.0m;
+        }
+
+        private static string GetGpaLetterGrade(
+            decimal gpa)
+        {
+            if (gpa >= 3.85m)
+                return "A";
+
+            if (gpa >= 3.50m)
+                return "A-";
+
+            if (gpa >= 3.15m)
+                return "B+";
+
+            if (gpa >= 2.85m)
+                return "B";
+
+            if (gpa >= 2.50m)
+                return "B-";
+
+            if (gpa >= 2.15m)
+                return "C+";
+
+            if (gpa >= 1.85m)
+                return "C";
+
+            if (gpa >= 1.50m)
+                return "C-";
+
+            if (gpa >= 1.00m)
+                return "D";
+
+            return "F";
+        }
     }
 }

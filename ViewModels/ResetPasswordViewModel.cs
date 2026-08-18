@@ -8,6 +8,8 @@ namespace StudentGradeApp.ViewModels
 
         public string Token { get; set; } = string.Empty;
 
+        public string ResetKey { get; set; } = string.Empty;
+
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "New Password")]

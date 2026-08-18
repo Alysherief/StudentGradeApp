@@ -20,6 +20,7 @@ namespace StudentGradeApp.Models
         public DateTime RequestedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime? ApprovedAt { get; set; }
+        public bool GradeNotificationSent { get; set; } = false;
     }
 
     public enum EnrollmentStatus

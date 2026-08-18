@@ -1,0 +1,451 @@
+﻿@model IEnumerable<StudentGradeApp.Models.AppUser>
+
+@{
+    ViewData["Title"] = "My Teachers";
+    var teachers = Model.ToList();
+}
+
+<style>
+    .teachers-page {
+        padding: 35px 0 60px;
+    }
+
+    .teachers-header {
+        background: linear-gradient(135deg, #0d6efd, #4f8dfd);
+        color: white;
+        border-radius: 24px;
+        padding: 38px;
+        margin-bottom: 30px;
+        box-shadow: 0 15px 35px rgba(13, 110, 253, 0.18);
+    }
+
+    .header-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 17px;
+        background: rgba(255, 255, 255, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        margin-bottom: 18px;
+    }
+
+    .teachers-header h1 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .teachers-header p {
+        margin: 0;
+        opacity: 0.9;
+    }
+
+    .summary-card {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    .summary-title {
+        font-weight: 800;
+        font-size: 1.1rem;
+        margin-bottom: 18px;
+    }
+
+    .summary-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0d6efd;
+    }
+
+    .summary-label {
+        color: #6c757d;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .teacher-card {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 22px;
+        overflow: hidden;
+        height: 100%;
+        box-shadow: 0 7px 22px rgba(0, 0, 0, .05);
+        transition: all .25s ease;
+    }
+
+        .teacher-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .09);
+            border-color: #c9dcff;
+        }
+
+    .teacher-top {
+        padding: 25px;
+        background: linear-gradient(135deg, #f5f8ff, #eef4ff);
+        border-bottom: 1px solid #e7edf7;
+    }
+
+    .teacher-avatar {
+        width: 65px;
+        height: 65px;
+        border-radius: 19px;
+        background: #0d6efd;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 27px;
+        flex-shrink: 0;
+    }
+
+    .teacher-name {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #212529;
+        margin-bottom: 4px;
+    }
+
+    .teacher-role {
+        color: #6c757d;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .teacher-body {
+        padding: 25px;
+    }
+
+    .teacher-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .info-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background: #f1f5ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .info-text small {
+        display: block;
+        color: #8a929a;
+        font-size: 10px;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: .4px;
+    }
+
+    .info-text span {
+        font-weight: 700;
+        color: #343a40;
+        word-break: break-word;
+    }
+
+    .subjects-section {
+        margin-top: 22px;
+        padding-top: 20px;
+        border-top: 1px solid #edf0f4;
+    }
+
+    .subjects-title {
+        font-size: 13px;
+        font-weight: 800;
+        color: #343a40;
+        margin-bottom: 12px;
+    }
+
+    .subject-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #eef4ff;
+        color: #0d6efd;
+        border-radius: 9px;
+        padding: 7px 10px;
+        margin: 0 5px 6px 0;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .profile-btn {
+        width: 100%;
+        border-radius: 11px;
+        font-weight: 700;
+        padding: 10px;
+        margin-top: 20px;
+    }
+
+    .empty-state {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 22px;
+        padding: 60px 30px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, .05);
+    }
+
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 22px;
+        background: #eef4ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 35px;
+        margin: 0 auto 20px;
+    }
+
+    .empty-state h3 {
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        color: #6c757d;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .back-btn {
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: 700;
+    }
+
+    @@media (max-width: 767px) {
+        .teachers-page {
+            padding-top: 20px;
+        }
+
+        .teachers-header {
+            padding: 28px 22px;
+            border-radius: 20px;
+        }
+
+            .teachers-header h1 {
+                font-size: 1.8rem;
+            }
+
+        .teacher-top,
+        .teacher-body {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="container teachers-page">
+
+    <div class="teachers-header">
+
+        <div class="header-icon">
+            <i class="bi bi-person-workspace"></i>
+        </div>
+
+        <h1>
+            My Teachers
+        </h1>
+
+        <p>
+            View the teachers responsible for your current subjects
+            and explore their profiles.
+        </p>
+
+    </div>
+
+    <div class="summary-card">
+
+        <div class="summary-title">
+            Teacher Overview
+        </div>
+
+        <div class="row align-items-center">
+
+            <div class="col-md-3">
+
+                <div class="summary-label">
+                    My Teachers
+                </div>
+
+                <div class="summary-number">
+                    @teachers.Count
+                </div>
+
+            </div>
+
+            <div class="col-md-9 mt-3 mt-md-0">
+
+                <div class="summary-label">
+                    Your Current Teachers
+                </div>
+
+                <p class="text-muted mb-0 mt-1">
+                    These are the teachers assigned to your approved subjects.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    @if (!teachers.Any())
+    {
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                <i class="bi bi-person-workspace"></i>
+            </div>
+
+            <h3>
+                No Teachers Yet
+            </h3>
+
+            <p>
+                You currently have no approved subjects with assigned teachers.
+                Once your subjects are approved, your teachers will appear here.
+            </p>
+
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+
+            @foreach (var teacher in teachers)
+            {
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="teacher-card">
+
+                        <div class="teacher-top">
+
+                            <div class="d-flex align-items-center gap-3">
+
+                                <div class="teacher-avatar">
+                                    <i class="bi bi-person-workspace"></i>
+                                </div>
+
+                                <div>
+
+                                    <div class="teacher-name">
+                                        @teacher.FullName
+                                    </div>
+
+                                    <div class="teacher-role">
+                                        Course Instructor
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="teacher-body">
+
+                            <div class="teacher-info">
+
+                                <div class="info-icon">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+
+                                <div class="info-text">
+
+                                    <small>
+                                        Username
+                                    </small>
+
+                                    <span>
+                                        @teacher.UserName
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="teacher-info">
+
+                                <div class="info-icon">
+                                    <i class="bi bi-envelope-fill"></i>
+                                </div>
+
+                                <div class="info-text">
+
+                                    <small>
+                                        Email
+                                    </small>
+
+                                    <span>
+                                        @teacher.Email
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="subjects-section">
+
+                                <div class="subjects-title">
+                                    <i class="bi bi-book me-1"></i>
+                                    Your Subjects With This Teacher
+                                </div>
+
+                                <span class="subject-badge">
+                                    <i class="bi bi-mortarboard-fill"></i>
+                                    Assigned Teacher
+                                </span>
+
+                            </div>
+
+                            <a asp-controller="Student"
+                               asp-action="TeacherProfile"
+                               asp-route-id="@teacher.Id"
+                               class="btn btn-primary profile-btn">
+
+                                <i class="bi bi-person-vcard me-2"></i>
+
+                                View Profile
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+    <div class="text-center mt-5">
+
+        <a asp-controller="Dashboard"
+           asp-action="Index"
+           class="btn btn-outline-secondary back-btn">
+
+            <i class="bi bi-speedometer2 me-2"></i>
+
+            Back to Dashboard
+
+        </a>
+
+    </div>
+
+</div>

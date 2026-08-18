@@ -712,5 +712,90 @@ namespace StudentGradeApp.Controllers
 
             return "F";
         }
+        [HttpGet]
+        public async Task<IActionResult> Teachers()
+        {
+            var student = await _userManager.GetUserAsync(User);
+
+            if (student == null)
+            {
+                return Unauthorized();
+            }
+
+            var teachers = await _context.StudentSubjects
+                .Include(ss => ss.Subject)
+                    .ThenInclude(s => s!.Teacher)
+                .Where(ss =>
+                    ss.StudentId == student.Id &&
+                    ss.Status == EnrollmentStatus.Approved &&
+                    ss.Subject != null &&
+                    ss.Subject.Teacher != null)
+                .Select(ss => ss.Subject!.Teacher!)
+                .Distinct()
+                .OrderBy(t => t.FullName)
+                .ToListAsync();
+
+            return View(teachers);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TeacherProfile(string id)
+        {
+            var student = await _userManager.GetUserAsync(User);
+
+            if (student == null)
+            {
+                return Unauthorized();
+            }
+
+            var teacher = await _userManager.FindByIdAsync(id);
+
+            if (teacher == null)
+            {
+                return NotFound();
+            }
+
+            var isTeacher = await _userManager.IsInRoleAsync(
+                teacher,
+                "Teacher");
+
+            if (!isTeacher)
+            {
+                return NotFound();
+            }
+
+            var subjects = await _context.StudentSubjects
+                .Include(ss => ss.Subject)
+                .Where(ss =>
+                    ss.StudentId == student.Id &&
+                    ss.Status == EnrollmentStatus.Approved &&
+                    ss.Subject != null &&
+                    ss.Subject.TeacherId == teacher.Id)
+                .Select(ss => new TeacherSubjectViewModel
+                {
+                    SubjectId = ss.Subject!.Id,
+                    Name = ss.Subject.Name,
+                    Code = ss.Subject.Code,
+                    CreditHours = ss.Subject.CreditHours
+                })
+                .OrderBy(s => s.Name)
+                .ToListAsync();
+
+            if (!subjects.Any())
+            {
+                return NotFound();
+            }
+
+            var model = new TeacherProfileViewModel
+            {
+                Id = teacher.Id,
+                FullName = teacher.FullName,
+                Username = teacher.UserName ?? string.Empty,
+                Email = teacher.Email ?? string.Empty,
+                Subjects = subjects
+            };
+
+            return View(model);
+        }
     }
 }

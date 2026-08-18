@@ -4,19 +4,10 @@
 
 <style>
 
-    /* =========================================================
-           DASHBOARD
-           ========================================================= */
-
     .dashboard-page {
         min-height: 80vh;
         padding-bottom: 60px;
     }
-
-
-    /* =========================================================
-           HERO / WELCOME SECTION
-           ========================================================= */
 
     .dashboard-hero {
         position: relative;
@@ -99,11 +90,6 @@
         max-width: 650px;
     }
 
-
-    /* =========================================================
-           USER CARD
-           ========================================================= */
-
     .dashboard-user-card {
         position: absolute;
         right: 45px;
@@ -146,11 +132,6 @@
         word-break: break-word;
     }
 
-
-    /* =========================================================
-           SECTION TITLES
-           ========================================================= */
-
     .section-title {
         font-size: 1.1rem;
         font-weight: 800;
@@ -158,21 +139,11 @@
         margin-bottom: 18px;
     }
 
-
-    /* =========================================================
-           DASHBOARD GRID
-           ========================================================= */
-
     .dashboard-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 22px;
     }
-
-
-    /* =========================================================
-           DASHBOARD CARDS
-           ========================================================= */
 
     .dashboard-card {
         border: 1px solid #edf0f5;
@@ -196,11 +167,6 @@
             height: 100%;
         }
 
-
-    /* =========================================================
-           CARD ICON
-           ========================================================= */
-
     .dashboard-icon {
         width: 58px;
         height: 58px;
@@ -213,11 +179,6 @@
         background: #edf4ff;
         color: #0d6efd;
     }
-
-
-    /* =========================================================
-           CARD TEXT
-           ========================================================= */
 
     .dashboard-card h3,
     .dashboard-card h4 {
@@ -235,11 +196,6 @@
         flex: 1;
     }
 
-
-    /* =========================================================
-           BUTTONS
-           ========================================================= */
-
     .dashboard-btn {
         border-radius: 12px;
         padding: 11px 18px;
@@ -251,11 +207,6 @@
         .dashboard-btn:hover {
             transform: translateY(-1px);
         }
-
-
-    /* =========================================================
-           ACCOUNT SECTION
-           ========================================================= */
 
     .account-section {
         margin-top: 42px;
@@ -276,11 +227,6 @@
         padding: 11px 18px;
         font-weight: 700;
     }
-
-
-    /* =========================================================
-           MOBILE
-           ========================================================= */
 
     @@media (max-width: 767px) {
 
@@ -319,30 +265,23 @@
             padding: 24px;
         }
     }
+
 </style>
 
 
-<!-- =========================================================
-     ADMIN DASHBOARD
-     ========================================================= -->
 @if (User.IsInRole("Admin"))
 {
     ViewData["Title"] = "Admin Dashboard";
 
     <div class="container dashboard-page mt-5">
 
-        <!-- HERO -->
-
         <div class="dashboard-hero">
 
             <div class="dashboard-hero-content">
 
                 <div class="dashboard-welcome">
-
                     <i class="bi bi-shield-check"></i>
-
                     ADMINISTRATOR PORTAL
-
                 </div>
 
                 <h1>
@@ -357,13 +296,10 @@
 
             </div>
 
-
             <div class="dashboard-user-card">
 
                 <div class="dashboard-user-icon">
-
                     <i class="bi bi-person-fill"></i>
-
                 </div>
 
                 <div class="dashboard-user-label">
@@ -379,15 +315,11 @@
         </div>
 
 
-        <!-- ACCOUNT MANAGEMENT -->
-
         <h4 class="section-title">
             Account Management
         </h4>
 
         <div class="dashboard-grid">
-
-            <!-- Teachers -->
 
             <div class="card dashboard-card shadow-sm">
 
@@ -418,8 +350,6 @@
             </div>
 
 
-            <!-- Students -->
-
             <div class="card dashboard-card shadow-sm">
 
                 <div class="card-body">
@@ -448,8 +378,6 @@
 
             </div>
 
-
-            <!-- Subjects -->
 
             <div class="card dashboard-card shadow-sm">
 
@@ -482,15 +410,11 @@
         </div>
 
 
-        <!-- ACADEMIC MANAGEMENT -->
-
         <h4 class="section-title mt-5">
             Academic Management
         </h4>
 
         <div class="dashboard-grid">
-
-            <!-- Subject Requests -->
 
             <div class="card dashboard-card shadow-sm">
 
@@ -521,8 +445,6 @@
             </div>
 
 
-            <!-- Assign Teachers -->
-
             <div class="card dashboard-card shadow-sm">
 
                 <div class="card-body">
@@ -551,8 +473,6 @@
 
             </div>
 
-
-            <!-- Grade Components -->
 
             <div class="card dashboard-card shadow-sm">
 
@@ -585,8 +505,6 @@
         </div>
 
 
-        <!-- ACCOUNT -->
-
         <div class="account-section">
 
             <h4 class="section-title">
@@ -594,8 +512,6 @@
             </h4>
 
             <div class="dashboard-grid">
-
-                <!-- Profile -->
 
                 <div class="card dashboard-card account-card shadow-sm">
 
@@ -625,8 +541,6 @@
 
                 </div>
 
-
-                <!-- Logout -->
 
                 <div class="card dashboard-card logout-card shadow-sm">
 
@@ -671,27 +585,19 @@
 }
 
 
-<!-- =========================================================
-     TEACHER DASHBOARD
-     ========================================================= -->
 @if (User.IsInRole("Teacher"))
 {
     ViewData["Title"] = "Teacher Dashboard";
 
     <div class="container dashboard-page mt-5">
 
-        <!-- HERO -->
-
         <div class="dashboard-hero">
 
             <div class="dashboard-hero-content">
 
                 <div class="dashboard-welcome">
-
                     <i class="bi bi-mortarboard-fill"></i>
-
                     TEACHER PORTAL
-
                 </div>
 
                 <h1>
@@ -706,13 +612,10 @@
 
             </div>
 
-
             <div class="dashboard-user-card">
 
                 <div class="dashboard-user-icon">
-
                     <i class="bi bi-person-badge-fill"></i>
-
                 </div>
 
                 <div class="dashboard-user-label">
@@ -728,15 +631,11 @@
         </div>
 
 
-        <!-- TEACHING TOOLS -->
-
         <h4 class="section-title">
             Teaching Tools
         </h4>
 
         <div class="dashboard-grid">
-
-            <!-- Students -->
 
             <div class="card dashboard-card shadow-sm">
 
@@ -767,8 +666,6 @@
             </div>
 
 
-            <!-- Grades -->
-
             <div class="card dashboard-card shadow-sm">
 
                 <div class="card-body">
@@ -797,8 +694,6 @@
 
             </div>
 
-
-            <!-- Subjects -->
 
             <div class="card dashboard-card shadow-sm">
 
@@ -831,8 +726,6 @@
         </div>
 
 
-        <!-- ACCOUNT -->
-
         <div class="account-section">
 
             <h4 class="section-title">
@@ -840,8 +733,6 @@
             </h4>
 
             <div class="dashboard-grid">
-
-                <!-- Profile -->
 
                 <div class="card dashboard-card account-card shadow-sm">
 
@@ -871,8 +762,6 @@
 
                 </div>
 
-
-                <!-- Logout -->
 
                 <div class="card dashboard-card logout-card shadow-sm">
 
@@ -917,27 +806,19 @@
 }
 
 
-<!-- =========================================================
-     STUDENT DASHBOARD
-     ========================================================= -->
 @if (User.IsInRole("Student"))
 {
     ViewData["Title"] = "Student Dashboard";
 
     <div class="container dashboard-page mt-5">
 
-        <!-- HERO -->
-
         <div class="dashboard-hero">
 
             <div class="dashboard-hero-content">
 
                 <div class="dashboard-welcome">
-
                     <i class="bi bi-mortarboard-fill"></i>
-
                     STUDENT PORTAL
-
                 </div>
 
                 <h1>
@@ -947,18 +828,15 @@
 
                 <p>
                     Keep track of your subjects, grades, academic performance,
-                    and semester progress all in one place.
+                    teachers, and semester progress all in one place.
                 </p>
 
             </div>
 
-
             <div class="dashboard-user-card">
 
                 <div class="dashboard-user-icon">
-
                     <i class="bi bi-person-fill"></i>
-
                 </div>
 
                 <div class="dashboard-user-label">
@@ -974,15 +852,11 @@
         </div>
 
 
-        <!-- ACADEMIC OVERVIEW -->
-
         <h4 class="section-title">
             Academic Overview
         </h4>
 
         <div class="dashboard-grid">
-
-            <!-- Grades -->
 
             <div class="card dashboard-card shadow-sm">
 
@@ -1013,8 +887,6 @@
             </div>
 
 
-            <!-- Subjects -->
-
             <div class="card dashboard-card shadow-sm">
 
                 <div class="card-body">
@@ -1044,7 +916,35 @@
             </div>
 
 
-            <!-- Performance -->
+            <div class="card dashboard-card shadow-sm">
+
+                <div class="card-body">
+
+                    <div class="dashboard-icon">
+                        <i class="bi bi-person-workspace"></i>
+                    </div>
+
+                    <h3>
+                        My Teachers
+                    </h3>
+
+                    <p>
+                        View the teachers assigned to your subjects and
+                        explore their profiles and information.
+                    </p>
+
+                    <a asp-controller="Student"
+                       asp-action="Teachers"
+                       class="btn btn-primary dashboard-btn w-100">
+
+                        View My Teachers
+
+                    </a>
+
+                </div>
+
+            </div>
+
 
             <div class="card dashboard-card shadow-sm">
 
@@ -1074,8 +974,6 @@
 
             </div>
 
-
-            <!-- Choose Subjects -->
 
             <div class="card dashboard-card shadow-sm">
 
@@ -1109,8 +1007,6 @@
         </div>
 
 
-        <!-- ACCOUNT -->
-
         <div class="account-section">
 
             <h4 class="section-title">
@@ -1118,8 +1014,6 @@
             </h4>
 
             <div class="dashboard-grid">
-
-                <!-- Profile -->
 
                 <div class="card dashboard-card account-card shadow-sm">
 
@@ -1149,8 +1043,6 @@
 
                 </div>
 
-
-                <!-- Logout -->
 
                 <div class="card dashboard-card logout-card shadow-sm">
 

@@ -221,7 +221,8 @@ namespace StudentGradeApp.Controllers
                 return View(model);
             }
 
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            var user =
+                await _userManager.FindByEmailAsync(model.Email);
 
             if (user == null)
             {
@@ -231,7 +232,8 @@ namespace StudentGradeApp.Controllers
                 return RedirectToAction(nameof(ForgotPassword));
             }
 
-            var roles = await _userManager.GetRolesAsync(user);
+            var roles =
+                await _userManager.GetRolesAsync(user);
 
             if (!roles.Contains("Student") &&
                 !roles.Contains("Teacher"))
@@ -242,10 +244,11 @@ namespace StudentGradeApp.Controllers
                 return RedirectToAction(nameof(ForgotPassword));
             }
 
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var token =
+                await _userManager.GeneratePasswordResetTokenAsync(user);
 
             var encodedToken =
-                System.Net.WebUtility.UrlEncode(token);
+                Uri.EscapeDataString(token);
 
             var resetUrl = Url.Action(
                 nameof(ResetPassword),
@@ -268,11 +271,18 @@ namespace StudentGradeApp.Controllers
 <head>
     <meta charset='UTF-8'>
 </head>
-<body style='font-family: Arial, sans-serif; background-color: #f5f7fb; padding: 30px;'>
-    <div style='max-width: 600px; margin: auto; background: white; padding: 35px; border-radius: 15px;'>
-        <h2 style='color: #0d6efd;'>Password Reset</h2>
 
-        <p>Hello {System.Net.WebUtility.HtmlEncode(user.FullName)},</p>
+<body style='font-family: Arial, sans-serif; background-color: #f5f7fb; padding: 30px;'>
+
+    <div style='max-width: 600px; margin: auto; background: white; padding: 35px; border-radius: 15px;'>
+
+        <h2 style='color: #0d6efd;'>
+            Password Reset
+        </h2>
+
+        <p>
+            Hello {System.Net.WebUtility.HtmlEncode(user.FullName)},
+        </p>
 
         <p>
             We received a request to reset the password for your
@@ -284,6 +294,7 @@ namespace StudentGradeApp.Controllers
         </p>
 
         <p style='text-align: center; margin: 30px 0;'>
+
             <a href='{resetUrl}'
                style='background-color: #0d6efd;
                       color: white;
@@ -293,15 +304,21 @@ namespace StudentGradeApp.Controllers
                       font-weight: bold;'>
                 Reset Password
             </a>
+
         </p>
 
         <p>
-            If you did not request a password reset, you can safely
-            ignore this email.
+            This password reset link will expire after
+            <strong>10 minutes</strong>.
         </p>
 
         <p>
-            This link will only work for your account.
+            The link can be opened from any browser or device.
+        </p>
+
+        <p>
+            If you did not request a password reset,
+            you can safely ignore this email.
         </p>
 
         <hr>
@@ -309,7 +326,9 @@ namespace StudentGradeApp.Controllers
         <p style='color: #777; font-size: 13px;'>
             StudentGradeApp
         </p>
+
     </div>
+
 </body>
 </html>";
 
@@ -325,7 +344,7 @@ namespace StudentGradeApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult ResetPassword(
+        public async Task<IActionResult> ResetPassword(
             string userId,
             string token)
         {
@@ -333,6 +352,36 @@ namespace StudentGradeApp.Controllers
                 string.IsNullOrWhiteSpace(token))
             {
                 return RedirectToAction(nameof(Login));
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return View("ResetPasswordExpired");
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (!roles.Contains("Student") &&
+                !roles.Contains("Teacher"))
+            {
+                return View("ResetPasswordExpired");
+            }
+
+            var decodedToken =
+                Uri.UnescapeDataString(token);
+
+            var tokenIsValid =
+                await _userManager.VerifyUserTokenAsync(
+                    user,
+                    _userManager.Options.Tokens.PasswordResetTokenProvider,
+                    "ResetPassword",
+                    decodedToken);
+
+            if (!tokenIsValid)
+            {
+                return View("ResetPasswordExpired");
             }
 
             var model = new ResetPasswordViewModel
@@ -354,36 +403,39 @@ namespace StudentGradeApp.Controllers
                 return View(model);
             }
 
-            var user = await _userManager.FindByIdAsync(model.UserId);
+            var user =
+                await _userManager.FindByIdAsync(model.UserId);
 
             if (user == null)
             {
                 ModelState.AddModelError(
                     string.Empty,
-                    "The password reset link is invalid.");
+                    "The password reset link is invalid or has expired.");
 
                 return View(model);
             }
 
-            var roles = await _userManager.GetRolesAsync(user);
+            var roles =
+                await _userManager.GetRolesAsync(user);
 
             if (!roles.Contains("Student") &&
                 !roles.Contains("Teacher"))
             {
                 ModelState.AddModelError(
                     string.Empty,
-                    "The password reset link is invalid.");
+                    "The password reset link is invalid or has expired.");
 
                 return View(model);
             }
 
             var decodedToken =
-                System.Net.WebUtility.UrlDecode(model.Token);
+                Uri.UnescapeDataString(model.Token);
 
-            var result = await _userManager.ResetPasswordAsync(
-                user,
-                decodedToken,
-                model.NewPassword);
+            var result =
+                await _userManager.ResetPasswordAsync(
+                    user,
+                    decodedToken,
+                    model.NewPassword);
 
             if (result.Succeeded)
             {
