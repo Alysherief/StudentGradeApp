@@ -30,14 +30,38 @@ namespace StudentGradeApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Subjects()
         {
-            var subjects = await _context.Subjects
+            var student = await _userManager.GetUserAsync(User);
+
+            if (student == null)
+            {
+                return Unauthorized();
+            }
+
+            var existingEnrollments = await _context.StudentSubjects
+                .Where(ss =>
+                    ss.StudentId == student.Id &&
+                    (ss.Status == EnrollmentStatus.Pending ||
+                     ss.Status == EnrollmentStatus.Approved))
+                .Include(ss => ss.Subject)
+                .ToListAsync();
+
+            var existingSubjectIds = existingEnrollments
+                .Select(ss => ss.SubjectId)
+                .ToHashSet();
+
+            var currentCreditHours = existingEnrollments
+                .Where(ss => ss.Subject != null)
+                .Sum(ss => ss.Subject!.CreditHours);
+
+            var availableSubjects = await _context.Subjects
                 .Include(s => s.Teacher)
+                .Where(s => !existingSubjectIds.Contains(s.Id))
                 .OrderBy(s => s.Name)
                 .ToListAsync();
 
             var model = new SelectSubjectsViewModel();
 
-            foreach (var subject in subjects)
+            foreach (var subject in availableSubjects)
             {
                 model.Subjects.Add(new SubjectSelectionItemViewModel
                 {
@@ -50,12 +74,16 @@ namespace StudentGradeApp.Controllers
                 });
             }
 
+            ViewBag.CurrentCreditHours = currentCreditHours;
+            ViewBag.RemainingCreditHours = Math.Max(0, 30 - currentCreditHours);
+
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SelectSubjects(SelectSubjectsViewModel model)
+        public async Task<IActionResult> SelectSubjects(
+            SelectSubjectsViewModel model)
         {
             var student = await _userManager.GetUserAsync(User);
 
@@ -63,6 +91,22 @@ namespace StudentGradeApp.Controllers
             {
                 return Unauthorized();
             }
+
+            var existingEnrollments = await _context.StudentSubjects
+                .Where(ss =>
+                    ss.StudentId == student.Id &&
+                    (ss.Status == EnrollmentStatus.Pending ||
+                     ss.Status == EnrollmentStatus.Approved))
+                .Include(ss => ss.Subject)
+                .ToListAsync();
+
+            var existingSubjectIds = existingEnrollments
+                .Select(ss => ss.SubjectId)
+                .ToHashSet();
+
+            var currentCreditHours = existingEnrollments
+                .Where(ss => ss.Subject != null)
+                .Sum(ss => ss.Subject!.CreditHours);
 
             var selectedSubjectIds = model.Subjects
                 .Where(s => s.Selected)
@@ -76,6 +120,29 @@ namespace StudentGradeApp.Controllers
                     string.Empty,
                     "Please select at least one subject.");
 
+                await RebuildSubjectsModel(
+                    model,
+                    existingSubjectIds,
+                    currentCreditHours);
+
+                return View("Subjects", model);
+            }
+
+            var alreadySelectedIds = selectedSubjectIds
+                .Where(id => existingSubjectIds.Contains(id))
+                .ToList();
+
+            if (alreadySelectedIds.Any())
+            {
+                ModelState.AddModelError(
+                    string.Empty,
+                    "One or more of the selected subjects have already been submitted.");
+
+                await RebuildSubjectsModel(
+                    model,
+                    existingSubjectIds,
+                    currentCreditHours);
+
                 return View("Subjects", model);
             }
 
@@ -83,29 +150,41 @@ namespace StudentGradeApp.Controllers
                 .Where(s => selectedSubjectIds.Contains(s.Id))
                 .ToListAsync();
 
-            var totalCreditHours = selectedSubjects
-                .Sum(s => s.CreditHours);
-
-            if (totalCreditHours != 30)
+            if (selectedSubjects.Count != selectedSubjectIds.Count)
             {
                 ModelState.AddModelError(
                     string.Empty,
-                    $"You must select exactly 30 credit hours. You currently selected {totalCreditHours}.");
+                    "One or more selected subjects could not be found.");
+
+                await RebuildSubjectsModel(
+                    model,
+                    existingSubjectIds,
+                    currentCreditHours);
 
                 return View("Subjects", model);
             }
 
-            var existingEnrollments = await _context.StudentSubjects
-                .Where(ss =>
-                    ss.StudentId == student.Id &&
-                    selectedSubjectIds.Contains(ss.SubjectId))
-                .ToListAsync();
+            var newlySelectedCreditHours = selectedSubjects
+                .Sum(s => s.CreditHours);
 
-            if (existingEnrollments.Any())
+            var totalCreditHours =
+                currentCreditHours + newlySelectedCreditHours;
+
+            if (totalCreditHours > 30)
             {
+                var remainingCreditHours =
+                    Math.Max(0, 30 - currentCreditHours);
+
                 ModelState.AddModelError(
                     string.Empty,
-                    "You have already submitted a request for one or more of these subjects.");
+                    $"You can select up to {remainingCreditHours} more credit hours. " +
+                    $"Your selection would bring your total to {totalCreditHours} credit hours, " +
+                    $"which exceeds the 30 credit hour limit.");
+
+                await RebuildSubjectsModel(
+                    model,
+                    existingSubjectIds,
+                    currentCreditHours);
 
                 return View("Subjects", model);
             }
@@ -124,9 +203,47 @@ namespace StudentGradeApp.Controllers
             await _context.SaveChangesAsync();
 
             TempData["SuccessMessage"] =
-                "Your subject selection has been successfully submitted for administrator approval.";
+                $"Your subject selection has been submitted successfully. " +
+                $"You are now enrolled in {totalCreditHours} credit hours " +
+                $"including your pending requests.";
 
             return RedirectToAction(nameof(Subjects));
+        }
+
+        private async Task RebuildSubjectsModel(
+            SelectSubjectsViewModel model,
+            HashSet<int> existingSubjectIds,
+            int currentCreditHours)
+        {
+            var availableSubjects = await _context.Subjects
+                .Include(s => s.Teacher)
+                .Where(s => !existingSubjectIds.Contains(s.Id))
+                .OrderBy(s => s.Name)
+                .ToListAsync();
+
+            var selectedIds = model.Subjects
+                .Where(s => s.Selected)
+                .Select(s => s.SubjectId)
+                .ToHashSet();
+
+            model.Subjects.Clear();
+
+            foreach (var subject in availableSubjects)
+            {
+                model.Subjects.Add(new SubjectSelectionItemViewModel
+                {
+                    SubjectId = subject.Id,
+                    Name = subject.Name,
+                    Code = subject.Code,
+                    CreditHours = subject.CreditHours,
+                    TeacherName = subject.Teacher?.FullName,
+                    Selected = selectedIds.Contains(subject.Id)
+                });
+            }
+
+            ViewBag.CurrentCreditHours = currentCreditHours;
+            ViewBag.RemainingCreditHours =
+                Math.Max(0, 30 - currentCreditHours);
         }
 
         [HttpGet]
@@ -148,7 +265,71 @@ namespace StudentGradeApp.Controllers
                 .OrderBy(ss => ss.Subject!.Name)
                 .ToListAsync();
 
+            ViewBag.RemovalRequests = await _context.SubjectRemovalRequests
+                .Where(r =>
+                    r.StudentId == student.Id &&
+                    r.Status == RemovalRequestStatus.Pending)
+                .Select(r => r.SubjectId)
+                .ToListAsync();
+
             return View(subjects);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RequestSubjectRemoval(int subjectId)
+        {
+            var student = await _userManager.GetUserAsync(User);
+
+            if (student == null)
+            {
+                return Unauthorized();
+            }
+
+            var enrollment = await _context.StudentSubjects
+                .Include(ss => ss.Subject)
+                .FirstOrDefaultAsync(ss =>
+                    ss.StudentId == student.Id &&
+                    ss.SubjectId == subjectId &&
+                    ss.Status == EnrollmentStatus.Approved);
+
+            if (enrollment == null)
+            {
+                TempData["ErrorMessage"] =
+                    "You are not currently enrolled in this subject.";
+
+                return RedirectToAction(nameof(MySubjects));
+            }
+
+            var existingRequest = await _context.SubjectRemovalRequests
+                .FirstOrDefaultAsync(r =>
+                    r.StudentId == student.Id &&
+                    r.SubjectId == subjectId &&
+                    r.Status == RemovalRequestStatus.Pending);
+
+            if (existingRequest != null)
+            {
+                TempData["ErrorMessage"] =
+                    "You already have a pending removal request for this subject.";
+
+                return RedirectToAction(nameof(MySubjects));
+            }
+
+            _context.SubjectRemovalRequests.Add(
+                new SubjectRemovalRequest
+                {
+                    StudentId = student.Id,
+                    SubjectId = subjectId,
+                    Status = RemovalRequestStatus.Pending,
+                    RequestedAt = DateTime.UtcNow
+                });
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] =
+                $"Your request to remove {enrollment.Subject?.Name} has been submitted for administrator approval.";
+
+            return RedirectToAction(nameof(MySubjects));
         }
 
         [HttpGet]
@@ -228,7 +409,8 @@ namespace StudentGradeApp.Controllers
             foreach (var component in components)
             {
                 var existingGrade = studentGrades
-                    .FirstOrDefault(g => g.GradeComponentId == component.Id);
+                    .FirstOrDefault(g =>
+                        g.GradeComponentId == component.Id);
 
                 if (existingGrade != null)
                 {
@@ -260,7 +442,8 @@ namespace StudentGradeApp.Controllers
                 {
                     var component = grade.GradeComponent;
 
-                    if (component == null || component.MaxGrade <= 0)
+                    if (component == null ||
+                        component.MaxGrade <= 0)
                     {
                         continue;
                     }
@@ -284,8 +467,11 @@ namespace StudentGradeApp.Controllers
 
             if (isComplete)
             {
-                ViewBag.FinalLetterGrade = GetLetterGrade(finalPercentage);
-                ViewBag.FinalGPA = GetGpa(finalPercentage);
+                ViewBag.FinalLetterGrade =
+                    GetLetterGrade(finalPercentage);
+
+                ViewBag.FinalGPA =
+                    GetGpa(finalPercentage);
             }
             else
             {
@@ -323,7 +509,8 @@ namespace StudentGradeApp.Controllers
                     g.GradeComponent != null)
                 .ToListAsync();
 
-            var performance = new List<StudentPerformanceViewModel>();
+            var performance =
+                new List<StudentPerformanceViewModel>();
 
             foreach (var subject in subjects)
             {
@@ -342,8 +529,9 @@ namespace StudentGradeApp.Controllers
                     .Select(g => g.GradeComponentId)
                     .ToHashSet();
 
-                var gradedComponents = components.Count(component =>
-                    gradedComponentIds.Contains(component.Id));
+                var gradedComponents =
+                    components.Count(component =>
+                        gradedComponentIds.Contains(component.Id));
 
                 var totalComponents = components.Count;
 
@@ -359,7 +547,8 @@ namespace StudentGradeApp.Controllers
                     {
                         var component = grade.GradeComponent;
 
-                        if (component == null || component.MaxGrade <= 0)
+                        if (component == null ||
+                            component.MaxGrade <= 0)
                         {
                             continue;
                         }
@@ -383,34 +572,39 @@ namespace StudentGradeApp.Controllers
                     ? GetGpa(totalPercentage)
                     : 0m;
 
-                performance.Add(new StudentPerformanceViewModel
-                {
-                    SubjectId = subject.Id,
-                    SubjectName = subject.Name,
-                    SubjectCode = subject.Code,
-                    CreditHours = subject.CreditHours,
-                    Percentage = totalPercentage,
-                    LetterGrade = letterGrade,
-                    GPA = gpa,
-                    IsComplete = isComplete,
-                    GradedComponents = gradedComponents,
-                    TotalComponents = totalComponents
-                });
+                performance.Add(
+                    new StudentPerformanceViewModel
+                    {
+                        SubjectId = subject.Id,
+                        SubjectName = subject.Name,
+                        SubjectCode = subject.Code,
+                        CreditHours = subject.CreditHours,
+                        Percentage = totalPercentage,
+                        LetterGrade = letterGrade,
+                        GPA = gpa,
+                        IsComplete = isComplete,
+                        GradedComponents = gradedComponents,
+                        TotalComponents = totalComponents
+                    });
             }
 
             var completedPerformance = performance
-                .Where(p => p.IsComplete && p.CreditHours > 0)
+                .Where(p =>
+                    p.IsComplete &&
+                    p.CreditHours > 0)
                 .ToList();
 
-            decimal totalCredits = completedPerformance
-                .Sum(p => p.CreditHours);
+            decimal totalCredits =
+                completedPerformance.Sum(p => p.CreditHours);
 
             decimal overallGpa = 0m;
 
             if (totalCredits > 0)
             {
-                overallGpa = completedPerformance.Sum(p =>
-                    p.GPA * p.CreditHours) / totalCredits;
+                overallGpa =
+                    completedPerformance.Sum(p =>
+                        p.GPA * p.CreditHours) /
+                    totalCredits;
             }
 
             ViewBag.OverallGPA = overallGpa;

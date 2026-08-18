@@ -3,31 +3,153 @@
 }
 
 <style>
+
+    /* =========================================================
+           DASHBOARD
+           ========================================================= */
+
     .dashboard-page {
         min-height: 80vh;
         padding-bottom: 60px;
     }
 
+
+    /* =========================================================
+           HERO / WELCOME SECTION
+           ========================================================= */
+
     .dashboard-hero {
-        border-radius: 24px;
-        padding: 38px 40px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 28px;
+        padding: 42px 45px;
         margin-bottom: 35px;
-        background: linear-gradient(135deg, #0d6efd 0%, #4f8dfd 100%);
+        background: linear-gradient(135deg, #0b5ed7 0%, #0d6efd 45%, #6ea8fe 100%);
         color: white;
-        box-shadow: 0 15px 35px rgba(13, 110, 253, 0.18);
+        box-shadow: 0 20px 45px rgba(13, 110, 253, 0.22);
+        min-height: 220px;
+        display: flex;
+        align-items: center;
     }
 
-        .dashboard-hero h1 {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 8px;
+        .dashboard-hero::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            right: -80px;
+            top: -140px;
         }
 
-        .dashboard-hero p {
-            margin: 0;
-            opacity: 0.9;
-            font-size: 15px;
+        .dashboard-hero::after {
+            content: "";
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.07);
+            right: 190px;
+            bottom: -140px;
         }
+
+    .dashboard-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 750px;
+    }
+
+    .dashboard-welcome {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 14px;
+        margin-bottom: 15px;
+        border-radius: 50px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .6px;
+    }
+
+        .dashboard-welcome i {
+            font-size: 14px;
+        }
+
+    .dashboard-hero h1 {
+        font-size: 2.5rem;
+        font-weight: 850;
+        letter-spacing: -0.8px;
+        margin-bottom: 10px;
+        line-height: 1.15;
+    }
+
+        .dashboard-hero h1 span {
+            font-weight: 500;
+            opacity: 0.95;
+        }
+
+    .dashboard-hero p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 16px;
+        line-height: 1.6;
+        max-width: 650px;
+    }
+
+
+    /* =========================================================
+           USER CARD
+           ========================================================= */
+
+    .dashboard-user-card {
+        position: absolute;
+        right: 45px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+        width: 175px;
+        padding: 20px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.13);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(10px);
+        text-align: center;
+    }
+
+    .dashboard-user-icon {
+        width: 55px;
+        height: 55px;
+        margin: 0 auto 10px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 23px;
+    }
+
+    .dashboard-user-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: .7px;
+        opacity: .75;
+        font-weight: 700;
+    }
+
+    .dashboard-user-name {
+        font-size: 15px;
+        font-weight: 800;
+        margin-top: 3px;
+        word-break: break-word;
+    }
+
+
+    /* =========================================================
+           SECTION TITLES
+           ========================================================= */
 
     .section-title {
         font-size: 1.1rem;
@@ -36,11 +158,21 @@
         margin-bottom: 18px;
     }
 
+
+    /* =========================================================
+           DASHBOARD GRID
+           ========================================================= */
+
     .dashboard-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 22px;
     }
+
+
+    /* =========================================================
+           DASHBOARD CARDS
+           ========================================================= */
 
     .dashboard-card {
         border: 1px solid #edf0f5;
@@ -64,6 +196,11 @@
             height: 100%;
         }
 
+
+    /* =========================================================
+           CARD ICON
+           ========================================================= */
+
     .dashboard-icon {
         width: 58px;
         height: 58px;
@@ -76,6 +213,11 @@
         background: #edf4ff;
         color: #0d6efd;
     }
+
+
+    /* =========================================================
+           CARD TEXT
+           ========================================================= */
 
     .dashboard-card h3,
     .dashboard-card h4 {
@@ -93,6 +235,11 @@
         flex: 1;
     }
 
+
+    /* =========================================================
+           BUTTONS
+           ========================================================= */
+
     .dashboard-btn {
         border-radius: 12px;
         padding: 11px 18px;
@@ -104,6 +251,11 @@
         .dashboard-btn:hover {
             transform: translateY(-1px);
         }
+
+
+    /* =========================================================
+           ACCOUNT SECTION
+           ========================================================= */
 
     .account-section {
         margin-top: 42px;
@@ -125,6 +277,11 @@
         font-weight: 700;
     }
 
+
+    /* =========================================================
+           MOBILE
+           ========================================================= */
+
     @@media (max-width: 767px) {
 
         .dashboard-page {
@@ -132,13 +289,26 @@
         }
 
         .dashboard-hero {
-            padding: 28px 22px;
-            border-radius: 20px;
+            padding: 30px 24px;
+            min-height: auto;
+            border-radius: 22px;
         }
 
             .dashboard-hero h1 {
-                font-size: 1.65rem;
+                font-size: 1.9rem;
             }
+
+            .dashboard-hero p {
+                font-size: 14px;
+            }
+
+        .dashboard-user-card {
+            display: none;
+        }
+
+        .dashboard-welcome {
+            font-size: 11px;
+        }
 
         .dashboard-grid {
             grid-template-columns: 1fr;
@@ -152,32 +322,84 @@
 </style>
 
 
+<!-- =========================================================
+     ADMIN DASHBOARD
+     ========================================================= -->
 @if (User.IsInRole("Admin"))
 {
     ViewData["Title"] = "Admin Dashboard";
 
     <div class="container dashboard-page mt-5">
 
+        <!-- HERO -->
+
         <div class="dashboard-hero">
-            <h1>Admin Dashboard</h1>
-            <p>
-                Welcome back, @User.Identity?.Name.
-                Manage users, subjects, and academic activities from here.
-            </p>
+
+            <div class="dashboard-hero-content">
+
+                <div class="dashboard-welcome">
+
+                    <i class="bi bi-shield-check"></i>
+
+                    ADMINISTRATOR PORTAL
+
+                </div>
+
+                <h1>
+                    Welcome back,
+                    <span>@User.Identity?.Name</span> 👋
+                </h1>
+
+                <p>
+                    Manage users, subjects, teacher assignments, and
+                    academic activities from one central dashboard.
+                </p>
+
+            </div>
+
+
+            <div class="dashboard-user-card">
+
+                <div class="dashboard-user-icon">
+
+                    <i class="bi bi-person-fill"></i>
+
+                </div>
+
+                <div class="dashboard-user-label">
+                    Signed in as
+                </div>
+
+                <div class="dashboard-user-name">
+                    @User.Identity?.Name
+                </div>
+
+            </div>
+
         </div>
 
-        <h4 class="section-title">Account Management</h4>
+
+        <!-- ACCOUNT MANAGEMENT -->
+
+        <h4 class="section-title">
+            Account Management
+        </h4>
 
         <div class="dashboard-grid">
 
+            <!-- Teachers -->
+
             <div class="card dashboard-card shadow-sm">
+
                 <div class="card-body">
 
                     <div class="dashboard-icon">
                         <i class="bi bi-person-workspace"></i>
                     </div>
 
-                    <h4>Teachers</h4>
+                    <h4>
+                        Teachers
+                    </h4>
 
                     <p>
                         Create, edit, and manage teacher accounts.
@@ -186,20 +408,29 @@
                     <a asp-controller="Admin"
                        asp-action="ManageTeachers"
                        class="btn btn-primary dashboard-btn w-100">
+
                         Manage Teachers
+
                     </a>
 
                 </div>
+
             </div>
 
+
+            <!-- Students -->
+
             <div class="card dashboard-card shadow-sm">
+
                 <div class="card-body">
 
                     <div class="dashboard-icon">
                         <i class="bi bi-mortarboard-fill"></i>
                     </div>
 
-                    <h4>Students</h4>
+                    <h4>
+                        Students
+                    </h4>
 
                     <p>
                         Create, edit, and manage student accounts.
@@ -208,20 +439,29 @@
                     <a asp-controller="Admin"
                        asp-action="ManageStudents"
                        class="btn btn-primary dashboard-btn w-100">
+
                         Manage Students
+
                     </a>
 
                 </div>
+
             </div>
 
+
+            <!-- Subjects -->
+
             <div class="card dashboard-card shadow-sm">
+
                 <div class="card-body">
 
                     <div class="dashboard-icon">
                         <i class="bi bi-journal-bookmark-fill"></i>
                     </div>
 
-                    <h4>Subjects</h4>
+                    <h4>
+                        Subjects
+                    </h4>
 
                     <p>
                         Create and manage university subjects and credit hours.
@@ -230,26 +470,39 @@
                     <a asp-controller="Admin"
                        asp-action="ManageSubjects"
                        class="btn btn-primary dashboard-btn w-100">
+
                         Manage Subjects
+
                     </a>
 
                 </div>
+
             </div>
 
         </div>
 
-        <h4 class="section-title mt-5">Academic Management</h4>
+
+        <!-- ACADEMIC MANAGEMENT -->
+
+        <h4 class="section-title mt-5">
+            Academic Management
+        </h4>
 
         <div class="dashboard-grid">
 
+            <!-- Subject Requests -->
+
             <div class="card dashboard-card shadow-sm">
+
                 <div class="card-body">
 
                     <div class="dashboard-icon">
                         <i class="bi bi-clipboard-check-fill"></i>
                     </div>
 
-                    <h4>Subject Requests</h4>
+                    <h4>
+                        Subject Requests
+                    </h4>
 
                     <p>
                         Review and approve student subject selections.
@@ -258,20 +511,29 @@
                     <a asp-controller="Admin"
                        asp-action="SubjectRequests"
                        class="btn btn-warning dashboard-btn w-100">
+
                         Review Requests
+
                     </a>
 
                 </div>
+
             </div>
 
+
+            <!-- Assign Teachers -->
+
             <div class="card dashboard-card shadow-sm">
+
                 <div class="card-body">
 
                     <div class="dashboard-icon">
                         <i class="bi bi-diagram-3-fill"></i>
                     </div>
 
-                    <h4>Assign Teachers</h4>
+                    <h4>
+                        Assign Teachers
+                    </h4>
 
                     <p>
                         Assign teachers to the subjects they will teach.
@@ -280,20 +542,29 @@
                     <a asp-controller="Admin"
                        asp-action="AssignTeacher"
                        class="btn btn-success dashboard-btn w-100">
+
                         Assign Teachers
+
                     </a>
 
                 </div>
+
             </div>
 
+
+            <!-- Grade Components -->
+
             <div class="card dashboard-card shadow-sm">
+
                 <div class="card-body">
 
                     <div class="dashboard-icon">
                         <i class="bi bi-journal-text"></i>
                     </div>
 
-                    <h4>Grade Components</h4>
+                    <h4>
+                        Grade Components
+                    </h4>
 
                     <p>
                         Manage quizzes, assignments, exams, and other grades.
@@ -302,28 +573,41 @@
                     <a asp-controller="Admin"
                        asp-action="GradeComponents"
                        class="btn btn-success dashboard-btn w-100">
+
                         Manage Grades
+
                     </a>
 
                 </div>
+
             </div>
 
         </div>
 
+
+        <!-- ACCOUNT -->
+
         <div class="account-section">
 
-            <h4 class="section-title">Account</h4>
+            <h4 class="section-title">
+                Account
+            </h4>
 
             <div class="dashboard-grid">
 
+                <!-- Profile -->
+
                 <div class="card dashboard-card account-card shadow-sm">
+
                     <div class="card-body">
 
                         <div class="dashboard-icon">
                             <i class="bi bi-person-fill"></i>
                         </div>
 
-                        <h3>My Profile</h3>
+                        <h3>
+                            My Profile
+                        </h3>
 
                         <p>
                             View and manage your personal account information.
@@ -332,20 +616,29 @@
                         <a asp-controller="Account"
                            asp-action="Profile"
                            class="btn btn-info dashboard-btn w-100">
+
                             View Profile
+
                         </a>
 
                     </div>
+
                 </div>
 
+
+                <!-- Logout -->
+
                 <div class="card dashboard-card logout-card shadow-sm">
+
                     <div class="card-body">
 
                         <div class="dashboard-icon">
                             <i class="bi bi-box-arrow-right"></i>
                         </div>
 
-                        <h3>Logout</h3>
+                        <h3>
+                            Logout
+                        </h3>
 
                         <p>
                             Sign out of your administrator account securely.
@@ -359,12 +652,15 @@
 
                             <button type="submit"
                                     class="btn btn-outline-danger logout-btn w-100">
+
                                 Logout
+
                             </button>
 
                         </form>
 
                     </div>
+
                 </div>
 
             </div>
@@ -375,32 +671,84 @@
 }
 
 
+<!-- =========================================================
+     TEACHER DASHBOARD
+     ========================================================= -->
 @if (User.IsInRole("Teacher"))
 {
     ViewData["Title"] = "Teacher Dashboard";
 
     <div class="container dashboard-page mt-5">
 
+        <!-- HERO -->
+
         <div class="dashboard-hero">
-            <h1>Teacher Dashboard</h1>
-            <p>
-                Welcome back, @User.Identity?.Name.
-                Manage your subjects, students, and grades.
-            </p>
+
+            <div class="dashboard-hero-content">
+
+                <div class="dashboard-welcome">
+
+                    <i class="bi bi-mortarboard-fill"></i>
+
+                    TEACHER PORTAL
+
+                </div>
+
+                <h1>
+                    Welcome back,
+                    <span>@User.Identity?.Name</span> 👋
+                </h1>
+
+                <p>
+                    Manage your subjects, students, grade components,
+                    and academic records from your teaching dashboard.
+                </p>
+
+            </div>
+
+
+            <div class="dashboard-user-card">
+
+                <div class="dashboard-user-icon">
+
+                    <i class="bi bi-person-badge-fill"></i>
+
+                </div>
+
+                <div class="dashboard-user-label">
+                    Signed in as
+                </div>
+
+                <div class="dashboard-user-name">
+                    @User.Identity?.Name
+                </div>
+
+            </div>
+
         </div>
 
-        <h4 class="section-title">Teaching Tools</h4>
+
+        <!-- TEACHING TOOLS -->
+
+        <h4 class="section-title">
+            Teaching Tools
+        </h4>
 
         <div class="dashboard-grid">
 
+            <!-- Students -->
+
             <div class="card dashboard-card shadow-sm">
+
                 <div class="card-body">
 
                     <div class="dashboard-icon">
                         <i class="bi bi-mortarboard-fill"></i>
                     </div>
 
-                    <h3>My Students</h3>
+                    <h3>
+                        My Students
+                    </h3>
 
                     <p>
                         View the students enrolled in the subjects you teach.
@@ -409,20 +757,29 @@
                     <a asp-controller="Teacher"
                        asp-action="Students"
                        class="btn btn-primary dashboard-btn w-100">
+
                         View Students
+
                     </a>
 
                 </div>
+
             </div>
 
+
+            <!-- Grades -->
+
             <div class="card dashboard-card shadow-sm">
+
                 <div class="card-body">
 
                     <div class="dashboard-icon">
                         <i class="bi bi-bar-chart-fill"></i>
                     </div>
 
-                    <h3>Manage Grades</h3>
+                    <h3>
+                        Manage Grades
+                    </h3>
 
                     <p>
                         Add quizzes, assignments, exams, and manage student grades.
@@ -431,20 +788,29 @@
                     <a asp-controller="Teacher"
                        asp-action="Grades"
                        class="btn btn-success dashboard-btn w-100">
+
                         Manage Grades
+
                     </a>
 
                 </div>
+
             </div>
 
+
+            <!-- Subjects -->
+
             <div class="card dashboard-card shadow-sm">
+
                 <div class="card-body">
 
                     <div class="dashboard-icon">
                         <i class="bi bi-journal-bookmark-fill"></i>
                     </div>
 
-                    <h3>My Subjects</h3>
+                    <h3>
+                        My Subjects
+                    </h3>
 
                     <p>
                         View the subjects assigned to you and manage their grade components.
@@ -453,28 +819,41 @@
                     <a asp-controller="Teacher"
                        asp-action="Subjects"
                        class="btn btn-primary dashboard-btn w-100">
+
                         View My Subjects
+
                     </a>
 
                 </div>
+
             </div>
 
         </div>
 
+
+        <!-- ACCOUNT -->
+
         <div class="account-section">
 
-            <h4 class="section-title">Account</h4>
+            <h4 class="section-title">
+                Account
+            </h4>
 
             <div class="dashboard-grid">
 
+                <!-- Profile -->
+
                 <div class="card dashboard-card account-card shadow-sm">
+
                     <div class="card-body">
 
                         <div class="dashboard-icon">
                             <i class="bi bi-person-fill"></i>
                         </div>
 
-                        <h3>My Profile</h3>
+                        <h3>
+                            My Profile
+                        </h3>
 
                         <p>
                             View and manage your personal account information.
@@ -483,20 +862,29 @@
                         <a asp-controller="Account"
                            asp-action="Profile"
                            class="btn btn-info dashboard-btn w-100">
+
                             View Profile
+
                         </a>
 
                     </div>
+
                 </div>
 
+
+                <!-- Logout -->
+
                 <div class="card dashboard-card logout-card shadow-sm">
+
                     <div class="card-body">
 
                         <div class="dashboard-icon">
                             <i class="bi bi-box-arrow-right"></i>
                         </div>
 
-                        <h3>Logout</h3>
+                        <h3>
+                            Logout
+                        </h3>
 
                         <p>
                             Sign out of your teacher account securely.
@@ -510,12 +898,15 @@
 
                             <button type="submit"
                                     class="btn btn-outline-danger logout-btn w-100">
+
                                 Logout
+
                             </button>
 
                         </form>
 
                     </div>
+
                 </div>
 
             </div>
@@ -526,32 +917,84 @@
 }
 
 
+<!-- =========================================================
+     STUDENT DASHBOARD
+     ========================================================= -->
 @if (User.IsInRole("Student"))
 {
     ViewData["Title"] = "Student Dashboard";
 
     <div class="container dashboard-page mt-5">
 
+        <!-- HERO -->
+
         <div class="dashboard-hero">
-            <h1>Student Dashboard</h1>
-            <p>
-                Welcome back, @User.Identity?.Name.
-                View your subjects, grades, and academic progress.
-            </p>
+
+            <div class="dashboard-hero-content">
+
+                <div class="dashboard-welcome">
+
+                    <i class="bi bi-mortarboard-fill"></i>
+
+                    STUDENT PORTAL
+
+                </div>
+
+                <h1>
+                    Welcome back,
+                    <span>@User.Identity?.Name</span> 👋
+                </h1>
+
+                <p>
+                    Keep track of your subjects, grades, academic performance,
+                    and semester progress all in one place.
+                </p>
+
+            </div>
+
+
+            <div class="dashboard-user-card">
+
+                <div class="dashboard-user-icon">
+
+                    <i class="bi bi-person-fill"></i>
+
+                </div>
+
+                <div class="dashboard-user-label">
+                    Signed in as
+                </div>
+
+                <div class="dashboard-user-name">
+                    @User.Identity?.Name
+                </div>
+
+            </div>
+
         </div>
 
-        <h4 class="section-title">Academic Overview</h4>
+
+        <!-- ACADEMIC OVERVIEW -->
+
+        <h4 class="section-title">
+            Academic Overview
+        </h4>
 
         <div class="dashboard-grid">
 
+            <!-- Grades -->
+
             <div class="card dashboard-card shadow-sm">
+
                 <div class="card-body">
 
                     <div class="dashboard-icon">
                         <i class="bi bi-bar-chart-fill"></i>
                     </div>
 
-                    <h3>My Grades</h3>
+                    <h3>
+                        My Grades
+                    </h3>
 
                     <p>
                         View your grades for all approved subjects.
@@ -560,20 +1003,29 @@
                     <a asp-controller="Student"
                        asp-action="Grades"
                        class="btn btn-primary dashboard-btn w-100">
+
                         View Grades
+
                     </a>
 
                 </div>
+
             </div>
 
+
+            <!-- Subjects -->
+
             <div class="card dashboard-card shadow-sm">
+
                 <div class="card-body">
 
                     <div class="dashboard-icon">
                         <i class="bi bi-journal-bookmark-fill"></i>
                     </div>
 
-                    <h3>My Subjects</h3>
+                    <h3>
+                        My Subjects
+                    </h3>
 
                     <p>
                         View the subjects approved by the administrator.
@@ -582,20 +1034,29 @@
                     <a asp-controller="Student"
                        asp-action="MySubjects"
                        class="btn btn-primary dashboard-btn w-100">
+
                         View My Subjects
+
                     </a>
 
                 </div>
+
             </div>
 
+
+            <!-- Performance -->
+
             <div class="card dashboard-card shadow-sm">
+
                 <div class="card-body">
 
                     <div class="dashboard-icon">
                         <i class="bi bi-graph-up-arrow"></i>
                     </div>
 
-                    <h3>My Performance</h3>
+                    <h3>
+                        My Performance
+                    </h3>
 
                     <p>
                         View your academic performance and overall results.
@@ -604,20 +1065,29 @@
                     <a asp-controller="Student"
                        asp-action="Performance"
                        class="btn btn-success dashboard-btn w-100">
+
                         View Performance
+
                     </a>
 
                 </div>
+
             </div>
 
+
+            <!-- Choose Subjects -->
+
             <div class="card dashboard-card shadow-sm">
+
                 <div class="card-body">
 
                     <div class="dashboard-icon">
                         <i class="bi bi-bookmark-star-fill"></i>
                     </div>
 
-                    <h3>Choose Subjects</h3>
+                    <h3>
+                        Choose Subjects
+                    </h3>
 
                     <p>
                         Select subjects for your semester and submit them
@@ -627,28 +1097,41 @@
                     <a asp-controller="Student"
                        asp-action="Subjects"
                        class="btn btn-success dashboard-btn w-100">
+
                         Choose Subjects
+
                     </a>
 
                 </div>
+
             </div>
 
         </div>
 
+
+        <!-- ACCOUNT -->
+
         <div class="account-section">
 
-            <h4 class="section-title">Account</h4>
+            <h4 class="section-title">
+                Account
+            </h4>
 
             <div class="dashboard-grid">
 
+                <!-- Profile -->
+
                 <div class="card dashboard-card account-card shadow-sm">
+
                     <div class="card-body">
 
                         <div class="dashboard-icon">
                             <i class="bi bi-person-fill"></i>
                         </div>
 
-                        <h3>My Profile</h3>
+                        <h3>
+                            My Profile
+                        </h3>
 
                         <p>
                             View and manage your personal account information.
@@ -657,20 +1140,29 @@
                         <a asp-controller="Account"
                            asp-action="Profile"
                            class="btn btn-info dashboard-btn w-100">
+
                             View Profile
+
                         </a>
 
                     </div>
+
                 </div>
 
+
+                <!-- Logout -->
+
                 <div class="card dashboard-card logout-card shadow-sm">
+
                     <div class="card-body">
 
                         <div class="dashboard-icon">
                             <i class="bi bi-box-arrow-right"></i>
                         </div>
 
-                        <h3>Logout</h3>
+                        <h3>
+                            Logout
+                        </h3>
 
                         <p>
                             Sign out of your student account securely.
@@ -684,12 +1176,15 @@
 
                             <button type="submit"
                                     class="btn btn-outline-danger logout-btn w-100">
+
                                 Logout
+
                             </button>
 
                         </form>
 
                     </div>
+
                 </div>
 
             </div>

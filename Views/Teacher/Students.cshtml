@@ -88,6 +88,44 @@
             font-size: 0.92rem;
         }
 
+    /* =========================
+           SEARCH
+           ========================= */
+
+    .student-search {
+        position: relative;
+        min-width: 260px;
+    }
+
+        .student-search i {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            pointer-events: none;
+        }
+
+        .student-search input {
+            border-radius: 10px;
+            padding: 9px 12px 9px 38px;
+            border: 1px solid #dee2e6;
+            width: 100%;
+        }
+
+            .student-search input:focus {
+                border-color: #86b7fe;
+                box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.12);
+                outline: none;
+            }
+
+    .no-search-results {
+        display: none;
+        text-align: center;
+        padding: 45px 20px;
+        color: #6c757d;
+    }
+
     .student-table {
         margin-bottom: 0;
     }
@@ -210,6 +248,7 @@
     }
 
     @@media (max-width: 768px) {
+
         .page-header {
             padding: 25px;
         }
@@ -225,17 +264,27 @@
         .table-responsive {
             border-radius: 0 0 18px 18px;
         }
+
+        .student-search {
+            width: 100%;
+            min-width: 0;
+        }
     }
 </style>
 
+
 <div class="container students-page">
 
-    <!-- Header -->
+    <!-- =========================
+         HEADER
+         ========================= -->
+
     <div class="page-header">
 
         <div class="d-flex align-items-center gap-3">
 
             <div>
+
                 <h1>
                     <i class="bi bi-people-fill me-2"></i>
                     My Students
@@ -244,6 +293,7 @@
                 <p>
                     View the students enrolled in the subjects you teach.
                 </p>
+
             </div>
 
         </div>
@@ -251,7 +301,10 @@
     </div>
 
 
-    <!-- Subject Selection -->
+    <!-- =========================
+         SUBJECT SELECTION
+         ========================= -->
+
     <div class="card control-card">
 
         <div class="card-body">
@@ -261,8 +314,11 @@
                 <div class="col-md-8">
 
                     <label class="control-label">
+
                         <i class="bi bi-book me-1"></i>
+
                         Select Subject
+
                     </label>
 
                     <select id="subjectSelect"
@@ -292,6 +348,7 @@
 
                 </div>
 
+
                 <div class="col-md-4">
 
                     <button type="button"
@@ -299,6 +356,7 @@
                             class="btn btn-primary w-100">
 
                         <i class="bi bi-people me-2"></i>
+
                         View Students
 
                     </button>
@@ -317,7 +375,11 @@
         var selectedSubject = Model.Subjects
             .FirstOrDefault(s => s.Id == Model.SelectedSubjectId);
 
-        <!-- Selected Subject -->
+
+        <!-- =========================
+             SELECTED SUBJECT
+             ========================= -->
+
         <div class="d-flex justify-content-between align-items-center mb-3">
 
             <div>
@@ -329,8 +391,11 @@
                 @if (selectedSubject != null)
                 {
                     <span class="subject-badge">
+
                         <i class="bi bi-book-fill"></i>
+
                         @selectedSubject.Code - @selectedSubject.Name
+
                     </span>
                 }
 
@@ -345,7 +410,10 @@
         </div>
 
 
-        <!-- Students Table -->
+        <!-- =========================
+             STUDENTS TABLE
+             ========================= -->
+
         <div class="card students-card">
 
             <div class="students-card-header">
@@ -353,6 +421,7 @@
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
 
                     <div>
+
                         <h4>
                             Enrolled Students
                         </h4>
@@ -360,79 +429,104 @@
                         <p>
                             Student grades shown below are for this subject only.
                         </p>
+
                     </div>
 
 
-                    <!-- Sorting -->
-                    <div>
+                    <!-- =========================
+                         SEARCH + SORTING
+                         ========================= -->
 
-                        <form method="get"
-                              asp-action="Students"
-                              asp-controller="Teacher">
+                    <div class="d-flex flex-column flex-md-row gap-2">
 
-                            <input type="hidden"
-                                   name="subjectId"
-                                   value="@Model.SelectedSubjectId" />
+                        <!-- SEARCH -->
 
-                            <select name="sortOrder"
-                                    class="form-select form-select-sm"
-                                    onchange="this.form.submit()">
+                        <div class="student-search">
 
-                                @if (ViewBag.SortOrder == "gradeDesc")
-                                {
-                                    <option value="gradeDesc" selected>
-                                        Highest Grade
-                                    </option>
-                                }
-                                else
-                                {
-                                    <option value="gradeDesc">
-                                        Highest Grade
-                                    </option>
-                                }
+                            <i class="bi bi-search"></i>
 
-                                @if (ViewBag.SortOrder == "gradeAsc")
-                                {
-                                    <option value="gradeAsc" selected>
-                                        Lowest Grade
-                                    </option>
-                                }
-                                else
-                                {
-                                    <option value="gradeAsc">
-                                        Lowest Grade
-                                    </option>
-                                }
+                            <input type="text"
+                                   id="studentSearch"
+                                   class="form-control"
+                                   placeholder="Search students..."
+                                   autocomplete="off" />
 
-                                @if (ViewBag.SortOrder == "nameDesc")
-                                {
-                                    <option value="nameDesc" selected>
-                                        Name Z-A
-                                    </option>
-                                }
-                                else
-                                {
-                                    <option value="nameDesc">
-                                        Name Z-A
-                                    </option>
-                                }
+                        </div>
 
-                                @if (ViewBag.SortOrder == "name")
-                                {
-                                    <option value="name" selected>
-                                        Name A-Z
-                                    </option>
-                                }
-                                else
-                                {
-                                    <option value="name">
-                                        Name A-Z
-                                    </option>
-                                }
 
-                            </select>
+                        <!-- SORTING -->
 
-                        </form>
+                        <div>
+
+                            <form method="get"
+                                  asp-action="Students"
+                                  asp-controller="Teacher">
+
+                                <input type="hidden"
+                                       name="subjectId"
+                                       value="@Model.SelectedSubjectId" />
+
+                                <select name="sortOrder"
+                                        class="form-select form-select-sm"
+                                        onchange="this.form.submit()">
+
+                                    @if (ViewBag.SortOrder == "gradeDesc")
+                                    {
+                                        <option value="gradeDesc" selected>
+                                            Highest Grade
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="gradeDesc">
+                                            Highest Grade
+                                        </option>
+                                    }
+
+                                    @if (ViewBag.SortOrder == "gradeAsc")
+                                    {
+                                        <option value="gradeAsc" selected>
+                                            Lowest Grade
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="gradeAsc">
+                                            Lowest Grade
+                                        </option>
+                                    }
+
+                                    @if (ViewBag.SortOrder == "nameDesc")
+                                    {
+                                        <option value="nameDesc" selected>
+                                            Name Z-A
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="nameDesc">
+                                            Name Z-A
+                                        </option>
+                                    }
+
+                                    @if (ViewBag.SortOrder == "name")
+                                    {
+                                        <option value="name" selected>
+                                            Name A-Z
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="name">
+                                            Name A-Z
+                                        </option>
+                                    }
+
+                                </select>
+
+                            </form>
+
+                        </div>
 
                     </div>
 
@@ -475,6 +569,7 @@
 
                         </thead>
 
+
                         <tbody>
 
                             @foreach (var student in Model.Students)
@@ -497,6 +592,7 @@
                                     }
                                 }
 
+
                                 var initials = "";
 
                                 if (!string.IsNullOrWhiteSpace(student.FullName))
@@ -518,7 +614,12 @@
                                     initials = initials.ToUpper();
                                 }
 
-                                <tr>
+
+                                <tr class="student-row"
+                                    data-student-name="@student.FullName"
+                                    data-student-email="@student.Email">
+
+                                    <!-- STUDENT -->
 
                                     <td>
 
@@ -529,6 +630,7 @@
                                             </div>
 
                                             <div>
+
                                                 <div class="student-name">
                                                     @student.FullName
                                                 </div>
@@ -536,6 +638,7 @@
                                                 <div class="student-email">
                                                     Student
                                                 </div>
+
                                             </div>
 
                                         </div>
@@ -543,48 +646,66 @@
                                     </td>
 
 
+                                    <!-- EMAIL -->
+
                                     <td>
+
                                         <span class="student-email">
                                             @student.Email
                                         </span>
+
                                     </td>
 
+
+                                    <!-- GRADE -->
 
                                     <td>
 
                                         @if (student.GradeCount > 0)
                                         {
                                             <span class="grade-badge @gradeClass">
+
                                                 @student.AverageGrade.ToString("0.##")%
+
                                             </span>
                                         }
                                         else
                                         {
                                             <span class="grade-badge grade-none">
+
                                                 Not graded
+
                                             </span>
                                         }
 
                                     </td>
 
+
+                                    <!-- COMPONENTS -->
 
                                     <td>
 
                                         @if (student.GradeCount > 0)
                                         {
                                             <span class="text-muted">
+
                                                 @student.GradeCount graded
+
                                             </span>
                                         }
                                         else
                                         {
                                             <span class="text-muted">
+
                                                 No grades yet
+
                                             </span>
                                         }
 
                                     </td>
 
+
+                                    <!-- PROFILE -->
 
                                     <td class="text-end">
 
@@ -594,6 +715,7 @@
                                            class="btn btn-outline-primary profile-btn">
 
                                             <i class="bi bi-person me-1"></i>
+
                                             View Profile
 
                                         </a>
@@ -607,6 +729,30 @@
 
                     </table>
 
+
+                    <!-- =========================
+                         NO SEARCH RESULTS
+                         ========================= -->
+
+                    <div id="noSearchResults"
+                         class="no-search-results">
+
+                        <div class="empty-icon">
+
+                            <i class="bi bi-search"></i>
+
+                        </div>
+
+                        <h5 class="fw-bold">
+                            No Students Found
+                        </h5>
+
+                        <p class="mb-0">
+                            No students match your search.
+                        </p>
+
+                    </div>
+
                 </div>
             }
             else
@@ -614,7 +760,9 @@
                 <div class="empty-state">
 
                     <div class="empty-icon">
+
                         <i class="bi bi-people"></i>
+
                     </div>
 
                     <h5 class="fw-bold">
@@ -630,16 +778,22 @@
             }
 
         </div>
+
     }
     else
     {
-        <!-- No Subject Selected -->
+        <!-- =========================
+             NO SUBJECT SELECTED
+             ========================= -->
+
         <div class="card students-card">
 
             <div class="empty-state">
 
                 <div class="empty-icon">
+
                     <i class="bi bi-book"></i>
+
                 </div>
 
                 <h5 class="fw-bold">
@@ -661,6 +815,10 @@
 
 <script>
 
+    // =========================
+    // VIEW STUDENTS BUTTON
+    // =========================
+
     document.getElementById("viewStudentsBtn")
         .addEventListener("click", function() {
 
@@ -668,7 +826,9 @@
                 document.getElementById("subjectSelect").value;
 
             if (!subjectId) {
+
                 alert("Please select a subject first.");
+
                 return;
             }
 
@@ -678,5 +838,85 @@
                 + subjectId;
 
         });
+
+
+    // =========================
+    // STUDENT SEARCH
+    // =========================
+
+    const searchInput =
+        document.getElementById("studentSearch");
+
+
+    if (searchInput) {
+
+        searchInput.addEventListener("input", function() {
+
+            const searchValue =
+                this.value.trim().toLowerCase();
+
+
+            const rows =
+                document.querySelectorAll(".student-row");
+
+
+            const noSearchResults =
+                document.getElementById("noSearchResults");
+
+
+            let visibleCount = 0;
+
+
+            rows.forEach(function(row) {
+
+                const studentName =
+                    (row.dataset.studentName || "")
+                        .toLowerCase();
+
+
+                const studentEmail =
+                    (row.dataset.studentEmail || "")
+                        .toLowerCase();
+
+
+                const matches =
+                    studentName.includes(searchValue) ||
+                    studentEmail.includes(searchValue);
+
+
+                if (matches) {
+
+                    row.style.display = "";
+
+                    visibleCount++;
+
+                }
+                else {
+
+                    row.style.display = "none";
+
+                }
+
+            });
+
+
+            if (noSearchResults) {
+
+                if (visibleCount === 0 && searchValue !== "") {
+
+                    noSearchResults.style.display = "block";
+
+                }
+                else {
+
+                    noSearchResults.style.display = "none";
+
+                }
+
+            }
+
+        });
+
+    }
 
 </script>

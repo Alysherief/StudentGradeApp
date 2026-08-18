@@ -4,19 +4,65 @@
     ViewData["Title"] = "Create Student";
 }
 
-<div class="container mt-5">
+<div class="container-fluid px-4 py-4">
 
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1 class="fw-bold mb-1">Create Student</h1>
+
+            <p class="text-muted mb-0">
+                Create a new student account and assign their login credentials.
+            </p>
+        </div>
+
+        <a asp-controller="Admin"
+           asp-action="ManageStudents"
+           class="btn btn-outline-secondary">
+
+            <i class="bi bi-arrow-left me-2"></i>
+
+            Back to Students
+
+        </a>
+
+    </div>
+
+
+    <!-- Create Student Card -->
     <div class="row justify-content-center">
 
-        <div class="col-md-6">
+        <div class="col-xl-8 col-lg-9">
 
-            <div class="card shadow">
+            <div class="card border-0 shadow-sm rounded-4">
 
-                <div class="card-body p-4">
+                <div class="card-body p-4 p-md-5">
 
-                    <h2 class="text-center mb-4">
-                        Create Student Account
-                    </h2>
+
+                    <!-- Card Heading -->
+                    <div class="d-flex align-items-center mb-4">
+
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3 me-3">
+
+                            <i class="bi bi-person-plus-fill fs-4"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h4 class="fw-bold mb-1">
+                                Student Information
+                            </h4>
+
+                            <p class="text-muted mb-0">
+                                Enter the student's personal and account details.
+                            </p>
+
+                        </div>
+
+                    </div>
+
 
                     <form asp-controller="Admin"
                           asp-action="CreateStudent"
@@ -24,109 +70,141 @@
 
                         @Html.AntiForgeryToken()
 
+
+                        <!-- Validation Summary -->
                         <div asp-validation-summary="ModelOnly"
-                             class="text-danger mb-3">
+                             class="text-danger mb-3"
+                             role="alert">
                         </div>
 
-                        <div class="mb-3">
+
+                        <!-- Full Name -->
+                        <div class="mb-4">
 
                             <label asp-for="FullName"
-                                   class="form-label">
+                                   class="form-label fw-semibold">
                             </label>
 
                             <input asp-for="FullName"
-                                   class="form-control"
-                                   placeholder="Enter full name" />
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter student's full name" />
 
                             <span asp-validation-for="FullName"
-                                  class="text-danger">
+                                  class="text-danger small">
                             </span>
 
                         </div>
 
-                        <div class="mb-3">
 
-                            <label asp-for="Username"
-                                   class="form-label">
-                            </label>
+                        <!-- Username + Email -->
+                        <div class="row">
 
-                            <input asp-for="Username"
-                                   class="form-control"
-                                   autocomplete="new-username"
-                                   placeholder="Enter username" />
+                            <div class="col-md-6 mb-4">
 
-                            <span asp-validation-for="Username"
-                                  class="text-danger">
-                            </span>
+                                <label asp-for="Username"
+                                       class="form-label fw-semibold">
+                                </label>
 
-                        </div>
+                                <input asp-for="Username"
+                                       class="form-control form-control-lg"
+                                       autocomplete="username"
+                                       placeholder="Enter username" />
 
-                        <div class="mb-3">
+                                <span asp-validation-for="Username"
+                                      class="text-danger small">
+                                </span>
 
-                            <label asp-for="Email"
-                                   class="form-label">
-                            </label>
+                            </div>
 
-                            <input asp-for="Email"
-                                   type="email"
-                                   class="form-control"
-                                   placeholder="Enter email" />
 
-                            <span asp-validation-for="Email"
-                                  class="text-danger">
-                            </span>
+                            <div class="col-md-6 mb-4">
 
-                        </div>
+                                <label asp-for="Email"
+                                       class="form-label fw-semibold">
+                                </label>
 
-                        <div class="mb-3">
+                                <input asp-for="Email"
+                                       type="email"
+                                       class="form-control form-control-lg"
+                                       autocomplete="email"
+                                       placeholder="student@example.com" />
 
-                            <label asp-for="Password"
-                                   class="form-label">
-                            </label>
+                                <span asp-validation-for="Email"
+                                      class="text-danger small">
+                                </span>
 
-                            <input asp-for="Password"
-                                   class="form-control"
-                                   autocomplete="new-password"
-                                   placeholder="Enter password" />
-
-                            <span asp-validation-for="Password"
-                                  class="text-danger">
-                            </span>
+                            </div>
 
                         </div>
 
-                        <div class="mb-3">
 
-                            <label asp-for="ConfirmPassword"
-                                   class="form-label">
-                            </label>
+                        <!-- Password + Confirm Password -->
+                        <div class="row">
 
-                            <input asp-for="ConfirmPassword"
-                                   class="form-control"
-                                   autocomplete="new-password"
-                                   placeholder="Confirm password" />
+                            <div class="col-md-6 mb-4">
 
-                            <span asp-validation-for="ConfirmPassword"
-                                  class="text-danger">
-                            </span>
+                                <label asp-for="Password"
+                                       class="form-label fw-semibold">
+                                </label>
+
+                                <input asp-for="Password"
+                                       type="password"
+                                       class="form-control form-control-lg"
+                                       autocomplete="new-password"
+                                       placeholder="Enter password" />
+
+                                <span asp-validation-for="Password"
+                                      class="text-danger small">
+                                </span>
+
+                            </div>
+
+
+                            <div class="col-md-6 mb-4">
+
+                                <label asp-for="ConfirmPassword"
+                                       class="form-label fw-semibold">
+                                </label>
+
+                                <input asp-for="ConfirmPassword"
+                                       type="password"
+                                       class="form-control form-control-lg"
+                                       autocomplete="new-password"
+                                       placeholder="Confirm password" />
+
+                                <span asp-validation-for="ConfirmPassword"
+                                      class="text-danger small">
+                                </span>
+
+                            </div>
 
                         </div>
 
-                        <button type="submit"
-                                class="btn btn-primary w-100">
-                            Create Student
-                        </button>
+
+                        <!-- Actions -->
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+
+                            <a asp-controller="Admin"
+                               asp-action="ManageStudents"
+                               class="btn btn-light btn-lg px-4">
+
+                                Cancel
+
+                            </a>
+
+
+                            <button type="submit"
+                                    class="btn btn-primary btn-lg px-4">
+
+                                <i class="bi bi-person-plus-fill me-2"></i>
+
+                                Create Student
+
+                            </button>
+
+                        </div>
 
                     </form>
-
-                    <div class="text-center mt-3">
-
-                        <a asp-controller="Dashboard"
-                           asp-action="Index">
-                            Back to Dashboard
-                        </a>
-
-                    </div>
 
                 </div>
 
@@ -138,6 +216,9 @@
 
 </div>
 
+
 @section Scripts {
+
     <partial name="_ValidationScriptsPartial" />
+
 }

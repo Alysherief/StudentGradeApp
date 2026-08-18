@@ -2,97 +2,829 @@
 
 @{
     ViewData["Title"] = "Manage Teachers";
+
+    var teachers = Model.ToList();
 }
 
-<div class="container mt-5">
+<style>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Manage Teachers</h2>
+    .teacher-page {
+        padding: 35px 0 60px;
+    }
 
-        <a asp-controller="Admin"
-           asp-action="CreateTeacher"
-           class="btn btn-primary">
-            Create Teacher
-        </a>
+    .teacher-header {
+        background: linear-gradient(135deg, #0d6efd, #4f8dfd);
+        color: white;
+        border-radius: 24px;
+        padding: 38px;
+        margin-bottom: 30px;
+        box-shadow: 0 15px 35px rgba(13, 110, 253, 0.18);
+    }
+
+    .header-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 17px;
+        background: rgba(255, 255, 255, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        margin-bottom: 18px;
+    }
+
+    .teacher-header h1 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .teacher-header p {
+        margin: 0;
+        opacity: 0.9;
+    }
+
+    .header-action {
+        margin-top: 25px;
+    }
+
+    .main-btn {
+        border-radius: 12px;
+        padding: 11px 20px;
+        font-weight: 700;
+    }
+
+    .summary-card {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    .summary-title {
+        font-weight: 800;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+
+    .summary-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0d6efd;
+    }
+
+    .summary-label {
+        color: #6c757d;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .status-active {
+        background: #d1e7dd;
+        color: #146c43;
+    }
+
+    .status-empty {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .search-card {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    .search-wrapper {
+        position: relative;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        font-size: 17px;
+        pointer-events: none;
+    }
+
+    .search-input {
+        width: 100%;
+        border: 1px solid #dee2e6;
+        border-radius: 12px;
+        padding: 12px 45px 12px 45px;
+        font-size: 15px;
+        outline: none;
+        transition: all .2s ease;
+    }
+
+        .search-input:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .15);
+        }
+
+    .clear-search {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: #6c757d;
+        font-size: 17px;
+        display: none;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+        .clear-search:hover {
+            color: #212529;
+        }
+
+    .search-result-count {
+        margin-top: 10px;
+        color: #6c757d;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .teacher-card {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 20px;
+        height: 100%;
+        overflow: hidden;
+        box-shadow: 0 7px 22px rgba(0, 0, 0, .05);
+        transition: all .25s ease;
+    }
+
+        .teacher-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 32px rgba(0, 0, .09);
+            border-color: #c9dcff;
+        }
+
+    .teacher-top {
+        padding: 22px;
+        background: linear-gradient(135deg, #f5f8ff, #eef4ff);
+        border-bottom: 1px solid #e7edf7;
+    }
+
+    .teacher-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 15px;
+        background: #0d6efd;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+    }
+
+    .teacher-body {
+        padding: 22px;
+    }
+
+    .teacher-name {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #212529;
+        margin-bottom: 20px;
+    }
+
+    .teacher-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .info-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: #f1f5ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .info-text small {
+        display: block;
+        color: #8a929a;
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: .3px;
+    }
+
+    .info-text span {
+        font-weight: 700;
+        color: #343a40;
+        word-break: break-word;
+    }
+
+    .role-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #e7f1ff;
+        color: #0d6efd;
+        padding: 7px 11px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .card-actions {
+        border-top: 1px solid #edf0f4;
+        margin-top: 20px;
+        padding-top: 18px;
+        display: flex;
+        gap: 8px;
+    }
+
+        .card-actions .btn {
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+    .no-search-results {
+        display: none;
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 22px;
+        padding: 50px 30px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, .05);
+        margin-top: 30px;
+    }
+
+        .no-search-results .empty-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            background: #eef4ff;
+            color: #0d6efd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin: 0 auto 18px;
+        }
+
+        .no-search-results h3 {
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .no-search-results p {
+            color: #6c757d;
+            margin-bottom: 0;
+        }
+
+    .empty-state {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 22px;
+        padding: 60px 30px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, .05);
+    }
+
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 22px;
+        background: #eef4ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 35px;
+        margin: 0 auto 20px;
+    }
+
+    .empty-state h3 {
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        color: #6c757d;
+        max-width: 500px;
+        margin: 0 auto 25px;
+    }
+
+    @@media (max-width: 767px) {
+
+        .teacher-page {
+            padding-top: 20px;
+        }
+
+        .teacher-header {
+            padding: 28px 22px;
+            border-radius: 20px;
+        }
+
+            .teacher-header h1 {
+                font-size: 1.8rem;
+            }
+
+        .teacher-body,
+        .teacher-top {
+            padding: 20px;
+        }
+
+        .search-card {
+            padding: 17px;
+        }
+    }
+
+</style>
+
+
+<div class="container teacher-page">
+
+    <div class="teacher-header">
+
+        <div class="header-icon">
+            <i class="bi bi-person-badge-fill"></i>
+        </div>
+
+        <h1>
+            Manage Teachers
+        </h1>
+
+        <p>
+            Create, edit and manage teacher accounts and their system access.
+        </p>
+
+        <div class="header-action">
+
+            <a asp-controller="Admin"
+               asp-action="CreateTeacher"
+               class="btn btn-light main-btn">
+
+                <i class="bi bi-person-plus-fill me-2"></i>
+
+                Create Teacher
+
+            </a>
+
+        </div>
+
     </div>
 
-    @if (!Model.Any())
-    {
-        <div class="alert alert-info">
-            No teachers have been created yet.
+
+    <div class="summary-card">
+
+        <div class="summary-title">
+            Teacher Overview
         </div>
-    }
-    else
-    {
-        <div class="card shadow">
-            <div class="card-body">
 
-                <div class="table-responsive">
+        <div class="row align-items-center">
 
-                    <table class="table table-hover align-middle">
+            <div class="col-md-3">
 
-                        <thead>
-                            <tr>
-                                <th>Full Name</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
+                <div class="summary-label">
+                    Total Teachers
+                </div>
 
-                        <tbody>
-
-                            @foreach (var teacher in Model)
-                            {
-                                <tr>
-                                    <td>
-                                        @teacher.FullName
-                                    </td>
-
-                                    <td>
-                                        @teacher.UserName
-                                    </td>
-
-                                    <td>
-                                        @teacher.Email
-                                    </td>
-
-                                    <td>
-                                        <a asp-controller="Admin"
-                                           asp-action="EditTeacher"
-                                           asp-route-id="@teacher.Id"
-                                           class="btn btn-sm btn-warning">
-                                            Edit
-                                        </a>
-
-                                        <a asp-controller="Admin"
-                                           asp-action="DeleteTeacher"
-                                           asp-route-id="@teacher.Id"
-                                           class="btn btn-sm btn-danger">
-                                            Delete
-                                        </a>
-                                    </td>
-                                </tr>
-                            }
-
-                        </tbody>
-
-                    </table>
-
+                <div class="summary-number">
+                    @teachers.Count
                 </div>
 
             </div>
+
+            <div class="col-md-6 mt-3 mt-md-0">
+
+                <div class="summary-label">
+                    Teacher Accounts
+                </div>
+
+                <p class="text-muted mb-0 mt-1">
+                    All teacher accounts currently registered in the system.
+                </p>
+
+            </div>
+
+            <div class="col-md-3 text-md-end mt-3 mt-md-0">
+
+                @if (teachers.Any())
+                {
+                    <span class="status-badge status-active">
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        Accounts Available
+
+                    </span>
+                }
+                else
+                {
+                    <span class="status-badge status-empty">
+
+                        <i class="bi bi-info-circle-fill"></i>
+
+                        No Teachers
+
+                    </span>
+                }
+
+            </div>
+
         </div>
+
+    </div>
+
+
+    @if (!teachers.Any())
+    {
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+
+                <i class="bi bi-person-badge-fill"></i>
+
+            </div>
+
+            <h3>
+                No Teachers Yet
+            </h3>
+
+            <p>
+                No teacher accounts have been created yet.
+                Create the first teacher account to get started.
+            </p>
+
+            <a asp-controller="Admin"
+               asp-action="CreateTeacher"
+               class="btn btn-primary main-btn">
+
+                <i class="bi bi-person-plus-fill me-2"></i>
+
+                Create First Teacher
+
+            </a>
+
+        </div>
+
+    }
+    else
+    {
+
+        <div class="search-card">
+
+            <div class="search-wrapper">
+
+                <i class="bi bi-search search-icon"></i>
+
+                <input type="text"
+                       id="teacherSearch"
+                       class="search-input"
+                       placeholder="Search teachers by name, username or email..."
+                       autocomplete="off" />
+
+                <button type="button"
+                        id="clearTeacherSearch"
+                        class="clear-search"
+                        aria-label="Clear search">
+
+                    <i class="bi bi-x-lg"></i>
+
+                </button>
+
+            </div>
+
+            <div id="searchResultCount"
+                 class="search-result-count">
+
+                Showing @teachers.Count teachers
+
+            </div>
+
+        </div>
+
+
+        <div id="teacherGrid" class="row g-4">
+
+            @foreach (var teacher in teachers)
+            {
+
+                <div class="col-md-6 col-lg-4 teacher-item"
+                     data-search="@($"{teacher.FullName} {teacher.UserName} {teacher.Email}")">
+
+                    <div class="teacher-card">
+
+                        <div class="teacher-top">
+
+                            <div class="d-flex align-items-center gap-3">
+
+                                <div class="teacher-icon">
+
+                                    <i class="bi bi-person-badge-fill"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <div class="fw-bold">
+                                        @teacher.FullName
+                                    </div>
+
+                                    <small class="text-muted">
+                                        Teacher Account
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="teacher-body">
+
+                            <div class="teacher-name">
+                                @teacher.FullName
+                            </div>
+
+
+                            <div class="teacher-info">
+
+                                <div class="info-icon">
+
+                                    <i class="bi bi-person-fill"></i>
+
+                                </div>
+
+                                <div class="info-text">
+
+                                    <small>
+                                        Username
+                                    </small>
+
+                                    <span>
+                                        @teacher.UserName
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="teacher-info">
+
+                                <div class="info-icon">
+
+                                    <i class="bi bi-envelope-fill"></i>
+
+                                </div>
+
+                                <div class="info-text">
+
+                                    <small>
+                                        Email
+                                    </small>
+
+                                    <span>
+                                        @teacher.Email
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="mt-3">
+
+                                <span class="role-badge">
+
+                                    <i class="bi bi-person-check-fill"></i>
+
+                                    Teacher
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="card-actions">
+
+                                <a asp-controller="Admin"
+                                   asp-action="EditTeacher"
+                                   asp-route-id="@teacher.Id"
+                                   class="btn btn-outline-primary btn-sm flex-grow-1">
+
+                                    <i class="bi bi-pencil me-1"></i>
+
+                                    Edit
+
+                                </a>
+
+
+                                <a asp-controller="Admin"
+                                   asp-action="DeleteTeacher"
+                                   asp-route-id="@teacher.Id"
+                                   class="btn btn-outline-danger btn-sm flex-grow-1">
+
+                                    <i class="bi bi-trash me-1"></i>
+
+                                    Delete
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            }
+
+        </div>
+
+
+        <div id="noSearchResults"
+             class="no-search-results">
+
+            <div class="empty-icon">
+
+                <i class="bi bi-search"></i>
+
+            </div>
+
+            <h3>
+                No Teachers Found
+            </h3>
+
+            <p>
+                No teacher matches your search.
+                Try searching for a different name, username or email.
+            </p>
+
+        </div>
+
     }
 
-    <div class="mt-3">
+
+    <div class="text-center mt-5">
 
         <a asp-controller="Dashboard"
            asp-action="Index"
-           class="btn btn-secondary">
+           class="btn btn-outline-secondary main-btn">
+
+            <i class="bi bi-speedometer2 me-2"></i>
+
             Back to Dashboard
+
         </a>
 
     </div>
 
 </div>
+
+
+@if (teachers.Any())
+{
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const searchInput =
+                document.getElementById("teacherSearch");
+
+            const clearButton =
+                document.getElementById("clearTeacherSearch");
+
+            const teacherItems =
+                document.querySelectorAll(".teacher-item");
+
+            const resultCount =
+                document.getElementById("searchResultCount");
+
+            const noResults =
+                document.getElementById("noSearchResults");
+
+
+            function filterTeachers() {
+
+                const searchTerm =
+                    searchInput.value.trim().toLowerCase();
+
+                let visibleCount = 0;
+
+
+                teacherItems.forEach(function(item) {
+
+                    const searchText =
+                        item.dataset.search.toLowerCase();
+
+                    if (searchText.includes(searchTerm)) {
+
+                        item.style.display = "";
+
+                        visibleCount++;
+
+                    }
+                    else {
+
+                        item.style.display = "none";
+
+                    }
+
+                });
+
+
+                if (searchTerm.length > 0) {
+
+                    clearButton.style.display = "block";
+
+                }
+                else {
+
+                    clearButton.style.display = "none";
+
+                }
+
+
+                if (searchTerm.length === 0) {
+
+                    resultCount.textContent =
+                        "Showing " +
+                        teacherItems.length +
+                        " teachers";
+
+                }
+                else {
+
+                    resultCount.textContent =
+                        "Showing " +
+                        visibleCount +
+                        " of " +
+                        teacherItems.length +
+                        " teachers";
+
+                }
+
+
+                if (visibleCount === 0) {
+
+                    noResults.style.display = "block";
+
+                }
+                else {
+
+                    noResults.style.display = "none";
+
+                }
+
+            }
+
+
+            searchInput.addEventListener(
+                "input",
+                filterTeachers
+            );
+
+
+            clearButton.addEventListener(
+                "click",
+                function() {
+
+                    searchInput.value = "";
+
+                    searchInput.focus();
+
+                    filterTeachers();
+
+                }
+            );
+
+        });
+
+    </script>
+}

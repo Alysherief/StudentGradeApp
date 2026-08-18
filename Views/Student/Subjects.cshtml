@@ -2,6 +2,14 @@
 
 @{
     ViewData["Title"] = "Choose Subjects";
+
+    var currentCreditHours = ViewBag.CurrentCreditHours != null
+        ? (int)ViewBag.CurrentCreditHours
+        : 0;
+
+    var remainingCreditHours = ViewBag.RemainingCreditHours != null
+        ? (int)ViewBag.RemainingCreditHours
+        : Math.Max(0, 30 - currentCreditHours);
 }
 
 <style>
@@ -55,6 +63,16 @@
         font-size: 14px;
     }
 
+    .credit-breakdown {
+        margin-top: 8px;
+        font-size: 13px;
+        color: #6c757d;
+    }
+
+        .credit-breakdown strong {
+            color: #212529;
+        }
+
     .progress {
         height: 10px;
         border-radius: 20px;
@@ -64,6 +82,102 @@
     .progress-bar {
         border-radius: 20px;
         transition: width 0.25s ease;
+    }
+
+    .search-box {
+        background: white;
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+        margin-bottom: 25px;
+        border: 1px solid #edf0f4;
+    }
+
+    .search-wrapper {
+        position: relative;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .search-input {
+        border-radius: 12px;
+        padding: 12px 45px 12px 43px;
+        border: 1px solid #dee2e6;
+        font-size: 15px;
+        width: 100%;
+        transition: all 0.2s ease;
+    }
+
+        .search-input:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.12);
+            outline: none;
+        }
+
+    .clear-search {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: #6c757d;
+        display: none;
+        font-size: 18px;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+        .clear-search:hover {
+            color: #212529;
+        }
+
+    .search-results {
+        margin-top: 10px;
+        font-size: 13px;
+        color: #6c757d;
+    }
+
+    .no-search-results {
+        display: none;
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 18px;
+        padding: 45px 25px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+        margin-top: 25px;
+    }
+
+    .no-search-icon {
+        width: 65px;
+        height: 65px;
+        border-radius: 18px;
+        background: #eef4ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin: 0 auto 15px;
+    }
+
+    .no-search-results h4 {
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+
+    .no-search-results p {
+        color: #6c757d;
+        margin-bottom: 0;
     }
 
     .subject-card {
@@ -201,6 +315,7 @@
         }
 
     @@media (max-width: 767px) {
+
         .subjects-page {
             padding: 20px 0 40px;
         }
@@ -225,14 +340,20 @@
         .submit-section {
             padding: 20px;
         }
+
+        .search-box {
+            padding: 15px;
+        }
     }
 </style>
+
 
 <div class="container subjects-page">
 
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert success-alert alert-dismissible fade show shadow-sm" role="alert">
+        <div class="alert success-alert alert-dismissible fade show shadow-sm"
+             role="alert">
 
             <div class="d-flex align-items-center">
 
@@ -241,11 +362,13 @@
                 </div>
 
                 <div>
+
                     <strong>Request Submitted!</strong>
 
                     <div class="small">
                         @TempData["SuccessMessage"]
                     </div>
+
                 </div>
 
             </div>
@@ -257,6 +380,9 @@
 
         </div>
     }
+
+
+    <!-- PAGE HEADER -->
 
     <div class="page-header">
 
@@ -273,7 +399,7 @@
 
                 <p>
                     Select the subjects you want to take this semester.
-                    You must select exactly 30 credit hours.
+                    You can select up to 30 total credit hours.
                 </p>
 
             </div>
@@ -295,19 +421,27 @@
 
     </div>
 
+
+    <!-- VALIDATION ERRORS -->
     @if (!ViewData.ModelState.IsValid)
     {
         <div class="alert alert-danger error-box shadow-sm">
 
             <div class="fw-bold mb-1">
+
                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
                 Please check your selection
+
             </div>
 
             <div asp-validation-summary="All"></div>
 
         </div>
     }
+
+
+    <!-- CREDIT SUMMARY -->
 
     <div class="credit-summary">
 
@@ -316,49 +450,89 @@
             <div class="col-md-4">
 
                 <div class="credit-title">
-                    Selected Credit Hours
+                    Total Credit Hours
                 </div>
 
                 <span id="creditTotal"
                       class="credit-number">
-                    0
+
+                    @currentCreditHours
+
                 </span>
 
                 <span class="credit-limit">
                     / 30 credits
                 </span>
 
+                <div class="credit-breakdown">
+
+                    Already enrolled:
+                    <strong id="existingCredits">
+                        @currentCreditHours
+                    </strong>
+
+                    credits
+
+                    <br />
+
+                    Newly selected:
+                    <strong id="newCredits">
+                        0
+                    </strong>
+
+                    credits
+
+                </div>
+
             </div>
+
 
             <div class="col-md-8 mt-3 mt-md-0">
 
                 <div class="d-flex justify-content-between mb-2">
 
                     <small class="text-muted">
-                        Selection Progress
+                        Credit Hour Progress
                     </small>
 
                     <small id="creditMessage"
                            class="fw-semibold text-primary">
-                        0 / 30
+
+                        @currentCreditHours / 30
+
                     </small>
 
                 </div>
+
 
                 <div class="progress">
 
                     <div id="creditProgress"
                          class="progress-bar"
                          role="progressbar"
-                         style="width: 0%;">
+                         style="width: @((currentCreditHours / 30.0) * 100)%;">
                     </div>
 
                 </div>
 
-                <div id="selectionStatus"
-                     class="selection-status invalid">
 
-                    Select subjects totaling exactly 30 credit hours.
+                <div id="selectionStatus"
+                     class="selection-status">
+
+                    @if (currentCreditHours >= 30)
+                    {
+                        <span>
+                            You have already reached the maximum of 30 credit hours.
+                        </span>
+                    }
+                    else
+                    {
+                        <span>
+                            You can select up to
+                            <strong>@remainingCreditHours</strong>
+                            more credit hours.
+                        </span>
+                    }
 
                 </div>
 
@@ -368,6 +542,44 @@
 
     </div>
 
+
+    <!-- SEARCH -->
+
+    <div class="search-box">
+
+        <div class="search-wrapper">
+
+            <i class="bi bi-search search-icon"></i>
+
+            <input type="text"
+                   id="subjectSearch"
+                   class="search-input"
+                   placeholder="Search by subject name, code or teacher..."
+                   autocomplete="off" />
+
+            <button type="button"
+                    id="clearSearch"
+                    class="clear-search"
+                    aria-label="Clear search">
+
+                <i class="bi bi-x-circle-fill"></i>
+
+            </button>
+
+        </div>
+
+        <div id="searchResults"
+             class="search-results">
+
+            Showing all subjects
+
+        </div>
+
+    </div>
+
+
+    <!-- FORM -->
+
     <form asp-controller="Student"
           asp-action="SelectSubjects"
           method="post"
@@ -375,13 +587,18 @@
 
         @Html.AntiForgeryToken()
 
-        <div class="row g-4">
+
+        <!-- SUBJECTS -->
+
+        <div class="row g-4"
+             id="subjectsContainer">
 
             @for (int i = 0; i < Model.Subjects.Count; i++)
             {
                 var subject = Model.Subjects[i];
 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4 subject-item"
+                     data-search="@($"{subject.Name} {subject.Code} {subject.TeacherName}")">
 
                     <label class="subject-card d-block"
                            for="subject_@subject.SubjectId"
@@ -407,6 +624,7 @@
                                name="Subjects[@i].TeacherName"
                                value="@subject.TeacherName" />
 
+
                         <div class="d-flex justify-content-between align-items-start">
 
                             <div>
@@ -416,6 +634,7 @@
                                 </span>
 
                             </div>
+
 
                             <input type="checkbox"
                                    id="subject_@subject.SubjectId"
@@ -428,13 +647,16 @@
 
                         </div>
 
+
                         <input type="hidden"
                                name="Subjects[@i].Selected"
                                value="false" />
 
+
                         <div class="subject-name">
                             @subject.Name
                         </div>
+
 
                         <div class="subject-teacher">
 
@@ -445,6 +667,7 @@
                                 : subject.TeacherName)
 
                         </div>
+
 
                         <span class="credit-badge">
 
@@ -462,6 +685,32 @@
 
         </div>
 
+
+        <!-- NO SEARCH RESULTS -->
+
+        <div id="noSearchResults"
+             class="no-search-results">
+
+            <div class="no-search-icon">
+
+                <i class="bi bi-search"></i>
+
+            </div>
+
+            <h4>
+                No Subjects Found
+            </h4>
+
+            <p>
+                No subjects match your search.
+                Try a different subject name, code or teacher.
+            </p>
+
+        </div>
+
+
+        <!-- SUBMIT -->
+
         <div class="submit-section">
 
             <div class="d-flex flex-column flex-md-row
@@ -475,11 +724,14 @@
                     </h5>
 
                     <p class="text-muted mb-0">
+
                         Your subject selection will be sent to an
                         administrator for approval.
+
                     </p>
 
                 </div>
+
 
                 <button type="submit"
                         id="submitButton"
@@ -487,6 +739,7 @@
                         disabled>
 
                     <i class="bi bi-send me-2"></i>
+
                     Submit for Approval
 
                 </button>
@@ -499,19 +752,43 @@
 
 </div>
 
+
 @section Scripts {
 
     <partial name="_ValidationScriptsPartial" />
 
+
     <script>
 
         document.addEventListener("DOMContentLoaded", function() {
+
+            /*
+             * EXISTING CREDIT HOURS
+             *
+             * This comes directly from the controller.
+             *
+             * Example:
+             * Student already has 12 credits.
+             *
+             * We DON'T reset this to zero.
+             */
+
+            const existingCreditHours = @currentCreditHours;
+
+            const maximumCreditHours = 30;
+
 
             const checkboxes =
                 document.querySelectorAll(".subject-check");
 
             const totalElement =
                 document.getElementById("creditTotal");
+
+            const existingCreditsElement =
+                document.getElementById("existingCredits");
+
+            const newCreditsElement =
+                document.getElementById("newCredits");
 
             const progressBar =
                 document.getElementById("creditProgress");
@@ -529,35 +806,98 @@
                 document.getElementById("subjectForm");
 
 
+            const searchInput =
+                document.getElementById("subjectSearch");
+
+            const clearSearch =
+                document.getElementById("clearSearch");
+
+            const searchResults =
+                document.getElementById("searchResults");
+
+            const noSearchResults =
+                document.getElementById("noSearchResults");
+
+            const subjectItems =
+                document.querySelectorAll(".subject-item");
+
+
+            /*
+             * UPDATE CREDIT HOURS
+             */
+
             function updateCredits() {
 
-                let total = 0;
+                let newlySelectedCredits = 0;
+
+
+                /*
+                 * Calculate only the subjects
+                 * selected on THIS page.
+                 */
 
                 checkboxes.forEach(function(checkbox) {
 
                     if (checkbox.checked) {
 
-                        total += parseInt(
-                            checkbox.dataset.credit
-                        ) || 0;
+                        newlySelectedCredits +=
+                            parseInt(checkbox.dataset.credit) || 0;
 
                     }
 
                 });
 
 
-                totalElement.textContent = total;
+                /*
+                 * Add the student's existing credits.
+                 */
+
+                const totalCreditHours =
+                    existingCreditHours +
+                    newlySelectedCredits;
+
+
+                const remainingAfterSelection =
+                    maximumCreditHours -
+                    totalCreditHours;
+
+
+                /*
+                 * Update numbers on screen.
+                 */
+
+                existingCreditsElement.textContent =
+                    existingCreditHours;
+
+                newCreditsElement.textContent =
+                    newlySelectedCredits;
+
+                totalElement.textContent =
+                    totalCreditHours;
 
                 message.textContent =
-                    total + " / 30";
+                    totalCreditHours +
+                    " / " +
+                    maximumCreditHours;
 
+
+                /*
+                 * Update progress bar.
+                 */
 
                 const percentage =
-                    Math.min((total / 30) * 100, 100);
+                    Math.min(
+                        (totalCreditHours / maximumCreditHours) * 100,
+                        100
+                    );
 
                 progressBar.style.width =
                     percentage + "%";
 
+
+                /*
+                 * Update selected card appearance.
+                 */
 
                 checkboxes.forEach(function(checkbox) {
 
@@ -568,10 +908,10 @@
                         return;
                     }
 
+
                     if (checkbox.checked) {
 
                         card.classList.add("selected");
-                        card.classList.remove("disabled-card");
 
                     }
                     else {
@@ -583,7 +923,56 @@
                 });
 
 
-                if (total === 30) {
+                /*
+                 * If the student already has 30 credits.
+                 */
+
+                if (existingCreditHours >= maximumCreditHours) {
+
+                    submitButton.disabled = true;
+
+                    submitButton.innerHTML =
+                        '<i class="bi bi-lock-fill me-2"></i>' +
+                        'Maximum Credits Reached';
+
+                    selectionStatus.textContent =
+                        "You already have the maximum of 30 credit hours.";
+
+                    selectionStatus.className =
+                        "selection-status invalid";
+
+                }
+
+
+                /*
+                 * If newly selected subjects push
+                 * the total above 30.
+                 */
+
+                else if (totalCreditHours > maximumCreditHours) {
+
+                    submitButton.disabled = true;
+
+                    submitButton.innerHTML =
+                        '<i class="bi bi-exclamation-circle me-2"></i>' +
+                        'Too Many Credits';
+
+                    selectionStatus.textContent =
+                        "Your total would be " +
+                        totalCreditHours +
+                        " credits. You can only have 30.";
+
+                    selectionStatus.className =
+                        "selection-status invalid";
+
+                }
+
+
+                /*
+                 * Valid selection.
+                 */
+
+                else if (newlySelectedCredits > 0) {
 
                     submitButton.disabled = false;
 
@@ -591,28 +980,32 @@
                         '<i class="bi bi-check-circle-fill me-2"></i>' +
                         'Submit for Approval';
 
-                    selectionStatus.textContent =
-                        "Perfect! You have selected exactly 30 credit hours.";
+
+                    if (totalCreditHours === maximumCreditHours) {
+
+                        selectionStatus.textContent =
+                            "You have reached the maximum of 30 credit hours.";
+
+                    }
+                    else {
+
+                        selectionStatus.textContent =
+                            "You have " +
+                            remainingAfterSelection +
+                            " credit hours remaining.";
+
+                    }
 
                     selectionStatus.className =
                         "selection-status valid";
 
                 }
-                else if (total > 30) {
 
-                    submitButton.disabled = true;
 
-                    submitButton.innerHTML =
-                        '<i class="bi bi-exclamation-circle me-2"></i>' +
-                        '30 Credits Required';
+                /*
+                 * Nothing newly selected.
+                 */
 
-                    selectionStatus.textContent =
-                        "You have selected too many credit hours.";
-
-                    selectionStatus.className =
-                        "selection-status invalid";
-
-                }
                 else {
 
                     submitButton.disabled = true;
@@ -621,10 +1014,23 @@
                         '<i class="bi bi-send me-2"></i>' +
                         'Submit for Approval';
 
-                    selectionStatus.textContent =
-                        "You need " +
-                        (30 - total) +
-                        " more credit hours.";
+
+                    if (existingCreditHours === 0) {
+
+                        selectionStatus.textContent =
+                            "Select at least one subject.";
+
+                    }
+                    else {
+
+                        selectionStatus.textContent =
+                            "You already have " +
+                            existingCreditHours +
+                            " credits. You can select up to " +
+                            (maximumCreditHours - existingCreditHours) +
+                            " more.";
+
+                    }
 
                     selectionStatus.className =
                         "selection-status warning";
@@ -632,27 +1038,53 @@
                 }
 
 
+                /*
+                 * Disable subjects that would make
+                 * the total exceed 30 credits.
+                 */
+
                 checkboxes.forEach(function(checkbox) {
+
+                    /*
+                     * Never disable something
+                     * the student already selected.
+                     */
 
                     if (checkbox.checked) {
 
                         checkbox.disabled = false;
 
                         return;
+
                     }
+
 
                     const credit =
                         parseInt(checkbox.dataset.credit) || 0;
 
+
                     const card =
                         checkbox.closest(".subject-card");
 
-                    if (total + credit > 30) {
+
+                    /*
+                     * Existing credits + selected credits
+                     * + this subject's credits
+                     */
+
+                    if (
+                        totalCreditHours + credit >
+                        maximumCreditHours
+                    ) {
 
                         checkbox.disabled = true;
 
                         if (card) {
-                            card.classList.add("disabled-card");
+
+                            card.classList.add(
+                                "disabled-card"
+                            );
+
                         }
 
                     }
@@ -661,7 +1093,11 @@
                         checkbox.disabled = false;
 
                         if (card) {
-                            card.classList.remove("disabled-card");
+
+                            card.classList.remove(
+                                "disabled-card"
+                            );
+
                         }
 
                     }
@@ -670,6 +1106,118 @@
 
             }
 
+
+            /*
+             * SEARCH SUBJECTS
+             */
+
+            function filterSubjects() {
+
+                const searchTerm =
+                    searchInput.value
+                        .trim()
+                        .toLowerCase();
+
+
+                let visibleCount = 0;
+
+
+                subjectItems.forEach(function(item) {
+
+                    const searchableText =
+                        item.dataset.search.toLowerCase();
+
+
+                    if (
+                        searchTerm === "" ||
+                        searchableText.includes(searchTerm)
+                    ) {
+
+                        item.style.display = "";
+
+                        visibleCount++;
+
+                    }
+                    else {
+
+                        item.style.display = "none";
+
+                    }
+
+                });
+
+
+                if (searchTerm === "") {
+
+                    clearSearch.style.display = "none";
+
+                    searchResults.textContent =
+                        "Showing all " +
+                        subjectItems.length +
+                        " subjects";
+
+                }
+                else {
+
+                    clearSearch.style.display = "block";
+
+                    searchResults.textContent =
+                        "Showing " +
+                        visibleCount +
+                        " of " +
+                        subjectItems.length +
+                        " subjects";
+
+                }
+
+
+                if (visibleCount === 0) {
+
+                    noSearchResults.style.display =
+                        "block";
+
+                }
+                else {
+
+                    noSearchResults.style.display =
+                        "none";
+
+                }
+
+            }
+
+
+            /*
+             * SEARCH INPUT
+             */
+
+            searchInput.addEventListener(
+                "input",
+                filterSubjects
+            );
+
+
+            /*
+             * CLEAR SEARCH
+             */
+
+            clearSearch.addEventListener(
+                "click",
+                function() {
+
+                    searchInput.value = "";
+
+                    filterSubjects();
+
+                    searchInput.focus();
+
+                }
+            );
+
+
+            /*
+             * SUBJECT CHECKBOXES
+             */
 
             checkboxes.forEach(function(checkbox) {
 
@@ -681,52 +1229,109 @@
             });
 
 
-            form.addEventListener("submit", function(event) {
+            /*
+             * FORM SUBMISSION VALIDATION
+             */
 
-                let total = 0;
+            form.addEventListener(
+                "submit",
+                function(event) {
 
-                checkboxes.forEach(function(checkbox) {
+                    let newlySelectedCredits = 0;
 
-                    if (checkbox.checked) {
 
-                        total += parseInt(
-                            checkbox.dataset.credit
-                        ) || 0;
+                    checkboxes.forEach(function(checkbox) {
+
+                        if (checkbox.checked) {
+
+                            newlySelectedCredits +=
+                                parseInt(
+                                    checkbox.dataset.credit
+                                ) || 0;
+
+                        }
+
+                    });
+
+
+                    const totalCreditHours =
+                        existingCreditHours +
+                        newlySelectedCredits;
+
+
+                    /*
+                     * No new subjects selected.
+                     */
+
+                    if (newlySelectedCredits <= 0) {
+
+                        event.preventDefault();
+
+                        alert(
+                            "Please select at least one subject."
+                        );
+
+                        return;
 
                     }
 
-                });
+
+                    /*
+                     * Total exceeds 30.
+                     */
+
+                    if (
+                        totalCreditHours >
+                        maximumCreditHours
+                    ) {
+
+                        event.preventDefault();
+
+                        alert(
+                            "You cannot have more than 30 credit hours. " +
+                            "You currently have " +
+                            existingCreditHours +
+                            " and selected " +
+                            newlySelectedCredits +
+                            " more."
+                        );
+
+                        return;
+
+                    }
 
 
-                if (total !== 30) {
+                    /*
+                     * Enable all checkboxes before submitting.
+                     *
+                     * This is important because disabled inputs
+                     * are NOT submitted by the browser.
+                     */
 
-                    event.preventDefault();
+                    checkboxes.forEach(function(checkbox) {
 
-                    alert(
-                        "You must select exactly 30 credit hours before submitting."
-                    );
+                        checkbox.disabled = false;
 
-                    return;
+                    });
+
+
+                    submitButton.disabled = true;
+
+                    submitButton.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-2"></span>' +
+                        'Submitting...';
+
                 }
+            );
 
 
-                checkboxes.forEach(function(checkbox) {
-
-                    checkbox.disabled = false;
-
-                });
-
-
-                submitButton.disabled = true;
-
-                submitButton.innerHTML =
-                    '<span class="spinner-border spinner-border-sm me-2"></span>' +
-                    'Submitting...';
-
-            });
-
+            /*
+             * INITIALIZE PAGE
+             */
 
             updateCredits();
+
+            filterSubjects();
 
         });
 

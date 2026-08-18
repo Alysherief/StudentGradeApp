@@ -8,6 +8,7 @@ namespace StudentGradeApp.ViewModels
             = new List<SubjectSelectionItemViewModel>();
 
         public int TotalCreditHours { get; set; }
+        public int ExistingCreditHours { get; set; }
     }
 
     public class SubjectSelectionItemViewModel

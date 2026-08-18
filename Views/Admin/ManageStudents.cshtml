@@ -2,105 +2,810 @@
 
 @{
     ViewData["Title"] = "Manage Students";
+
+    var students = Model.ToList();
 }
 
-<div class="container mt-5">
+<style>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    .student-page {
+        padding: 35px 0 60px;
+    }
 
-        <h2>Manage Students</h2>
+    .student-header {
+        background: linear-gradient(135deg, #0d6efd, #4f8dfd);
+        color: white;
+        border-radius: 24px;
+        padding: 38px;
+        margin-bottom: 30px;
+        box-shadow: 0 15px 35px rgba(13, 110, 253, 0.18);
+    }
 
-        <a asp-controller="Admin"
-           asp-action="CreateStudent"
-           class="btn btn-primary">
-            Create Student
-        </a>
+    .header-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 17px;
+        background: rgba(255, 255, 255, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        margin-bottom: 18px;
+    }
+
+    .student-header h1 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .student-header p {
+        margin: 0;
+        opacity: 0.9;
+    }
+
+    .header-action {
+        margin-top: 25px;
+    }
+
+    .main-btn {
+        border-radius: 12px;
+        padding: 11px 20px;
+        font-weight: 700;
+    }
+
+    .summary-card {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    .summary-title {
+        font-weight: 800;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+
+    .summary-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0d6efd;
+    }
+
+    .summary-label {
+        color: #6c757d;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .status-active {
+        background: #d1e7dd;
+        color: #146c43;
+    }
+
+    .status-empty {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .search-card {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    .search-wrapper {
+        position: relative;
+    }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 17px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+    .student-search {
+        height: 50px;
+        border-radius: 12px;
+        border: 1px solid #dee2e6;
+        padding-left: 48px;
+        padding-right: 45px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+    }
+
+        .student-search:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.12);
+        }
+
+    .clear-search {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: #6c757d;
+        font-size: 18px;
+        display: none;
+        padding: 5px;
+    }
+
+        .clear-search:hover {
+            color: #dc3545;
+        }
+
+    .search-results {
+        margin-top: 10px;
+        color: #6c757d;
+        font-size: 13px;
+    }
+
+    .student-card {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 20px;
+        height: 100%;
+        overflow: hidden;
+        box-shadow: 0 7px 22px rgba(0, 0, 0, .05);
+        transition: all .25s ease;
+    }
+
+        .student-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 32px rgba(0, 0, 0, .09);
+            border-color: #c9dcff;
+        }
+
+    .student-top {
+        padding: 22px;
+        background: linear-gradient(135deg, #f5f8ff, #eef4ff);
+        border-bottom: 1px solid #e7edf7;
+    }
+
+    .student-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 15px;
+        background: #0d6efd;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+    }
+
+    .student-body {
+        padding: 22px;
+    }
+
+    .student-name {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #212529;
+        margin-bottom: 20px;
+    }
+
+    .student-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .info-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: #f1f5ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .info-text small {
+        display: block;
+        color: #8a929a;
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: .3px;
+    }
+
+    .info-text span {
+        font-weight: 700;
+        color: #343a40;
+        word-break: break-word;
+    }
+
+    .role-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #e7f1ff;
+        color: #0d6efd;
+        padding: 7px 11px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .card-actions {
+        border-top: 1px solid #edf0f4;
+        margin-top: 20px;
+        padding-top: 18px;
+        display: flex;
+        gap: 8px;
+    }
+
+        .card-actions .btn {
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+    .empty-state {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 22px;
+        padding: 60px 30px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, .05);
+    }
+
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 22px;
+        background: #eef4ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 35px;
+        margin: 0 auto 20px;
+    }
+
+    .empty-state h3 {
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        color: #6c757d;
+        max-width: 500px;
+        margin: 0 auto 25px;
+    }
+
+    .no-search-results {
+        display: none;
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 22px;
+        padding: 55px 30px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, .05);
+    }
+
+    .no-search-icon {
+        width: 75px;
+        height: 75px;
+        border-radius: 20px;
+        background: #f1f5ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        margin: 0 auto 18px;
+    }
+
+    .no-search-results h3 {
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .no-search-results p {
+        color: #6c757d;
+        margin-bottom: 0;
+    }
+
+    @@media (max-width: 767px) {
+
+        .student-page {
+            padding-top: 20px;
+        }
+
+        .student-header {
+            padding: 28px 22px;
+            border-radius: 20px;
+        }
+
+            .student-header h1 {
+                font-size: 1.8rem;
+            }
+
+        .student-body,
+        .student-top {
+            padding: 20px;
+        }
+
+        .search-card {
+            padding: 16px;
+        }
+    }
+
+</style>
+
+
+<div class="container student-page">
+
+    <div class="student-header">
+
+        <div class="header-icon">
+            <i class="bi bi-people-fill"></i>
+        </div>
+
+        <h1>
+            Manage Students
+        </h1>
+
+        <p>
+            Create, edit and manage student accounts and their system access.
+        </p>
+
+        <div class="header-action">
+
+            <a asp-controller="Admin"
+               asp-action="CreateStudent"
+               class="btn btn-light main-btn">
+
+                <i class="bi bi-person-plus-fill me-2"></i>
+
+                Create Student
+
+            </a>
+
+        </div>
 
     </div>
 
-    @if (!Model.Any())
-    {
-        <div class="alert alert-info">
-            No students have been created yet.
+
+    <div class="summary-card">
+
+        <div class="summary-title">
+            Student Overview
         </div>
-    }
-    else
-    {
-        <div class="card shadow">
 
-            <div class="card-body">
+        <div class="row align-items-center">
 
-                <div class="table-responsive">
+            <div class="col-md-3">
 
-                    <table class="table table-hover align-middle">
-
-                        <thead>
-                            <tr>
-                                <th>Full Name</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-
-                            @foreach (var student in Model)
-                            {
-                                <tr>
-
-                                    <td>
-                                        @student.FullName
-                                    </td>
-
-                                    <td>
-                                        @student.UserName
-                                    </td>
-
-                                    <td>
-                                        @student.Email
-                                    </td>
-
-                                    <td>
-
-                                        <a asp-controller="Admin"
-                                           asp-action="EditStudent"
-                                           asp-route-id="@student.Id"
-                                           class="btn btn-sm btn-warning">
-                                            Edit
-                                        </a>
-
-                                        <a asp-controller="Admin"
-                                           asp-action="DeleteStudent"
-                                           asp-route-id="@student.Id"
-                                           class="btn btn-sm btn-danger">
-                                            Delete
-                                        </a>
-
-                                    </td>
-
-                                </tr>
-                            }
-
-                        </tbody>
-
-                    </table>
-
+                <div class="summary-label">
+                    Total Students
                 </div>
+
+                <div class="summary-number">
+                    @students.Count
+                </div>
+
+            </div>
+
+            <div class="col-md-6 mt-3 mt-md-0">
+
+                <div class="summary-label">
+                    Student Accounts
+                </div>
+
+                <p class="text-muted mb-0 mt-1">
+                    All student accounts currently registered in the system.
+                </p>
+
+            </div>
+
+            <div class="col-md-3 text-md-end mt-3 mt-md-0">
+
+                @if (students.Any())
+                {
+                    <span class="status-badge status-active">
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        Accounts Available
+
+                    </span>
+                }
+                else
+                {
+                    <span class="status-badge status-empty">
+
+                        <i class="bi bi-info-circle-fill"></i>
+
+                        No Students
+
+                    </span>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    @if (students.Any())
+    {
+        <div class="search-card">
+
+            <div class="search-wrapper">
+
+                <i class="bi bi-search"></i>
+
+                <input type="text"
+                       id="studentSearch"
+                       class="form-control student-search"
+                       placeholder="Search students by name, username, or email..."
+                       autocomplete="off" />
+
+                <button type="button"
+                        id="clearStudentSearch"
+                        class="clear-search"
+                        aria-label="Clear search">
+
+                    <i class="bi bi-x-circle-fill"></i>
+
+                </button>
+
+            </div>
+
+            <div id="searchResults"
+                 class="search-results">
+
+                Showing all @students.Count student@(students.Count == 1 ? "" : "s")
 
             </div>
 
         </div>
     }
 
-    <div class="mt-3">
+
+    @if (!students.Any())
+    {
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+
+                <i class="bi bi-people-fill"></i>
+
+            </div>
+
+            <h3>
+                No Students Yet
+            </h3>
+
+            <p>
+                No student accounts have been created yet.
+                Create the first student account to get started.
+            </p>
+
+            <a asp-controller="Admin"
+               asp-action="CreateStudent"
+               class="btn btn-primary main-btn">
+
+                <i class="bi bi-person-plus-fill me-2"></i>
+
+                Create First Student
+
+            </a>
+
+        </div>
+
+    }
+    else
+    {
+
+        <div id="studentGrid"
+             class="row g-4">
+
+            @foreach (var student in students)
+            {
+
+                <div class="col-md-6 col-lg-4 student-result">
+
+                    <div class="student-card"
+                         data-search="@($"{student.FullName} {student.UserName} {student.Email}")">
+
+                        <div class="student-top">
+
+                            <div class="d-flex align-items-center gap-3">
+
+                                <div class="student-icon">
+
+                                    <i class="bi bi-person-fill"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <div class="fw-bold">
+                                        @student.FullName
+                                    </div>
+
+                                    <small class="text-muted">
+                                        Student Account
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="student-body">
+
+                            <div class="student-name">
+                                @student.FullName
+                            </div>
+
+
+                            <div class="student-info">
+
+                                <div class="info-icon">
+
+                                    <i class="bi bi-person-fill"></i>
+
+                                </div>
+
+                                <div class="info-text">
+
+                                    <small>
+                                        Username
+                                    </small>
+
+                                    <span>
+                                        @student.UserName
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="student-info">
+
+                                <div class="info-icon">
+
+                                    <i class="bi bi-envelope-fill"></i>
+
+                                </div>
+
+                                <div class="info-text">
+
+                                    <small>
+                                        Email
+                                    </small>
+
+                                    <span>
+                                        @student.Email
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="mt-3">
+
+                                <span class="role-badge">
+
+                                    <i class="bi bi-mortarboard-fill"></i>
+
+                                    Student
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="card-actions">
+
+                                <a asp-controller="Admin"
+                                   asp-action="EditStudent"
+                                   asp-route-id="@student.Id"
+                                   class="btn btn-outline-primary btn-sm flex-grow-1">
+
+                                    <i class="bi bi-pencil me-1"></i>
+
+                                    Edit
+
+                                </a>
+
+
+                                <a asp-controller="Admin"
+                                   asp-action="DeleteStudent"
+                                   asp-route-id="@student.Id"
+                                   class="btn btn-outline-danger btn-sm flex-grow-1">
+
+                                    <i class="bi bi-trash me-1"></i>
+
+                                    Delete
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            }
+
+        </div>
+
+
+        <div id="noSearchResults"
+             class="no-search-results">
+
+            <div class="no-search-icon">
+
+                <i class="bi bi-search"></i>
+
+            </div>
+
+            <h3>
+                No Students Found
+            </h3>
+
+            <p>
+                No student accounts match your search.
+                Try searching for a different name, username, or email.
+            </p>
+
+        </div>
+
+    }
+
+
+    <div class="text-center mt-5">
 
         <a asp-controller="Dashboard"
            asp-action="Index"
-           class="btn btn-secondary">
+           class="btn btn-outline-secondary main-btn">
+
+            <i class="bi bi-speedometer2 me-2"></i>
+
             Back to Dashboard
+
         </a>
 
     </div>
 
 </div>
+
+
+@section Scripts {
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const searchInput = document.getElementById("studentSearch");
+            const clearButton = document.getElementById("clearStudentSearch");
+            const searchResults = document.getElementById("searchResults");
+            const noSearchResults = document.getElementById("noSearchResults");
+            const studentResults = document.querySelectorAll(".student-result");
+
+            if (!searchInput) {
+                return;
+            }
+
+            function performSearch() {
+
+                const searchTerm = searchInput.value
+                    .toLowerCase()
+                    .trim();
+
+                let visibleCount = 0;
+
+                studentResults.forEach(function(result) {
+
+                    const card = result.querySelector(".student-card");
+
+                    const searchData = card
+                        .getAttribute("data-search")
+                        .toLowerCase();
+
+                    if (searchData.includes(searchTerm)) {
+
+                        result.style.display = "";
+
+                        visibleCount++;
+
+                    }
+                    else {
+
+                        result.style.display = "none";
+
+                    }
+
+                });
+
+                if (searchTerm.length > 0) {
+
+                    clearButton.style.display = "block";
+
+                    searchResults.textContent =
+                        visibleCount +
+                        " student" +
+                        (visibleCount === 1 ? "" : "s") +
+                        " found";
+
+                }
+                else {
+
+                    clearButton.style.display = "none";
+
+                    searchResults.textContent =
+                        "Showing all " +
+                        studentResults.length +
+                        " student" +
+                        (studentResults.length === 1 ? "" : "s");
+
+                }
+
+                if (visibleCount === 0) {
+
+                    noSearchResults.style.display = "block";
+
+                }
+                else {
+
+                    noSearchResults.style.display = "none";
+
+                }
+
+            }
+
+            searchInput.addEventListener("input", performSearch);
+
+            clearButton.addEventListener("click", function() {
+
+                searchInput.value = "";
+
+                searchInput.focus();
+
+                performSearch();
+
+            });
+
+        });
+
+    </script>
+
+}

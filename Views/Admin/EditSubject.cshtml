@@ -4,19 +4,256 @@
     ViewData["Title"] = "Edit Subject";
 }
 
-<div class="container mt-5">
+<style>
+
+    .edit-subject-page {
+        padding: 35px 0 60px;
+    }
+
+    /* =========================
+           HEADER
+           ========================= */
+
+    .subject-header {
+        background: linear-gradient(135deg, #0d6efd, #4f8dfd);
+        color: white;
+        border-radius: 24px;
+        padding: 38px;
+        margin-bottom: 30px;
+        box-shadow: 0 15px 35px rgba(13, 110, 253, 0.18);
+    }
+
+    .header-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 17px;
+        background: rgba(255, 255, 255, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        margin-bottom: 18px;
+    }
+
+    .subject-header h1 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .subject-header p {
+        margin: 0;
+        opacity: 0.9;
+    }
+
+
+    /* =========================
+           FORM CARD
+           ========================= */
+
+    .form-card {
+        background: white;
+        border: 1px solid #edf0f4;
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, .05);
+    }
+
+    .form-card-header {
+        padding: 25px;
+        background: linear-gradient(135deg, #f5f8ff, #eef4ff);
+        border-bottom: 1px solid #e7edf7;
+    }
+
+    .form-card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: #0d6efd;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+    }
+
+    .form-card-header h4 {
+        font-weight: 800;
+        margin-bottom: 4px;
+    }
+
+    .form-card-body {
+        padding: 30px;
+    }
+
+
+    /* =========================
+           FORM ELEMENTS
+           ========================= */
+
+    .form-section {
+        margin-bottom: 22px;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #343a40;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        border-radius: 12px;
+        border: 1px solid #dee2e6;
+        padding: 12px 15px;
+        transition: all .2s ease;
+    }
+
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .12);
+        }
+
+    .form-control-lg {
+        min-height: 50px;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+    }
+
+
+    /* =========================
+           ACTIONS
+           ========================= */
+
+    .form-actions {
+        border-top: 1px solid #edf0f4;
+        margin-top: 10px;
+        padding-top: 22px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .main-btn {
+        border-radius: 12px;
+        padding: 11px 20px;
+        font-weight: 700;
+    }
+
+
+    /* =========================
+           BACK BUTTON
+           ========================= */
+
+    .back-button {
+        margin-top: 35px;
+    }
+
+
+    /* =========================
+           MOBILE
+           ========================= */
+
+    @@media (max-width: 767px) {
+
+        .edit-subject-page {
+            padding-top: 20px;
+        }
+
+        .subject-header {
+            padding: 28px 22px;
+            border-radius: 20px;
+        }
+
+            .subject-header h1 {
+                font-size: 1.8rem;
+            }
+
+        .form-card-header,
+        .form-card-body {
+            padding: 22px;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+    }
+
+</style>
+
+
+<div class="container edit-subject-page">
+
+    <!-- =========================
+         HEADER
+         ========================= -->
+
+    <div class="subject-header">
+
+        <div class="header-icon">
+
+            <i class="bi bi-book-gear-fill"></i>
+
+        </div>
+
+        <h1>
+            Edit Subject
+        </h1>
+
+        <p>
+            Update the subject information, code, credit hours and description.
+        </p>
+
+    </div>
+
+
+    <!-- =========================
+         FORM
+         ========================= -->
 
     <div class="row justify-content-center">
 
-        <div class="col-md-6">
+        <div class="col-xl-8 col-lg-9">
 
-            <div class="card shadow">
+            <div class="form-card">
 
-                <div class="card-body p-4">
+                <!-- FORM HEADER -->
 
-                    <h2 class="text-center mb-4">
-                        Edit Subject
-                    </h2>
+                <div class="form-card-header">
+
+                    <div class="d-flex align-items-center gap-3">
+
+                        <div class="form-card-icon">
+
+                            <i class="bi bi-journal-bookmark-fill"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h4>
+                                Subject Information
+                            </h4>
+
+                            <p class="text-muted mb-0">
+                                Modify the subject details below.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FORM BODY -->
+
+                <div class="form-card-body">
 
                     <form asp-controller="Admin"
                           asp-action="EditSubject"
@@ -26,82 +263,152 @@
 
                         <input asp-for="Id" type="hidden" />
 
+
+                        <!-- VALIDATION -->
+
                         <div asp-validation-summary="ModelOnly"
-                             class="text-danger mb-3">
+                             class="alert alert-danger"
+                             role="alert">
                         </div>
 
-                        <div class="mb-3">
+
+                        <!-- SUBJECT NAME -->
+
+                        <div class="form-section">
+
                             <label asp-for="Name"
                                    class="form-label">
+
+                                <i class="bi bi-book-fill text-primary me-1"></i>
+
+                                Subject Name
+
                             </label>
 
                             <input asp-for="Name"
-                                   class="form-control" />
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter subject name" />
 
                             <span asp-validation-for="Name"
-                                  class="text-danger">
+                                  class="text-danger small">
                             </span>
+
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Code"
-                                   class="form-label">
-                            </label>
 
-                            <input asp-for="Code"
-                                   class="form-control" />
+                        <!-- CODE + CREDIT HOURS -->
 
-                            <span asp-validation-for="Code"
-                                  class="text-danger">
-                            </span>
+                        <div class="row">
+
+                            <div class="col-md-6">
+
+                                <div class="form-section">
+
+                                    <label asp-for="Code"
+                                           class="form-label">
+
+                                        <i class="bi bi-upc-scan text-primary me-1"></i>
+
+                                        Subject Code
+
+                                    </label>
+
+                                    <input asp-for="Code"
+                                           class="form-control form-control-lg"
+                                           placeholder="e.g. CS101" />
+
+                                    <span asp-validation-for="Code"
+                                          class="text-danger small">
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <div class="form-section">
+
+                                    <label asp-for="CreditHours"
+                                           class="form-label">
+
+                                        <i class="bi bi-clock-fill text-primary me-1"></i>
+
+                                        Credit Hours
+
+                                    </label>
+
+                                    <input asp-for="CreditHours"
+                                           type="number"
+                                           min="1"
+                                           max="10"
+                                           class="form-control form-control-lg"
+                                           placeholder="Enter credit hours" />
+
+                                    <span asp-validation-for="CreditHours"
+                                          class="text-danger small">
+                                    </span>
+
+                                </div>
+
+                            </div>
+
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="CreditHours"
-                                   class="form-label">
-                            </label>
 
-                            <input asp-for="CreditHours"
-                                   type="number"
-                                   min="1"
-                                   max="10"
-                                   class="form-control" />
+                        <!-- DESCRIPTION -->
 
-                            <span asp-validation-for="CreditHours"
-                                  class="text-danger">
-                            </span>
-                        </div>
+                        <div class="form-section">
 
-                        <div class="mb-3">
                             <label asp-for="Description"
                                    class="form-label">
+
+                                <i class="bi bi-card-text text-primary me-1"></i>
+
+                                Description
+
                             </label>
 
                             <textarea asp-for="Description"
                                       class="form-control"
-                                      rows="4"></textarea>
+                                      rows="5"
+                                      placeholder="Enter subject description"></textarea>
 
                             <span asp-validation-for="Description"
-                                  class="text-danger">
+                                  class="text-danger small">
                             </span>
+
                         </div>
 
-                        <button type="submit"
-                                class="btn btn-primary w-100">
-                            Save Changes
-                        </button>
+
+                        <!-- ACTIONS -->
+
+                        <div class="form-actions">
+
+                            <a asp-controller="Admin"
+                               asp-action="ManageSubjects"
+                               class="btn btn-light btn-lg main-btn">
+
+                                <i class="bi bi-x-lg me-2"></i>
+
+                                Cancel
+
+                            </a>
+
+
+                            <button type="submit"
+                                    class="btn btn-primary btn-lg main-btn">
+
+                                <i class="bi bi-check-lg me-2"></i>
+
+                                Save Changes
+
+                            </button>
+
+                        </div>
 
                     </form>
-
-                    <div class="text-center mt-3">
-
-                        <a asp-controller="Admin"
-                           asp-action="ManageSubjects"
-                           class="btn btn-secondary">
-                            Back to Subjects
-                        </a>
-
-                    </div>
 
                 </div>
 
@@ -111,8 +418,30 @@
 
     </div>
 
+
+    <!-- =========================
+         BACK TO DASHBOARD
+         ========================= -->
+
+    <div class="text-center back-button">
+
+        <a asp-controller="Dashboard"
+           asp-action="Index"
+           class="btn btn-outline-secondary main-btn">
+
+            <i class="bi bi-speedometer2 me-2"></i>
+
+            Back to Dashboard
+
+        </a>
+
+    </div>
+
 </div>
 
+
 @section Scripts {
+
     <partial name="_ValidationScriptsPartial" />
+
 }

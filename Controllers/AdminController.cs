@@ -14,7 +14,9 @@ namespace StudentGradeApp.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly ApplicationDbContext _context;
 
-        public AdminController(UserManager<AppUser> userManager, ApplicationDbContext context)
+        public AdminController(
+            UserManager<AppUser> userManager,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _context = context;
@@ -22,7 +24,7 @@ namespace StudentGradeApp.Controllers
 
         public IActionResult Index()
         {
-            return RedirectToAction("Index","DashBoard");
+            return RedirectToAction("Index", "DashBoard");
         }
 
         [HttpGet]
@@ -95,25 +97,31 @@ namespace StudentGradeApp.Controllers
 
             return View(model);
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> ManageTeachers()
         {
-            var teachers = await _userManager.GetUsersInRoleAsync("Teacher");
+            var teachers =
+                await _userManager.GetUsersInRoleAsync("Teacher");
 
             return View(teachers);
         }
+
         [HttpGet]
         public async Task<IActionResult> EditTeacher(string id)
         {
-            var teacher = await _userManager.FindByIdAsync(id);
+            var teacher =
+                await _userManager.FindByIdAsync(id);
 
             if (teacher == null)
             {
                 return NotFound();
             }
 
-            var isTeacher = await _userManager.IsInRoleAsync(teacher, "Teacher");
+            var isTeacher =
+                await _userManager.IsInRoleAsync(
+                    teacher,
+                    "Teacher");
 
             if (!isTeacher)
             {
@@ -141,14 +149,18 @@ namespace StudentGradeApp.Controllers
                 return View(model);
             }
 
-            var teacher = await _userManager.FindByIdAsync(model.Id);
+            var teacher =
+                await _userManager.FindByIdAsync(model.Id);
 
             if (teacher == null)
             {
                 return NotFound();
             }
 
-            var isTeacher = await _userManager.IsInRoleAsync(teacher, "Teacher");
+            var isTeacher =
+                await _userManager.IsInRoleAsync(
+                    teacher,
+                    "Teacher");
 
             if (!isTeacher)
             {
@@ -185,7 +197,8 @@ namespace StudentGradeApp.Controllers
             teacher.UserName = model.Username;
             teacher.Email = model.Email;
 
-            var result = await _userManager.UpdateAsync(teacher);
+            var result =
+                await _userManager.UpdateAsync(teacher);
 
             if (result.Succeeded)
             {
@@ -201,17 +214,22 @@ namespace StudentGradeApp.Controllers
 
             return View(model);
         }
+
         [HttpGet]
         public async Task<IActionResult> DeleteTeacher(string id)
         {
-            var teacher = await _userManager.FindByIdAsync(id);
+            var teacher =
+                await _userManager.FindByIdAsync(id);
 
             if (teacher == null)
             {
                 return NotFound();
             }
 
-            var isTeacher = await _userManager.IsInRoleAsync(teacher, "Teacher");
+            var isTeacher =
+                await _userManager.IsInRoleAsync(
+                    teacher,
+                    "Teacher");
 
             if (!isTeacher)
             {
@@ -223,23 +241,29 @@ namespace StudentGradeApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteTeacherConfirmed(string id)
+        public async Task<IActionResult> DeleteTeacherConfirmed(
+            string id)
         {
-            var teacher = await _userManager.FindByIdAsync(id);
+            var teacher =
+                await _userManager.FindByIdAsync(id);
 
             if (teacher == null)
             {
                 return NotFound();
             }
 
-            var isTeacher = await _userManager.IsInRoleAsync(teacher, "Teacher");
+            var isTeacher =
+                await _userManager.IsInRoleAsync(
+                    teacher,
+                    "Teacher");
 
             if (!isTeacher)
             {
                 return NotFound();
             }
 
-            var result = await _userManager.DeleteAsync(teacher);
+            var result =
+                await _userManager.DeleteAsync(teacher);
 
             if (result.Succeeded)
             {
@@ -255,6 +279,7 @@ namespace StudentGradeApp.Controllers
 
             return View("DeleteTeacher", teacher);
         }
+
         [HttpGet]
         public IActionResult CreateStudent()
         {
@@ -303,9 +328,10 @@ namespace StudentGradeApp.Controllers
                 EmailConfirmed = true
             };
 
-            var result = await _userManager.CreateAsync(
-                student,
-                model.Password);
+            var result =
+                await _userManager.CreateAsync(
+                    student,
+                    model.Password);
 
             if (result.Succeeded)
             {
@@ -325,24 +351,31 @@ namespace StudentGradeApp.Controllers
 
             return View(model);
         }
+
         [HttpGet]
         public async Task<IActionResult> ManageStudents()
         {
-            var students = await _userManager.GetUsersInRoleAsync("Student");
+            var students =
+                await _userManager.GetUsersInRoleAsync("Student");
 
             return View(students);
         }
+
         [HttpGet]
         public async Task<IActionResult> EditStudent(string id)
         {
-            var student = await _userManager.FindByIdAsync(id);
+            var student =
+                await _userManager.FindByIdAsync(id);
 
             if (student == null)
             {
                 return NotFound();
             }
 
-            var isStudent = await _userManager.IsInRoleAsync(student, "Student");
+            var isStudent =
+                await _userManager.IsInRoleAsync(
+                    student,
+                    "Student");
 
             if (!isStudent)
             {
@@ -370,14 +403,18 @@ namespace StudentGradeApp.Controllers
                 return View(model);
             }
 
-            var student = await _userManager.FindByIdAsync(model.Id);
+            var student =
+                await _userManager.FindByIdAsync(model.Id);
 
             if (student == null)
             {
                 return NotFound();
             }
 
-            var isStudent = await _userManager.IsInRoleAsync(student, "Student");
+            var isStudent =
+                await _userManager.IsInRoleAsync(
+                    student,
+                    "Student");
 
             if (!isStudent)
             {
@@ -414,7 +451,8 @@ namespace StudentGradeApp.Controllers
             student.UserName = model.Username;
             student.Email = model.Email;
 
-            var result = await _userManager.UpdateAsync(student);
+            var result =
+                await _userManager.UpdateAsync(student);
 
             if (result.Succeeded)
             {
@@ -430,16 +468,22 @@ namespace StudentGradeApp.Controllers
 
             return View(model);
         }
+
+        [HttpGet]
         public async Task<IActionResult> DeleteStudent(string id)
         {
-            var student = await _userManager.FindByIdAsync(id);
+            var student =
+                await _userManager.FindByIdAsync(id);
 
             if (student == null)
             {
                 return NotFound();
             }
 
-            var isStudent = await _userManager.IsInRoleAsync(student, "Student");
+            var isStudent =
+                await _userManager.IsInRoleAsync(
+                    student,
+                    "Student");
 
             if (!isStudent)
             {
@@ -448,25 +492,32 @@ namespace StudentGradeApp.Controllers
 
             return View(student);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteStudentConfirmed(string id)
+        public async Task<IActionResult> DeleteStudentConfirmed(
+            string id)
         {
-            var student = await _userManager.FindByIdAsync(id);
+            var student =
+                await _userManager.FindByIdAsync(id);
 
             if (student == null)
             {
                 return NotFound();
             }
 
-            var isStudent = await _userManager.IsInRoleAsync(student, "Student");
+            var isStudent =
+                await _userManager.IsInRoleAsync(
+                    student,
+                    "Student");
 
             if (!isStudent)
             {
                 return NotFound();
             }
 
-            var result = await _userManager.DeleteAsync(student);
+            var result =
+                await _userManager.DeleteAsync(student);
 
             if (result.Succeeded)
             {
@@ -482,6 +533,7 @@ namespace StudentGradeApp.Controllers
 
             return View("DeleteStudent", student);
         }
+
         [HttpGet]
         public IActionResult CreateSubject()
         {
@@ -498,8 +550,10 @@ namespace StudentGradeApp.Controllers
                 return View(model);
             }
 
-            var existingCode = await _context.Subjects
-                .FirstOrDefaultAsync(s => s.Code == model.Code);
+            var existingCode =
+                await _context.Subjects
+                    .FirstOrDefaultAsync(
+                        s => s.Code == model.Code);
 
             if (existingCode != null)
             {
@@ -524,20 +578,24 @@ namespace StudentGradeApp.Controllers
 
             return RedirectToAction("ManageSubjects");
         }
+
         [HttpGet]
         public async Task<IActionResult> ManageSubjects()
         {
-            var subjects = await _context.Subjects
-                .Include(s => s.Teacher)
-                .OrderBy(s => s.Name)
-                .ToListAsync();
+            var subjects =
+                await _context.Subjects
+                    .Include(s => s.Teacher)
+                    .OrderBy(s => s.Name)
+                    .ToListAsync();
 
             return View(subjects);
         }
+
         [HttpGet]
         public async Task<IActionResult> EditSubject(int id)
         {
-            var subject = await _context.Subjects.FindAsync(id);
+            var subject =
+                await _context.Subjects.FindAsync(id);
 
             if (subject == null)
             {
@@ -566,17 +624,19 @@ namespace StudentGradeApp.Controllers
                 return View(model);
             }
 
-            var subject = await _context.Subjects.FindAsync(model.Id);
+            var subject =
+                await _context.Subjects.FindAsync(model.Id);
 
             if (subject == null)
             {
                 return NotFound();
             }
 
-            var existingCode = await _context.Subjects
-                .FirstOrDefaultAsync(s =>
-                    s.Code == model.Code &&
-                    s.Id != model.Id);
+            var existingCode =
+                await _context.Subjects
+                    .FirstOrDefaultAsync(s =>
+                        s.Code == model.Code &&
+                        s.Id != model.Id);
 
             if (existingCode != null)
             {
@@ -596,12 +656,15 @@ namespace StudentGradeApp.Controllers
 
             return RedirectToAction("ManageSubjects");
         }
+
         [HttpGet]
         public async Task<IActionResult> DeleteSubject(int id)
         {
-            var subject = await _context.Subjects
-                .Include(s => s.Teacher)
-                .FirstOrDefaultAsync(s => s.Id == id);
+            var subject =
+                await _context.Subjects
+                    .Include(s => s.Teacher)
+                    .FirstOrDefaultAsync(
+                        s => s.Id == id);
 
             if (subject == null)
             {
@@ -613,10 +676,13 @@ namespace StudentGradeApp.Controllers
 
         [HttpPost, ActionName("DeleteSubject")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteSubjectConfirmed(int id)
+        public async Task<IActionResult> DeleteSubjectConfirmed(
+            int id)
         {
-            var subject = await _context.Subjects
-                .FirstOrDefaultAsync(s => s.Id == id);
+            var subject =
+                await _context.Subjects
+                    .FirstOrDefaultAsync(
+                        s => s.Id == id);
 
             if (subject == null)
             {
@@ -629,33 +695,40 @@ namespace StudentGradeApp.Controllers
 
             return RedirectToAction("ManageSubjects");
         }
+
         [HttpGet]
         public async Task<IActionResult> AssignTeacher()
         {
-            var subjects = await _context.Subjects
-                .OrderBy(s => s.Name)
-                .ToListAsync();
+            var subjects =
+                await _context.Subjects
+                    .OrderBy(s => s.Name)
+                    .ToListAsync();
 
-            var teachers = await _userManager.GetUsersInRoleAsync("Teacher");
+            var teachers =
+                await _userManager
+                    .GetUsersInRoleAsync("Teacher");
 
             ViewBag.Subjects = subjects;
             ViewBag.Teachers = teachers;
 
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignTeacher(
-    AssignTeacherViewModel model)
+            AssignTeacherViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                var subjects = await _context.Subjects
-                    .OrderBy(s => s.Name)
-                    .ToListAsync();
+                var subjects =
+                    await _context.Subjects
+                        .OrderBy(s => s.Name)
+                        .ToListAsync();
 
-                var teachers = await _userManager
-                    .GetUsersInRoleAsync("Teacher");
+                var teachers =
+                    await _userManager
+                        .GetUsersInRoleAsync("Teacher");
 
                 ViewBag.Subjects = subjects;
                 ViewBag.Teachers = teachers;
@@ -663,16 +736,19 @@ namespace StudentGradeApp.Controllers
                 return View(model);
             }
 
-            var subject = await _context.Subjects
-                .FirstOrDefaultAsync(s => s.Id == model.SubjectId);
+            var subject =
+                await _context.Subjects
+                    .FirstOrDefaultAsync(
+                        s => s.Id == model.SubjectId);
 
             if (subject == null)
             {
                 return NotFound();
             }
 
-            var teacher = await _userManager
-                .FindByIdAsync(model.TeacherId);
+            var teacher =
+                await _userManager
+                    .FindByIdAsync(model.TeacherId);
 
             if (teacher == null)
             {
@@ -680,12 +756,14 @@ namespace StudentGradeApp.Controllers
                     "TeacherId",
                     "The selected teacher could not be found.");
 
-                var subjects = await _context.Subjects
-                    .OrderBy(s => s.Name)
-                    .ToListAsync();
+                var subjects =
+                    await _context.Subjects
+                        .OrderBy(s => s.Name)
+                        .ToListAsync();
 
-                var teachers = await _userManager
-                    .GetUsersInRoleAsync("Teacher");
+                var teachers =
+                    await _userManager
+                        .GetUsersInRoleAsync("Teacher");
 
                 ViewBag.Subjects = subjects;
                 ViewBag.Teachers = teachers;
@@ -693,8 +771,11 @@ namespace StudentGradeApp.Controllers
                 return View(model);
             }
 
-            var isTeacher = await _userManager
-                .IsInRoleAsync(teacher, "Teacher");
+            var isTeacher =
+                await _userManager
+                    .IsInRoleAsync(
+                        teacher,
+                        "Teacher");
 
             if (!isTeacher)
             {
@@ -702,12 +783,14 @@ namespace StudentGradeApp.Controllers
                     "TeacherId",
                     "The selected user is not a teacher.");
 
-                var subjects = await _context.Subjects
-                    .OrderBy(s => s.Name)
-                    .ToListAsync();
+                var subjects =
+                    await _context.Subjects
+                        .OrderBy(s => s.Name)
+                        .ToListAsync();
 
-                var teachers = await _userManager
-                    .GetUsersInRoleAsync("Teacher");
+                var teachers =
+                    await _userManager
+                        .GetUsersInRoleAsync("Teacher");
 
                 ViewBag.Subjects = subjects;
                 ViewBag.Teachers = teachers;
@@ -721,89 +804,204 @@ namespace StudentGradeApp.Controllers
 
             return RedirectToAction("ManageSubjects");
         }
+
         [HttpGet]
         public async Task<IActionResult> SubjectRequests()
         {
-            var requests = await _context.StudentSubjects
-                .Include(ss => ss.Student)
-                .Include(ss => ss.Subject)
-                    .ThenInclude(s => s!.Teacher)
-                .Where(ss => ss.Status == EnrollmentStatus.Pending)
-                .OrderBy(ss => ss.RequestedAt)
-                .ToListAsync();
+            var enrollmentRequests =
+                await _context.StudentSubjects
+                    .Include(ss => ss.Student)
+                    .Include(ss => ss.Subject)
+                        .ThenInclude(s => s!.Teacher)
+                    .Where(ss =>
+                        ss.Status ==
+                        EnrollmentStatus.Pending)
+                    .OrderBy(ss => ss.RequestedAt)
+                    .ToListAsync();
 
-            return View(requests);
+            var removalRequests =
+                await _context.SubjectRemovalRequests
+                    .Include(rr => rr.Student)
+                    .Include(rr => rr.Subject)
+                        .ThenInclude(s => s!.Teacher)
+                    .Where(rr =>
+                        rr.Status ==
+                        RemovalRequestStatus.Pending)
+                    .OrderBy(rr => rr.RequestedAt)
+                    .ToListAsync();
+
+            ViewBag.RemovalRequests =
+                removalRequests;
+
+            return View(enrollmentRequests);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ApproveSubject(int id)
         {
-            var request = await _context.StudentSubjects
-                .FirstOrDefaultAsync(ss => ss.Id == id);
+            var request =
+                await _context.StudentSubjects
+                    .FirstOrDefaultAsync(
+                        ss => ss.Id == id);
 
             if (request == null)
             {
                 return NotFound();
             }
 
-            request.Status = EnrollmentStatus.Approved;
-            request.ApprovedAt = DateTime.UtcNow;
+            request.Status =
+                EnrollmentStatus.Approved;
+
+            request.ApprovedAt =
+                DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(SubjectRequests));
+            return RedirectToAction(
+                nameof(SubjectRequests));
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RejectSubject(int id)
         {
-            var request = await _context.StudentSubjects
-                .FirstOrDefaultAsync(ss => ss.Id == id);
+            var request =
+                await _context.StudentSubjects
+                    .FirstOrDefaultAsync(
+                        ss => ss.Id == id);
 
             if (request == null)
             {
                 return NotFound();
             }
 
-            request.Status = EnrollmentStatus.Rejected;
+            request.Status =
+                EnrollmentStatus.Rejected;
+
             request.ApprovedAt = null;
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(SubjectRequests));
+            return RedirectToAction(
+                nameof(SubjectRequests));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApproveRemoval(int id)
+        {
+            var request =
+                await _context.SubjectRemovalRequests
+                    .FirstOrDefaultAsync(
+                        rr => rr.Id == id);
+
+            if (request == null)
+            {
+                return NotFound();
+            }
+
+            var enrollment =
+                await _context.StudentSubjects
+                    .FirstOrDefaultAsync(ss =>
+                        ss.StudentId == request.StudentId &&
+                        ss.SubjectId == request.SubjectId &&
+                        ss.Status == EnrollmentStatus.Approved);
+
+            if (enrollment == null)
+            {
+                request.Status =
+                    RemovalRequestStatus.Rejected;
+
+                request.ProcessedAt =
+                    DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(
+                    nameof(SubjectRequests));
+            }
+
+            _context.StudentSubjects.Remove(enrollment);
+
+            request.Status =
+                RemovalRequestStatus.Approved;
+
+            request.ProcessedAt =
+                DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(
+                nameof(SubjectRequests));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectRemoval(int id)
+        {
+            var request =
+                await _context.SubjectRemovalRequests
+                    .FirstOrDefaultAsync(
+                        rr => rr.Id == id);
+
+            if (request == null)
+            {
+                return NotFound();
+            }
+
+            request.Status =
+                RemovalRequestStatus.Rejected;
+
+            request.ProcessedAt =
+                DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(
+                nameof(SubjectRequests));
         }
 
         [HttpGet]
-        public async Task<IActionResult> GradeComponents(int? subjectId)
+        public async Task<IActionResult> GradeComponents(
+            int? subjectId)
         {
-            var subjects = await _context.Subjects
-                .OrderBy(s => s.Name)
-                .ToListAsync();
+            var subjects =
+                await _context.Subjects
+                    .OrderBy(s => s.Name)
+                    .ToListAsync();
 
             ViewBag.Subjects = subjects;
 
             if (subjectId == null)
             {
-                return View(new List<GradeComponent>());
+                return View(
+                    new List<GradeComponent>());
             }
 
-            var components = await _context.GradeComponents
-                .Include(g => g.Subject)
-                .Where(g => g.SubjectId == subjectId)
-                .OrderBy(g => g.Id)
-                .ToListAsync();
+            var components =
+                await _context.GradeComponents
+                    .Include(g => g.Subject)
+                    .Where(g =>
+                        g.SubjectId ==
+                        subjectId)
+                    .OrderBy(g => g.Id)
+                    .ToListAsync();
 
-            ViewBag.SelectedSubjectId = subjectId;
+            ViewBag.SelectedSubjectId =
+                subjectId;
 
             return View(components);
         }
 
-
         [HttpGet]
-        public async Task<IActionResult> CreateGradeComponent(int subjectId)
+        public async Task<IActionResult> CreateGradeComponent(
+            int subjectId)
         {
-            var subject = await _context.Subjects
-                .FirstOrDefaultAsync(s => s.Id == subjectId);
+            var subject =
+                await _context.Subjects
+                    .FirstOrDefaultAsync(
+                        s => s.Id == subjectId);
 
             if (subject == null)
             {
@@ -812,37 +1010,43 @@ namespace StudentGradeApp.Controllers
 
             ViewBag.Subject = subject;
 
-            return View(new GradeComponent
-            {
-                SubjectId = subjectId
-            });
+            return View(
+                new GradeComponent
+                {
+                    SubjectId = subjectId
+                });
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateGradeComponent(
             GradeComponent model)
         {
-            var subject = await _context.Subjects
-                .FirstOrDefaultAsync(s => s.Id == model.SubjectId);
+            var subject =
+                await _context.Subjects
+                    .FirstOrDefaultAsync(
+                        s => s.Id == model.SubjectId);
 
             if (subject == null)
             {
                 return NotFound();
             }
 
-            var currentWeight = await _context.GradeComponents
-                .Where(g => g.SubjectId == model.SubjectId)
-                .SumAsync(g => g.WeightPercentage);
+            var currentWeight =
+                await _context.GradeComponents
+                    .Where(g =>
+                        g.SubjectId ==
+                        model.SubjectId)
+                    .SumAsync(
+                        g => g.WeightPercentage);
 
-            if (currentWeight + model.WeightPercentage > 100)
+            if (currentWeight +
+                model.WeightPercentage > 100)
             {
                 ModelState.AddModelError(
                     "WeightPercentage",
                     $"The total weight cannot exceed 100%. " +
-                    $"The subject currently has {currentWeight}% assigned."
-                );
+                    $"The subject currently has {currentWeight}% assigned.");
             }
 
             if (!ModelState.IsValid)
@@ -857,28 +1061,33 @@ namespace StudentGradeApp.Controllers
 
             return RedirectToAction(
                 nameof(GradeComponents),
-                new { subjectId = model.SubjectId }
-            );
+                new
+                {
+                    subjectId =
+                        model.SubjectId
+                });
         }
 
-
         [HttpGet]
-        public async Task<IActionResult> EditGradeComponent(int id)
+        public async Task<IActionResult> EditGradeComponent(
+            int id)
         {
-            var component = await _context.GradeComponents
-                .Include(g => g.Subject)
-                .FirstOrDefaultAsync(g => g.Id == id);
+            var component =
+                await _context.GradeComponents
+                    .Include(g => g.Subject)
+                    .FirstOrDefaultAsync(
+                        g => g.Id == id);
 
             if (component == null)
             {
                 return NotFound();
             }
 
-            ViewBag.Subject = component.Subject;
+            ViewBag.Subject =
+                component.Subject;
 
             return View(component);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -891,76 +1100,96 @@ namespace StudentGradeApp.Controllers
                 return NotFound();
             }
 
-            var existing = await _context.GradeComponents
-                .FirstOrDefaultAsync(g => g.Id == id);
+            var existing =
+                await _context.GradeComponents
+                    .FirstOrDefaultAsync(
+                        g => g.Id == id);
 
             if (existing == null)
             {
                 return NotFound();
             }
 
-            var currentWeight = await _context.GradeComponents
-                .Where(g =>
-                    g.SubjectId == model.SubjectId &&
-                    g.Id != model.Id)
-                .SumAsync(g => g.WeightPercentage);
+            var currentWeight =
+                await _context.GradeComponents
+                    .Where(g =>
+                        g.SubjectId ==
+                            model.SubjectId &&
+                        g.Id != model.Id)
+                    .SumAsync(
+                        g => g.WeightPercentage);
 
-            if (currentWeight + model.WeightPercentage > 100)
+            if (currentWeight +
+                model.WeightPercentage > 100)
             {
                 ModelState.AddModelError(
                     "WeightPercentage",
                     $"The total weight cannot exceed 100%. " +
-                    $"The other components currently use {currentWeight}%."
-                );
+                    $"The other components currently use {currentWeight}%.");
             }
 
             if (!ModelState.IsValid)
             {
-                var subject = await _context.Subjects
-                    .FirstOrDefaultAsync(s => s.Id == model.SubjectId);
+                var subject =
+                    await _context.Subjects
+                        .FirstOrDefaultAsync(
+                            s => s.Id ==
+                                model.SubjectId);
 
                 ViewBag.Subject = subject;
 
                 return View(model);
             }
 
-            existing.Name = model.Name;
-            existing.MaxGrade = model.MaxGrade;
-            existing.WeightPercentage = model.WeightPercentage;
+            existing.Name =
+                model.Name;
+
+            existing.MaxGrade =
+                model.MaxGrade;
+
+            existing.WeightPercentage =
+                model.WeightPercentage;
 
             await _context.SaveChangesAsync();
 
             return RedirectToAction(
                 nameof(GradeComponents),
-                new { subjectId = model.SubjectId }
-            );
+                new
+                {
+                    subjectId =
+                        model.SubjectId
+                });
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteGradeComponent(int id)
+        public async Task<IActionResult> DeleteGradeComponent(
+            int id)
         {
-            var component = await _context.GradeComponents
-                .FirstOrDefaultAsync(g => g.Id == id);
+            var component =
+                await _context.GradeComponents
+                    .FirstOrDefaultAsync(
+                        g => g.Id == id);
 
             if (component == null)
             {
                 return NotFound();
             }
 
-            var subjectId = component.SubjectId;
+            var subjectId =
+                component.SubjectId;
 
-            _context.GradeComponents.Remove(component);
+            _context.GradeComponents.Remove(
+                component);
 
             await _context.SaveChangesAsync();
 
             return RedirectToAction(
                 nameof(GradeComponents),
-                new { subjectId }
-            );
+                new
+                {
+                    subjectId
+                });
         }
-
     }
 }
-

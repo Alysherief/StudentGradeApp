@@ -17,5 +17,6 @@ namespace StudentGradeApp.Data
 
         public DbSet<StudentSubject> StudentSubjects { get; set; }
         public DbSet<StudentGrade> StudentGrades { get; set; }
+        public DbSet<SubjectRemovalRequest> SubjectRemovalRequests { get; set; }
     }
 }

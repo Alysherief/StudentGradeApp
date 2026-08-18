@@ -6,6 +6,9 @@
     var subjects = Model.ToList();
     var totalCredits = subjects.Sum(x => x.Subject?.CreditHours ?? 0);
     var progress = Math.Min((totalCredits / 30.0) * 100, 100);
+
+    var removalRequests = ViewBag.RemovalRequests as List<int>
+        ?? new List<int>();
 }
 
 <style>
@@ -13,10 +16,6 @@
     .subjects-page {
         padding: 35px 0 60px;
     }
-
-    /* =========================
-           HEADER
-           ========================= */
 
     .subjects-header {
         background: linear-gradient(135deg, #0d6efd, #4f8dfd);
@@ -50,10 +49,6 @@
         font-size: 26px;
         margin-bottom: 18px;
     }
-
-    /* =========================
-           CREDIT SUMMARY
-           ========================= */
 
     .credit-summary {
         background: white;
@@ -110,10 +105,6 @@
         font-weight: 700;
     }
 
-    /* =========================
-           SUBJECT CARDS
-           ========================= */
-
     .subject-card {
         background: white;
         border: 1px solid #edf0f4;
@@ -153,6 +144,18 @@
         gap: 4px;
         background: #d1e7dd;
         color: #146c43;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .pending-removal-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #fff3cd;
+        color: #856404;
         padding: 6px 10px;
         border-radius: 8px;
         font-size: 12px;
@@ -219,9 +222,12 @@
         font-weight: 600;
     }
 
-    /* =========================
-           EMPTY STATE
-           ========================= */
+    .remove-btn {
+        width: 100%;
+        border-radius: 11px;
+        padding: 10px 15px;
+        font-weight: 600;
+    }
 
     .empty-state {
         background: white;
@@ -256,10 +262,6 @@
         margin: 0 auto 25px;
     }
 
-    /* =========================
-           BOTTOM ACTIONS
-           ========================= */
-
     .actions-section {
         margin-top: 35px;
         display: flex;
@@ -274,9 +276,11 @@
         font-weight: 600;
     }
 
-    /* =========================
-           MOBILE
-           ========================= */
+    .alert-custom {
+        border-radius: 15px;
+        border: none;
+        margin-bottom: 25px;
+    }
 
     @@media (max-width: 767px) {
 
@@ -304,19 +308,38 @@
 
 </style>
 
-
 <div class="container subjects-page">
 
-    <!-- =========================
-         PAGE HEADER
-         ========================= -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-custom alert-dismissible fade show shadow-sm">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            @TempData["SuccessMessage"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-custom alert-dismissible fade show shadow-sm">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            @TempData["ErrorMessage"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+        </div>
+    }
 
     <div class="subjects-header">
 
         <div class="header-icon">
-
             <i class="bi bi-journal-bookmark-fill"></i>
-
         </div>
 
         <h1>
@@ -324,25 +347,17 @@
         </h1>
 
         <p>
-            View all subjects that have been approved for your semester.
+            View your approved subjects and request to remove a subject if needed.
         </p>
 
     </div>
 
-
     @if (!subjects.Any())
     {
-
-        <!-- =========================
-             EMPTY STATE
-             ========================= -->
-
         <div class="empty-state">
 
             <div class="empty-icon">
-
                 <i class="bi bi-journal-x"></i>
-
             </div>
 
             <h3>
@@ -359,21 +374,14 @@
                class="btn btn-primary action-btn">
 
                 <i class="bi bi-plus-circle me-2"></i>
-
                 Choose Subjects
 
             </a>
 
         </div>
-
     }
     else
     {
-
-        <!-- =========================
-             CREDIT SUMMARY
-             ========================= -->
-
         <div class="credit-summary">
 
             <div class="row align-items-center">
@@ -398,7 +406,6 @@
 
                 </div>
 
-
                 <div class="col-md-8 mt-4 mt-md-0">
 
                     <div class="d-flex justify-content-between align-items-center mb-2">
@@ -410,11 +417,8 @@
                         @if (totalCredits >= 30)
                         {
                             <span class="complete-badge">
-
                                 <i class="bi bi-check-circle-fill"></i>
-
                                 Complete
-
                             </span>
                         }
                         else
@@ -426,12 +430,10 @@
 
                     </div>
 
-
                     <div class="credit-progress">
 
                         <div class="credit-progress-bar"
-                             style="width: @progress%;">
-                        </div>
+                             style="width: @progress%;"></div>
 
                     </div>
 
@@ -441,66 +443,54 @@
 
         </div>
 
-
-        <!-- =========================
-             SUBJECT CARDS
-             ========================= -->
-
         <div class="row g-4">
 
             @foreach (var enrollment in subjects)
             {
+                var hasPendingRemoval =
+                    removalRequests.Contains(enrollment.SubjectId);
 
                 <div class="col-md-6 col-lg-4">
 
                     <div class="subject-card">
 
-                        <!-- CARD TOP -->
-
                         <div class="subject-top">
 
-                            <div class="d-flex
-                                justify-content-between
-                                align-items-center">
+                            <div class="d-flex justify-content-between align-items-center gap-2">
 
                                 <span class="subject-code">
-
                                     @enrollment.Subject?.Code
-
                                 </span>
 
-                                <span class="approved-badge">
-
-                                    <i class="bi bi-check-circle-fill"></i>
-
-                                    Approved
-
-                                </span>
+                                @if (hasPendingRemoval)
+                                {
+                                    <span class="pending-removal-badge">
+                                        <i class="bi bi-hourglass-split"></i>
+                                        Removal Pending
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="approved-badge">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        Approved
+                                    </span>
+                                }
 
                             </div>
 
                         </div>
 
-
-                        <!-- CARD BODY -->
-
                         <div class="subject-body">
 
                             <div class="subject-name">
-
                                 @enrollment.Subject?.Name
-
                             </div>
-
-
-                            <!-- TEACHER -->
 
                             <div class="subject-info">
 
                                 <div class="info-icon">
-
                                     <i class="bi bi-person-fill"></i>
-
                                 </div>
 
                                 <div class="info-content">
@@ -510,25 +500,18 @@
                                     </small>
 
                                     <span>
-
                                         @(enrollment.Subject?.Teacher?.FullName
                                             ?? "Not Assigned")
-
                                     </span>
 
                                 </div>
 
                             </div>
 
-
-                            <!-- CREDIT HOURS -->
-
                             <div class="subject-info">
 
                                 <div class="info-icon">
-
                                     <i class="bi bi-clock-fill"></i>
-
                                 </div>
 
                                 <div class="info-content">
@@ -538,18 +521,15 @@
                                     </small>
 
                                     <span>
-
                                         @enrollment.Subject?.CreditHours
                                         credit hour@(enrollment.Subject?.CreditHours == 1 ? "" : "s")
-
                                     </span>
 
                                 </div>
 
                             </div>
 
-
-                            <div class="mt-3">
+                            <div class="mt-3 mb-3">
 
                                 <span class="credit-badge">
 
@@ -561,20 +541,51 @@
 
                             </div>
 
+                            @if (hasPendingRemoval)
+                            {
+                                <button type="button"
+                                        class="btn btn-outline-warning remove-btn"
+                                        disabled>
+
+                                    <i class="bi bi-hourglass-split me-2"></i>
+
+                                    Removal Request Pending
+
+                                </button>
+                            }
+                            else
+                            {
+                                <form asp-controller="Student"
+                                      asp-action="RequestSubjectRemoval"
+                                      method="post"
+                                      onsubmit="return confirm('Are you sure you want to request removal of this subject? The subject will only be removed after administrator approval.');">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden"
+                                           name="subjectId"
+                                           value="@enrollment.SubjectId" />
+
+                                    <button type="submit"
+                                            class="btn btn-outline-danger remove-btn">
+
+                                        <i class="bi bi-trash3 me-2"></i>
+
+                                        Request Removal
+
+                                    </button>
+
+                                </form>
+                            }
+
                         </div>
 
                     </div>
 
                 </div>
-
             }
 
         </div>
-
-
-        <!-- =========================
-             ACTIONS
-             ========================= -->
 
         <div class="actions-section">
 
@@ -599,7 +610,6 @@
             </a>
 
         </div>
-
     }
 
 </div>
