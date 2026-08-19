@@ -1,18 +1,18 @@
-﻿@model IEnumerable<StudentGradeApp.Models.AppUser>
+﻿@model IEnumerable<StudentGradeApp.Models.Subject>
 
 @{
-    ViewData["Title"] = "Manage Students";
+    ViewData["Title"] = "Manage Subjects";
 
-    var students = Model.ToList();
+    var subjects = Model.ToList();
 }
 
 <style>
 
-    .student-page {
+    .subject-page {
         padding: 35px 0 60px;
     }
 
-    .student-header {
+    .subject-header {
         background: linear-gradient(135deg, #0d6efd, #4f8dfd);
         color: white;
         border-radius: 24px;
@@ -33,13 +33,13 @@
         margin-bottom: 18px;
     }
 
-    .student-header h1 {
+    .subject-header h1 {
         font-size: 2.2rem;
         font-weight: 800;
         margin-bottom: 8px;
     }
 
-    .student-header p {
+    .subject-header p {
         margin: 0;
         opacity: 0.9;
     }
@@ -181,7 +181,7 @@
         margin: 0 auto 18px;
     }
 
-    .student-card {
+    .subject-card {
         background: white;
         border: 1px solid #edf0f4;
         border-radius: 20px;
@@ -191,19 +191,19 @@
         transition: all .25s ease;
     }
 
-        .student-card:hover {
+        .subject-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 14px 32px rgba(0, 0, 0, .09);
             border-color: #c9dcff;
         }
 
-    .student-top {
+    .subject-top {
         padding: 22px;
         background: linear-gradient(135deg, #f5f8ff, #eef4ff);
         border-bottom: 1px solid #e7edf7;
     }
 
-    .student-icon {
+    .subject-icon {
         width: 50px;
         height: 50px;
         border-radius: 15px;
@@ -215,18 +215,18 @@
         font-size: 21px;
     }
 
-    .student-body {
+    .subject-body {
         padding: 22px;
     }
 
-    .student-name {
+    .subject-name {
         font-size: 1.25rem;
         font-weight: 800;
         color: #212529;
         margin-bottom: 20px;
     }
 
-    .student-info {
+    .subject-info {
         display: flex;
         align-items: center;
         gap: 10px;
@@ -260,12 +260,24 @@
         word-break: break-word;
     }
 
-    .role-badge {
+    .teacher-badge {
         display: inline-flex;
         align-items: center;
         gap: 6px;
         background: #e7f1ff;
         color: #0d6efd;
+        padding: 7px 11px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .no-teacher-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #fff3cd;
+        color: #856404;
         padding: 7px 11px;
         border-radius: 9px;
         font-size: 13px;
@@ -320,52 +332,52 @@
 
     @@media (max-width: 767px) {
 
-        .student-page {
+        .subject-page {
             padding-top: 20px;
         }
 
-        .student-header {
+        .subject-header {
             padding: 28px 22px;
             border-radius: 20px;
         }
 
-            .student-header h1 {
+            .subject-header h1 {
                 font-size: 1.8rem;
             }
 
-        .student-body,
-        .student-top {
+        .subject-body,
+        .subject-top {
             padding: 20px;
         }
     }
 
 </style>
 
-<div class="container student-page">
+<div class="container subject-page">
 
-    <div class="student-header">
+    <div class="subject-header">
 
         <div class="header-icon">
-            <i class="bi bi-people-fill"></i>
+            <i class="bi bi-book-half"></i>
         </div>
 
         <h1>
-            Manage Students
+            Manage Subjects
         </h1>
 
         <p>
-            Create, edit and manage student accounts and their system access.
+            Create, edit and manage university subjects and their assigned teachers.
         </p>
 
         <div class="header-action">
 
             <a asp-controller="Admin"
-               asp-action="CreateStudent"
+               asp-action="CreateSubject"
                class="btn btn-light main-btn">
 
-                <i class="bi bi-person-plus-fill me-2"></i>
+                <i class="bi bi-plus-circle-fill me-2"></i>
 
-                Create Student
+                Create Subject
 
             </a>
 
@@ -376,7 +388,7 @@
     <div class="summary-card">
 
         <div class="summary-title">
-            Student Overview
+            Subject Overview
         </div>
 
         <div class="row align-items-center">
@@ -384,11 +396,11 @@
             <div class="col-md-3">
 
                 <div class="summary-label">
-                    Total Students
+                    Total Subjects
                 </div>
 
                 <div class="summary-number">
-                    @students.Count
+                    @subjects.Count
                 </div>
 
             </div>
@@ -396,24 +408,24 @@
             <div class="col-md-6 mt-3 mt-md-0">
 
                 <div class="summary-label">
-                    Student Accounts
+                    Available Subjects
                 </div>
 
                 <p class="text-muted mb-0 mt-1">
-                    All student accounts currently registered in the system.
+                    All subjects currently registered in the system.
                 </p>
 
             </div>
 
             <div class="col-md-3 text-md-end mt-3 mt-md-0">
 
-                @if (students.Any())
+                @if (subjects.Any())
                 {
                     <span class="status-badge status-active">
 
                         <i class="bi bi-check-circle-fill"></i>
 
-                        Accounts Available
+                        Subjects Available
 
                     </span>
                 }
@@ -423,7 +435,7 @@
 
                         <i class="bi bi-info-circle-fill"></i>
 
-                        No Students
+                        No Subjects
 
                     </span>
                 }
@@ -434,30 +446,30 @@
 
     </div>
 
-    @if (!students.Any())
+    @if (!subjects.Any())
     {
         <div class="empty-state">
 
             <div class="empty-icon">
-                <i class="bi bi-people-fill"></i>
+                <i class="bi bi-book-half"></i>
             </div>
 
             <h3>
-                No Students Yet
+                No Subjects Yet
             </h3>
 
             <p>
-                No student accounts have been created yet.
-                Create the first student account to get started.
+                No subjects have been created yet.
+                Create the first subject to start managing your academic courses.
             </p>
 
             <a asp-controller="Admin"
-               asp-action="CreateStudent"
+               asp-action="CreateSubject"
                class="btn btn-primary main-btn">
 
-                <i class="bi bi-person-plus-fill me-2"></i>
+                <i class="bi bi-plus-circle-fill me-2"></i>
 
-                Create First Student
+                Create First Subject
 
             </a>
 
@@ -472,13 +484,13 @@
                 <i class="bi bi-search search-icon"></i>
 
                 <input type="text"
-                       id="studentSearch"
+                       id="subjectSearch"
                        class="form-control search-input"
-                       placeholder="Search students by name, username or email..."
+                       placeholder="Search subjects by name, code or teacher..."
                        autocomplete="off" />
 
                 <button type="button"
-                        id="clearStudentSearch"
+                        id="clearSubjectSearch"
                         class="clear-search">
 
                     <i class="bi bi-x-lg"></i>
@@ -487,40 +499,40 @@
 
             </div>
 
-            <div id="studentResultCount"
+            <div id="subjectResultCount"
                  class="search-result-count">
 
-                Showing @students.Count student@(students.Count == 1 ? "" : "s")
+                Showing @subjects.Count subject@(subjects.Count == 1 ? "" : "s")
 
             </div>
 
         </div>
 
-        <div id="studentsContainer" class="row g-4">
+        <div id="subjectsContainer" class="row g-4">
 
-            @foreach (var student in students)
+            @foreach (var subject in subjects)
             {
-                <div class="col-md-6 col-lg-4 student-search-item"
-                     data-search="@($"{student.FullName} {student.UserName} {student.Email}")">
+                <div class="col-md-6 col-lg-4 subject-search-item"
+                     data-search="@($"{subject.Name} {subject.Code} {subject.Teacher?.FullName}")">
 
-                    <div class="student-card">
+                    <div class="subject-card">
 
-                        <div class="student-top">
+                        <div class="subject-top">
 
                             <div class="d-flex align-items-center gap-3">
 
-                                <div class="student-icon">
-                                    <i class="bi bi-person-fill"></i>
+                                <div class="subject-icon">
+                                    <i class="bi bi-book-fill"></i>
                                 </div>
 
                                 <div>
 
                                     <div class="fw-bold">
-                                        @student.FullName
+                                        @subject.Name
                                     </div>
 
                                     <small class="text-muted">
-                                        Student Account
+                                        University Subject
                                     </small>
 
                                 </div>
@@ -529,46 +541,46 @@
 
                         </div>
 
-                        <div class="student-body">
+                        <div class="subject-body">
 
-                            <div class="student-name">
-                                @student.FullName
+                            <div class="subject-name">
+                                @subject.Name
                             </div>
 
-                            <div class="student-info">
+                            <div class="subject-info">
 
                                 <div class="info-icon">
-                                    <i class="bi bi-person-fill"></i>
+                                    <i class="bi bi-hash"></i>
                                 </div>
 
                                 <div class="info-text">
 
                                     <small>
-                                        Username
+                                        Subject Code
                                     </small>
 
                                     <span>
-                                        @student.UserName
+                                        @subject.Code
                                     </span>
 
                                 </div>
 
                             </div>
 
-                            <div class="student-info">
+                            <div class="subject-info">
 
                                 <div class="info-icon">
-                                    <i class="bi bi-envelope-fill"></i>
+                                    <i class="bi bi-person-badge-fill"></i>
                                 </div>
 
                                 <div class="info-text">
 
                                     <small>
-                                        Email
+                                        Assigned Teacher
                                     </small>
 
                                     <span>
-                                        @student.Email
+                                        @(subject.Teacher?.FullName ?? "No teacher assigned")
                                     </span>
 
                                 </div>
@@ -577,21 +589,34 @@
 
                             <div class="mt-3">
 
-                                <span class="role-badge">
+                                @if (subject.Teacher != null)
+                                {
+                                    <span class="teacher-badge">
 
-                                    <i class="bi bi-mortarboard-fill"></i>
+                                        <i class="bi bi-person-check-fill"></i>
 
-                                    Student
+                                        Teacher Assigned
 
-                                </span>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="no-teacher-badge">
+
+                                        <i class="bi bi-person-x-fill"></i>
+
+                                        No Teacher
+
+                                    </span>
+                                }
 
                             </div>
 
                             <div class="card-actions">
 
                                 <a asp-controller="Admin"
-                                   asp-action="EditStudent"
-                                   asp-route-id="@student.Id"
+                                   asp-action="EditSubject"
+                                   asp-route-id="@subject.Id"
                                    class="btn btn-outline-primary btn-sm flex-grow-1">
 
                                     <i class="bi bi-pencil me-1"></i>
@@ -601,8 +626,8 @@
                                 </a>
 
                                 <a asp-controller="Admin"
-                                   asp-action="DeleteStudent"
-                                   asp-route-id="@student.Id"
+                                   asp-action="DeleteSubject"
+                                   asp-route-id="@subject.Id"
                                    class="btn btn-outline-danger btn-sm flex-grow-1">
 
                                     <i class="bi bi-trash me-1"></i>
@@ -629,11 +654,11 @@
             </div>
 
             <h3 class="fw-bold">
-                No Students Found
+                No Subjects Found
             </h3>
 
             <p class="text-muted mb-0">
-                Try searching with a different name, username or email.
+                Try searching with a different subject name, code or teacher.
             </p>
 
         </div>
@@ -662,25 +687,25 @@
         document.addEventListener("DOMContentLoaded", function() {
 
             const searchInput =
-                document.getElementById("studentSearch");
+                document.getElementById("subjectSearch");
 
             const clearButton =
-                document.getElementById("clearStudentSearch");
+                document.getElementById("clearSubjectSearch");
 
             const resultCount =
-                document.getElementById("studentResultCount");
+                document.getElementById("subjectResultCount");
 
             const noResults =
                 document.getElementById("noSearchResults");
 
             const items =
-                document.querySelectorAll(".student-search-item");
+                document.querySelectorAll(".subject-search-item");
 
             if (!searchInput) {
                 return;
             }
 
-            function searchStudents() {
+            function searchSubjects() {
 
                 const searchValue =
                     searchInput.value.trim().toLowerCase();
@@ -710,7 +735,7 @@
                 resultCount.textContent =
                     "Showing " +
                     visibleCount +
-                    " student" +
+                    " subject" +
                     (visibleCount === 1 ? "" : "s");
 
                 noResults.style.display =
@@ -719,7 +744,7 @@
 
             searchInput.addEventListener(
                 "input",
-                searchStudents
+                searchSubjects
             );
 
             clearButton.addEventListener(
@@ -730,7 +755,7 @@
 
                     searchInput.focus();
 
-                    searchStudents();
+                    searchSubjects();
 
                 }
             );
